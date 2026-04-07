@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<meta name="theme-color" content="#1e2a16"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Udyami Vikas"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icon.svg"/>
+<title>Udyami Vikas — Grassroutes</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════ TOKENS ═══════════════════════ */
+:root{
+  --green:#8bb25a;--green-dark:#5e8332;--green-deep:#3d5c1f;--green-light:#eef4e5;--green-mid:#c8e0a0;
+  --orange:#f9a556;--orange-dark:#d9760f;--orange-light:#fff5ea;--orange-mid:#fdd9ad;
+  --charcoal:#1e2a16;--ink:#2e3d20;--grey-dark:#555f4a;--grey-med:#7a8a6a;--grey-light:#e2e9d8;--grey-xlight:#f4f7ef;
+  --white:#fff;--red:#c94444;--red-light:#fdf0f0;--blue:#4a7fc1;--blue-light:#eef4fc;--purple:#7c5cbf;--purple-light:#f0ecf9;
+  --border:#d6e2c4;--border-strong:#b8d08a;
+  --shadow-sm:0 1px 3px rgba(30,42,22,.07);--shadow:0 2px 8px rgba(30,42,22,.09);--shadow-md:0 4px 20px rgba(30,42,22,.14);
+  --fh:'Montserrat',sans-serif;--fb:'Open Sans',sans-serif;--r:12px;--rs:7px;
+  --nav-h:64px;
+  --sidebar-w:220px;
+  --sidebar-w-collapsed:64px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-top:env(safe-area-inset-top,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{height:100%;}
+body{height:100%;background:var(--charcoal);font-family:var(--fb);font-size:13px;color:var(--ink);overflow:hidden;}
+
+/* ═══════════════════════ LOGIN SCREEN ═════════════════ */
+#login-screen{position:fixed;inset:0;background:var(--charcoal);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow-y:auto;}
+.ls-brand{text-align:center;margin-bottom:32px;}
+.ls-logo{width:72px;height:72px;background:var(--green);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 8px 24px rgba(139,178,90,.35);}
+.ls-title{font-family:var(--fh);font-size:26px;font-weight:900;color:#fff;letter-spacing:.5px;}
+.ls-title span{color:var(--green);}
+.ls-sub{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:1.5px;text-transform:uppercase;font-family:var(--fh);margin-top:4px;}
+.ls-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:24px;width:100%;max-width:420px;backdrop-filter:blur(10px);}
+.ls-section{font-family:var(--fh);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.35);margin-bottom:12px;}
+.ql-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.ql-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--rs);padding:11px 13px;cursor:pointer;transition:all .15s;}
+.ql-card:hover{background:rgba(139,178,90,.15);border-color:rgba(139,178,90,.4);}
+.ql-role{font-family:var(--fh);font-size:10px;font-weight:800;color:#fff;margin-bottom:2px;}
+.ql-cred{font-size:9px;color:rgba(255,255,255,.4);font-family:var(--fh);}
+.ql-badge{display:inline-block;margin-top:4px;padding:2px 7px;border-radius:5px;font-size:8px;font-family:var(--fh);font-weight:800;text-transform:uppercase;}
+.or-line{display:flex;align-items:center;gap:10px;margin:16px 0;color:rgba(255,255,255,.2);font-size:10px;font-family:var(--fh);}
+.or-line::before,.or-line::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.1);}
+.ls-input{width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);border-radius:var(--rs);padding:12px 14px;color:#fff;font-family:var(--fb);font-size:13px;outline:none;margin-bottom:10px;transition:border-color .15s;}
+.ls-input:focus{border-color:var(--green);}
+.ls-input::placeholder{color:rgba(255,255,255,.3);}
+.ls-btn{width:100%;background:var(--green-dark);color:#fff;border:none;border-radius:var(--rs);padding:14px;font-family:var(--fh);font-size:12px;font-weight:800;cursor:pointer;transition:background .15s;letter-spacing:.3px;margin-top:4px;}
+.ls-btn:hover{background:var(--green-deep);}
+.ls-err{color:#ff9090;font-size:11px;font-family:var(--fh);margin-bottom:8px;display:none;}
+.ls-err.show{display:block;}
+.ls-signup-link{text-align:center;margin-top:14px;font-size:11px;color:rgba(255,255,255,.35);font-family:var(--fh);}
+.ls-signup-link a{color:var(--green);text-decoration:none;font-weight:700;}
+
+/* ═══════════════════════ APP SHELL ════════════════════ */
+#app-shell{position:fixed;inset:0;display:none;flex-direction:row;background:var(--grey-xlight);}
+#app-shell.show{display:flex;}
+
+/* ── SIDEBAR (desktop only) ── */
+.sidebar{width:var(--sidebar-w);background:var(--charcoal);display:flex;flex-direction:column;flex-shrink:0;transition:width .2s;z-index:100;}
+.sb-brand{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px;}
+.sb-logo{width:34px;height:34px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sb-name{font-family:var(--fh);font-size:13px;font-weight:800;color:#fff;line-height:1.2;}
+.sb-name small{display:block;font-size:8px;font-weight:500;color:rgba(255,255,255,.35);letter-spacing:1.2px;text-transform:uppercase;margin-top:1px;}
+.sb-nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;}
+.sb-item{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:var(--rs);cursor:pointer;transition:all .15s;border:1px solid transparent;}
+.sb-item:hover{background:rgba(255,255,255,.06);}
+.sb-item.active{background:rgba(139,178,90,.14);border-color:rgba(139,178,90,.25);}
+.sb-icon{font-size:16px;flex-shrink:0;width:20px;text-align:center;}
+.sb-label{font-family:var(--fh);font-size:11px;font-weight:700;color:rgba(255,255,255,.5);white-space:nowrap;letter-spacing:.3px;}
+.sb-item.active .sb-label{color:var(--green);}
+.sb-item:hover .sb-label{color:rgba(255,255,255,.8);}
+.sb-badge{margin-left:auto;background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:9px;font-family:var(--fh);font-weight:800;flex-shrink:0;}
+.sb-footer{padding:12px 8px;border-top:1px solid rgba(255,255,255,.07);}
+.sb-user{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:var(--rs);cursor:pointer;}
+.sb-user:hover{background:rgba(255,255,255,.05);}
+.sb-av{width:30px;height:30px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:11px;font-weight:800;color:#fff;flex-shrink:0;}
+.sb-uname{font-family:var(--fh);font-size:10px;font-weight:700;color:rgba(255,255,255,.75);}
+.sb-urole{font-size:9px;color:rgba(255,255,255,.35);font-family:var(--fh);}
+
+/* ── MAIN CONTENT ── */
+.app-main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
+
+/* ── APP TOPBAR ── */
+.app-topbar{height:56px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;box-shadow:var(--shadow-sm);}
+.at-title{font-family:var(--fh);font-size:14px;font-weight:900;color:var(--charcoal);flex:1;}
+.at-badge{background:var(--green-light);border:1px solid var(--green-mid);border-radius:12px;padding:4px 11px;font-family:var(--fh);font-size:10px;font-weight:700;color:var(--green-dark);}
+.at-btn{background:var(--grey-xlight);border:1px solid var(--border);border-radius:var(--rs);padding:7px 13px;font-family:var(--fh);font-size:10px;font-weight:700;color:var(--grey-dark);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.at-btn:hover{border-color:var(--green);color:var(--green-dark);}
+.at-menu-btn{display:none;background:none;border:none;color:var(--charcoal);font-size:20px;cursor:pointer;padding:4px;}
+
+/* ── SCREEN CONTENT ── */
+.screens{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h) + var(--safe-bottom));}
+.screen{display:none;padding:20px;}
+.screen.active{display:block;}
+
+/* ── BOTTOM NAV (mobile) ── */
+.bottom-nav{display:none;height:calc(var(--nav-h) + var(--safe-bottom));background:var(--charcoal);border-top:1px solid rgba(255,255,255,.08);position:fixed;bottom:0;left:0;right:0;z-index:100;padding-bottom:var(--safe-bottom);}
+.bn-inner{display:flex;height:var(--nav-h);}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:all .15s;position:relative;}
+.bn-item.active::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:32px;height:3px;background:var(--green);border-radius:0 0 3px 3px;}
+.bn-icon{font-size:20px;line-height:1;}
+.bn-label{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.4);}
+.bn-item.active .bn-label{color:var(--green);}
+.bn-badge{position:absolute;top:8px;right:calc(50% - 18px);background:var(--red);color:#fff;border-radius:8px;padding:1px 5px;font-size:9px;font-family:var(--fh);font-weight:800;}
+
+/* ── OFFLINE BAR ── */
+#offline-bar{position:fixed;top:0;left:0;right:0;background:var(--orange-dark);color:#fff;text-align:center;padding:8px;font-family:var(--fh);font-size:11px;font-weight:700;z-index:2000;display:none;letter-spacing:.3px;}
+
+/* ── INSTALL PROMPT ── */
+#install-prompt{position:fixed;bottom:calc(var(--nav-h) + var(--safe-bottom) + 12px);left:12px;right:12px;background:var(--charcoal);border:1px solid rgba(139,178,90,.3);border-radius:var(--r);padding:16px;z-index:500;display:none;box-shadow:var(--shadow-md);}
+#install-prompt.show{display:block;}
+.ip-title{font-family:var(--fh);font-size:13px;font-weight:800;color:#fff;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+.ip-sub{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:12px;line-height:1.5;}
+.ip-actions{display:flex;gap:8px;}
+.ip-install{flex:1;background:var(--green-dark);color:#fff;border:none;border-radius:var(--rs);padding:10px;font-family:var(--fh);font-size:11px;font-weight:800;cursor:pointer;}
+.ip-dismiss{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);border-radius:var(--rs);padding:10px 16px;font-family:var(--fh);font-size:11px;cursor:pointer;}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:calc(var(--nav-h) + var(--safe-bottom) + 12px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--charcoal);color:#fff;padding:12px 20px;border-radius:var(--rs);font-family:var(--fh);font-size:11px;font-weight:700;box-shadow:var(--shadow-md);z-index:2000;opacity:0;transition:all .25s;white-space:nowrap;border-left:4px solid var(--green);pointer-events:none;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── MOBILE DRAWER ── */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;}
+.drawer-overlay.show{display:block;}
+.drawer{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:var(--charcoal);z-index:201;transform:translateX(-100%);transition:transform .25s;overflow-y:auto;}
+.drawer.open{transform:translateX(0);}
+
+/* ═══════════════════════ DASHBOARD SCREEN ══════════════ */
+.sl{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--grey-med);margin-bottom:12px;margin-top:4px;display:flex;align-items:center;gap:8px;}
+.sl::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--green);flex-shrink:0;}
+.sl::after{content:'';flex:1;height:1px;background:var(--border);}
+.stat-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.stat-card.sg::before{background:linear-gradient(90deg,var(--green),var(--green-dark));}
+.stat-card.so::before{background:linear-gradient(90deg,var(--orange),var(--orange-dark));}
+.stat-card.sb::before{background:linear-gradient(90deg,var(--blue),#2f5ea8);}
+.stat-card.sr::before{background:linear-gradient(90deg,var(--red),#a83030);}
+.stat-card.sp::before{background:linear-gradient(90deg,var(--purple),#5a3ca0);}
+.sc-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:10px;}
+.sc-val{font-family:var(--fh);font-size:22px;font-weight:900;color:var(--ink);line-height:1;margin-bottom:3px;}
+.sc-lbl{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--grey-med);}
+.sc-delta{font-family:var(--fh);font-size:10px;font-weight:700;margin-top:6px;}
+.delta-up{color:var(--green-dark);}.delta-dn{color:var(--red);}
+
+.ind-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px;}
+.ind-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:13px;box-shadow:var(--shadow-sm);}
+.ind-label{font-family:var(--fh);font-size:10px;font-weight:800;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.ind-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.ind-pct{font-family:var(--fh);font-size:26px;font-weight:900;color:var(--ink);line-height:1;margin-bottom:5px;}
+.ind-pct span{font-size:13px;font-weight:500;color:var(--grey-med);}
+.prog-bar{height:5px;background:var(--grey-light);border-radius:3px;overflow:hidden;margin-bottom:7px;}
+.prog-fill{height:100%;border-radius:3px;}
+.ind-chips{display:flex;gap:4px;flex-wrap:wrap;}
+.ind-chip{font-size:9px;font-family:var(--fh);font-weight:700;padding:2px 6px;border-radius:6px;}
+.chip-g{background:var(--green-light);color:var(--green-dark);}
+.chip-o{background:var(--orange-light);color:var(--orange-dark);}
+.chip-r{background:var(--red-light);color:var(--red);}
+
+.dash-two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+.dash-three-col{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:14px;margin-bottom:18px;}
+.panel-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow-sm);}
+.pc-title{font-family:var(--fh);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--ink);margin-bottom:14px;}
+
+.level-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.lv-badge{font-family:var(--fh);font-size:10px;font-weight:800;width:30px;text-align:center;padding:3px 0;border-radius:5px;flex-shrink:0;}
+.lv-3{background:var(--green-light);color:var(--green-dark);}
+.lv-2{background:var(--blue-light);color:var(--blue);}
+.lv-1{background:#fff3e0;color:#c07000;}
+.lv-d{background:var(--red-light);color:var(--red);}
+.lv-bar-wrap{flex:1;height:8px;background:var(--grey-light);border-radius:4px;overflow:hidden;}
+.lv-bar-fill{height:100%;border-radius:4px;}
+.lv-count{font-family:var(--fh);font-size:12px;font-weight:800;color:var(--ink);min-width:20px;text-align:right;}
+.lv-pct{font-size:10px;color:var(--grey-med);min-width:28px;text-align:right;}
+
+/* Entrepreneur table */
+.ent-wrap{overflow-x:auto;margin-bottom:0;}
+table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
+.ent-table thead tr{background:var(--charcoal);}
+.ent-table th{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.6);padding:9px 10px;text-align:left;white-space:nowrap;}
+.ent-table tbody tr{border-bottom:1px solid var(--grey-light);transition:background .12s;cursor:pointer;}
+.ent-table tbody tr:hover{background:var(--green-light);}
+.ent-table td{padding:8px 10px;vertical-align:middle;white-space:nowrap;}
+.ent-name-cell{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--ink);}
+.ent-id-cell{font-size:9px;color:var(--grey-med);margin-top:1px;}
+.status-dot{display:inline-block;width:9px;height:9px;border-radius:50%;}
+.sd-g{background:#63b54a;}.sd-o{background:var(--orange);}.sd-r{background:var(--red);}
+.lv-pill{display:inline-block;font-family:var(--fh);font-size:9px;font-weight:800;padding:2px 7px;border-radius:5px;}
+.score-pill{display:inline-block;font-family:var(--fh);font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px;min-width:32px;text-align:center;}
+.sp-g{background:var(--green-light);color:var(--green-dark);}
+.sp-o{background:var(--orange-light);color:var(--orange-dark);}
+.sp-r{background:var(--red-light);color:var(--red);}
+.flag-pill{background:var(--red);color:#fff;font-family:var(--fh);font-size:9px;font-weight:800;padding:2px 7px;border-radius:8px;}
+
+/* Flagged / visit-overdue alert cards */
+.alert-row{display:flex;gap:10px;margin-bottom:7px;}
+.alert-card{flex:1;display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:var(--rs);border:1px solid;}
+.ac-red{background:var(--red-light);border-color:#f5c0c0;}
+.ac-orange{background:var(--orange-light);border-color:var(--orange-mid);}
+.ac-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:9px;font-weight:800;color:#fff;flex-shrink:0;}
+.ac-name{font-family:var(--fh);font-size:11px;font-weight:800;color:var(--ink);}
+.ac-detail{font-size:10px;color:var(--grey-dark);margin-top:2px;}
+
+/* ═══════════════════════ ENTREPRENEUR SCREEN ══════════ */
+.ent-search-bar{display:flex;gap:8px;margin-bottom:16px;}
+.ent-search-bar input{flex:1;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--rs);font-family:var(--fb);font-size:13px;outline:none;background:var(--white);}
+.ent-search-bar input:focus{border-color:var(--green);}
+.ent-search-bar select{padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--rs);font-family:var(--fh);font-size:11px;font-weight:700;outline:none;background:var(--white);appearance:none;}
+.ent-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;}
+.ent-item-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow-sm);}
+.ent-item-card:hover{border-color:var(--green);box-shadow:0 4px 16px rgba(139,178,90,.12);transform:translateY(-1px);}
+.ent-item-card.flagged{border-left:4px solid var(--red);}
+.ent-item-card.dropout{opacity:.55;}
+.eic-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.eic-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:13px;font-weight:900;color:#fff;flex-shrink:0;}
+.eic-name{font-family:var(--fh);font-size:13px;font-weight:800;color:var(--charcoal);line-height:1.2;}
+.eic-meta{font-size:10px;color:var(--grey-med);margin-top:2px;}
+.eic-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;}
+.eic-stat{text-align:center;background:var(--grey-xlight);border-radius:5px;padding:7px 4px;}
+.eic-stat-val{font-family:var(--fh);font-size:13px;font-weight:900;color:var(--ink);line-height:1;}
+.eic-stat-lbl{font-size:8px;font-family:var(--fh);font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--grey-med);margin-top:2px;}
+
+/* Slide-in detail panel */
+.detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:none;}
+.detail-overlay.show{display:block;}
+.detail-panel{position:fixed;right:0;top:0;bottom:0;width:min(100vw,560px);background:var(--white);z-index:301;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);overflow-y:auto;box-shadow:-8px 0 32px rgba(0,0,0,.15);}
+.detail-panel.open{transform:translateX(0);}
+.dp-header{background:var(--charcoal);padding:16px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:1;}
+.dp-close{background:none;border:none;color:rgba(255,255,255,.6);font-size:22px;cursor:pointer;margin-right:4px;}
+.dp-close:hover{color:#fff;}
+.dp-name{font-family:var(--fh);font-size:16px;font-weight:900;color:#fff;flex:1;}
+.dp-sub{font-size:10px;color:rgba(255,255,255,.45);font-family:var(--fh);margin-top:2px;}
+.dp-body{padding:20px;}
+.dp-section{margin-bottom:20px;}
+.dp-section-title{font-family:var(--fh);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--grey-med);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.dp-section-title::before{content:'';width:3px;height:13px;border-radius:2px;background:var(--green);}
+.dp-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.dp-field{background:var(--grey-xlight);border-radius:var(--rs);padding:10px 12px;}
+.dp-field-lbl{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--grey-med);margin-bottom:3px;}
+.dp-field-val{font-family:var(--fh);font-size:13px;font-weight:800;color:var(--ink);}
+.dp-score-bar{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.dp-bar-label{font-size:10px;color:var(--grey-dark);width:120px;flex-shrink:0;}
+.dp-bar-wrap{flex:1;height:6px;background:var(--grey-light);border-radius:3px;overflow:hidden;}
+.dp-bar-fill{height:100%;border-radius:3px;}
+.dp-bar-val{font-family:var(--fh);font-size:10px;font-weight:800;color:var(--ink);min-width:32px;text-align:right;}
+.dp-open-full{display:flex;gap:8px;margin-top:16px;}
+.dp-btn{flex:1;padding:12px;border-radius:var(--rs);font-family:var(--fh);font-size:11px;font-weight:800;cursor:pointer;border:none;text-align:center;transition:all .15s;}
+.dp-btn-primary{background:var(--green-dark);color:#fff;}
+.dp-btn-primary:hover{background:var(--green-deep);}
+.dp-btn-secondary{background:var(--white);color:var(--ink);border:1.5px solid var(--border);}
+.dp-btn-secondary:hover{border-color:var(--green);color:var(--green-dark);}
+
+/* ═══════════════════════ FORMS SCREEN ════════════════ */
+.forms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:20px;}
+.form-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--shadow-sm);transition:all .15s;}
+.form-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.fc-icon{font-size:28px;margin-bottom:12px;}
+.fc-title{font-family:var(--fh);font-size:14px;font-weight:900;color:var(--charcoal);margin-bottom:4px;}
+.fc-freq{display:inline-block;padding:3px 9px;border-radius:8px;font-family:var(--fh);font-size:9px;font-weight:700;margin-bottom:10px;}
+.fc-desc{font-size:12px;color:var(--grey-dark);line-height:1.5;margin-bottom:16px;}
+.fc-fields{font-family:var(--fh);font-size:10px;color:var(--grey-med);margin-bottom:14px;line-height:1.6;}
+.fc-actions{display:flex;gap:8px;}
+.fc-btn{flex:1;padding:10px;border-radius:var(--rs);font-family:var(--fh);font-size:11px;font-weight:700;cursor:pointer;border:none;text-align:center;transition:all .15s;}
+.fc-btn-fill{background:var(--green-dark);color:#fff;}
+.fc-btn-fill:hover{background:var(--green-deep);}
+.fc-btn-import{background:var(--white);color:var(--ink);border:1.5px solid var(--border);}
+.fc-btn-import:hover{border-color:var(--green);color:var(--green-dark);}
+.recent-imports{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow-sm);}
+
+/* ═══════════════════════ ANALYTICS SCREEN ════════════ */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+.chart-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow-sm);}
+.chart-card canvas{max-height:220px;}
+
+/* ═══════════════════════ PROFILE SCREEN ══════════════ */
+.profile-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--shadow-sm);margin-bottom:14px;display:flex;align-items:center;gap:16px;}
+.prof-av{width:56px;height:56px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:20px;font-weight:900;color:#fff;flex-shrink:0;}
+.prof-name{font-family:var(--fh);font-size:16px;font-weight:900;color:var(--charcoal);}
+.prof-role{font-size:11px;color:var(--grey-med);margin-top:3px;}
+.prof-uid{font-family:var(--fh);font-size:10px;font-weight:700;color:var(--green-dark);background:var(--green-light);padding:3px 9px;border-radius:6px;display:inline-block;margin-top:5px;}
+.settings-list{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:14px;}
+.setting-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;}
+.setting-item:last-child{border-bottom:none;}
+.setting-item:hover{background:var(--grey-xlight);}
+.si-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.si-label{font-family:var(--fh);font-size:12px;font-weight:700;color:var(--ink);}
+.si-sub{font-size:11px;color:var(--grey-med);margin-top:2px;}
+.si-arrow{margin-left:auto;color:var(--grey-med);font-size:14px;}
+.logout-btn{width:100%;background:var(--red-light);border:1.5px solid #f5c0c0;border-radius:var(--rs);padding:13px;font-family:var(--fh);font-size:12px;font-weight:800;color:var(--red);cursor:pointer;transition:all .15s;}
+.logout-btn:hover{background:#f9d0d0;}
+
+/* ═══════════════════════ RESPONSIVE ══════════════════ */
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .bottom-nav{display:block;}
+  .screens{padding-bottom:calc(var(--nav-h) + var(--safe-bottom) + 8px);}
+  .at-menu-btn{display:block;}
+  .stat-strip{grid-template-columns:1fr 1fr;}
+  .ind-grid{grid-template-columns:1fr 1fr;}
+  .dash-two-col,.dash-three-col{grid-template-columns:1fr;}
+  .chart-grid{grid-template-columns:1fr;}
+}
+@media(max-width:520px){
+  .stat-strip{grid-template-columns:1fr 1fr;}
+  .screen{padding:14px;}
+  .ent-list{grid-template-columns:1fr;}
+  .forms-grid{grid-template-columns:1fr;}
+  .dp-field-grid{grid-template-columns:1fr;}
+}
+@media(min-width:901px){
+  .detail-panel{width:500px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ OFFLINE BAR ═════════════════════ -->
+<div id="offline-bar">📡 You are offline — viewing cached data</div>
+
+<!-- ═══════════════════ LOGIN SCREEN ════════════════════ -->
+<div id="login-screen">
+  <div class="ls-brand">
+    <div class="ls-logo">
+      <svg viewBox="0 0 40 40" fill="none" width="36" height="36">
+        <circle cx="20" cy="14" r="7" fill="white" opacity=".9"/>
+        <path d="M8 32 Q20 18 32 32" stroke="white" stroke-width="2.5" fill="none" opacity=".8"/>
+        <path d="M20 21 L20 30" stroke="white" stroke-width="2" opacity=".7"/>
+      </svg>
+    </div>
+    <div class="ls-title">Udyami <span>Vikas</span></div>
+    <div class="ls-sub">Field Data Platform · Grassroutes</div>
+  </div>
+  <div class="ls-card">
+    <div class="ls-section">Quick Login — Test Accounts</div>
+    <div class="ql-grid">
+      <div class="ql-card" onclick="quickLogin('IO001','Test@123','Incubation Officer','IO')">
+        <div class="ql-role">Incubation Officer</div>
+        <div class="ql-cred">IO001 · Test@123</div>
+        <span class="ql-badge" style="background:rgba(139,178,90,.2);color:var(--green);">IO</span>
+      </div>
+      <div class="ql-card" onclick="quickLogin('SP001','Test@123','NGO Supervisor','SP')">
+        <div class="ql-role">NGO Supervisor</div>
+        <div class="ql-cred">SP001 · Test@123</div>
+        <span class="ql-badge" style="background:rgba(74,127,193,.2);color:#7ab0e0;">SP</span>
+      </div>
+      <div class="ql-card" onclick="quickLogin('FD001','Test@123','Funder','FD')">
+        <div class="ql-role">Funder</div>
+        <div class="ql-cred">FD001 · Test@123</div>
+        <span class="ql-badge" style="background:rgba(249,165,86,.2);color:var(--orange);">FD</span>
+      </div>
+      <div class="ql-card" onclick="quickLogin('GR001','Test@123','Grassroutes Admin','GR')">
+        <div class="ql-role">Admin</div>
+        <div class="ql-cred">GR001 · Test@123</div>
+        <span class="ql-badge" style="background:rgba(124,92,191,.2);color:#b4a0e0;">GR</span>
+      </div>
+    </div>
+    <div class="or-line">or sign in manually</div>
+    <div class="ls-err" id="login-err">Invalid User ID or password.</div>
+    <input class="ls-input" id="l-uid" type="text" placeholder="User ID" autocomplete="username"/>
+    <input class="ls-input" id="l-pw" type="password" placeholder="Password" autocomplete="current-password"/>
+    <button class="ls-btn" onclick="doLogin()">Sign In →</button>
+    <div class="ls-signup-link">No account? <a href="gr_signup.html" target="_blank">Sign Up here</a></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ APP SHELL ════════════════════════ -->
+<div id="app-shell">
+
+  <!-- SIDEBAR (desktop) -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo">
+        <svg viewBox="0 0 40 40" fill="none" width="18" height="18">
+          <circle cx="20" cy="14" r="7" fill="white" opacity=".9"/>
+          <path d="M8 32 Q20 18 32 32" stroke="white" stroke-width="2.5" fill="none" opacity=".8"/>
+          <path d="M20 21 L20 30" stroke="white" stroke-width="2" opacity=".7"/>
+        </svg>
+      </div>
+      <div class="sb-name">Udyami Vikas<small>Grassroutes Platform</small></div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-item active" onclick="navigate('dashboard')">
+        <span class="sb-icon">🏠</span><span class="sb-label">Dashboard</span>
+      </div>
+      <div class="sb-item" onclick="navigate('survey')">
+        <span class="sb-icon">🌱</span><span class="sb-label">Survey Pipeline</span>
+        <span class="sb-badge" id="sb-survey-count" style="display:none">0</span>
+      </div>
+      <div class="sb-item" onclick="navigate('entrepreneurs')">
+        <span class="sb-icon">👥</span><span class="sb-label">Entrepreneurs</span>
+        <span class="sb-badge" id="sb-flag-count">6</span>
+      </div>
+      <div class="sb-item" onclick="navigate('forms')">
+        <span class="sb-icon">📋</span><span class="sb-label">Field Forms</span>
+      </div>
+      <div class="sb-item" onclick="navigate('analytics')">
+        <span class="sb-icon">📊</span><span class="sb-label">Analytics</span>
+      </div>
+      <div class="sb-item" onclick="navigate('profile')">
+        <span class="sb-icon">⚙️</span><span class="sb-label">Profile</span>
+      </div>
+    </div>
+    <div class="sb-footer">
+      <div class="sb-user" onclick="navigate('profile')">
+        <div class="sb-av" id="sb-av">IO</div>
+        <div>
+          <div class="sb-uname" id="sb-uname">Loading…</div>
+          <div class="sb-urole" id="sb-urole">—</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="app-main">
+    <div class="app-topbar">
+      <button class="at-menu-btn" onclick="openDrawer()">☰</button>
+      <div class="at-title" id="at-title">Dashboard</div>
+      <span class="at-badge" id="at-batch">Batch MP-2024-A</span>
+      <button class="at-btn" onclick="refreshData()">⟳ Refresh</button>
+    </div>
+    <div class="screens">
+
+      <!-- ══ DASHBOARD SCREEN ══ -->
+      <div id="screen-dashboard" class="screen active">
+        <div class="sl" id="dash-sl">Batch Snapshot — MP-2024-A · Month 9 of 12</div>
+        <div class="stat-strip" id="stat-strip"></div>
+        <div class="sl">Transaction Indicators</div>
+        <div class="ind-grid" id="ind-grid"></div>
+        <div class="dash-three-col">
+          <div class="panel-card">
+            <div class="pc-title">Level Distribution</div>
+            <div id="level-rows"></div>
+            <div style="position:relative;height:130px;margin-top:12px;"><canvas id="level-chart"></canvas></div>
+          </div>
+          <div class="panel-card">
+            <div class="pc-title">⚑ Flagged — Needs Attention</div>
+            <div id="flagged-list"></div>
+          </div>
+          <div class="panel-card">
+            <div class="pc-title">⏰ Visit Overdue (&gt;15 days)</div>
+            <div id="overdue-list"></div>
+          </div>
+        </div>
+        <div class="sl">All Entrepreneurs</div>
+        <div class="panel-card" style="padding:0;overflow:hidden;">
+          <div class="ent-wrap">
+            <table class="ent-table">
+              <thead>
+                <tr>
+                  <th style="padding-left:16px;">Name</th>
+                  <th>Village GP</th>
+                  <th>Industry</th>
+                  <th>Level</th>
+                  <th title="Daily Diary">📓</th>
+                  <th title="KYC">KYC</th>
+                  <th title="BMC">BMC</th>
+                  <th title="UE">UE</th>
+                  <th title="BP">BP</th>
+                  <th>Sales/Mo</th>
+                  <th>Profit/Mo</th>
+                  <th>Health</th>
+                  <th>Last Visit</th>
+                </tr>
+              </thead>
+              <tbody id="ent-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ENTREPRENEURS SCREEN ══ -->
+      <div id="screen-entrepreneurs" class="screen">
+        <div class="ent-search-bar">
+          <input type="text" id="ent-search" placeholder="🔍  Search by name, village, or ID…" oninput="filterEntrepreneurs()"/>
+          <select id="ent-filter-level" onchange="filterEntrepreneurs()">
+            <option value="">All Levels</option>
+            <option value="3">L3 — Strong</option>
+            <option value="2">L2 — Growing</option>
+            <option value="1">L1 — Early</option>
+          </select>
+          <select id="ent-filter-flag" onchange="filterEntrepreneurs()">
+            <option value="">All Status</option>
+            <option value="flag">⚑ Flagged</option>
+            <option value="dropout">✗ Dropout</option>
+          </select>
+          <select id="ent-filter-batch" onchange="filterEntrepreneurs()">
+            <option value="">All Batches</option>
+          </select>
+          <input type="date" id="ent-filter-date-from" title="Surveyed from" onchange="filterEntrepreneurs()" style="font-size:11px;padding:6px 8px;border:1.5px solid var(--border);border-radius:var(--rs);"/>
+          <input type="date" id="ent-filter-date-to" title="Surveyed until" onchange="filterEntrepreneurs()" style="font-size:11px;padding:6px 8px;border:1.5px solid var(--border);border-radius:var(--rs);"/>
+        </div>
+        <div class="ent-list" id="ent-card-list"></div>
+      </div>
+
+      <!-- ══ FORMS SCREEN ══ -->
+      <div id="screen-forms" class="screen">
+        <div class="sl">Field Data Collection Forms</div>
+        <div class="forms-grid">
+          <div class="form-card">
+            <div class="fc-icon">🌱</div>
+            <div class="fc-title">Survey Form</div>
+            <span class="fc-freq" style="background:var(--blue-light);color:var(--blue);">One-Time · ~90 min</span>
+            <div class="fc-desc">Collected once at enrollment. Captures entrepreneur profile, enterprise details, and financial baseline.</div>
+            <div class="fc-fields">📌 Name · Location · Enterprise · Financials · Employment</div>
+            <div class="fc-actions">
+              <button class="fc-btn fc-btn-fill" onclick="openForm('baseline')">Fill Form</button>
+              <button class="fc-btn fc-btn-import" onclick="openFormImport('baseline')">Import CSV</button>
+            </div>
+          </div>
+          <div class="form-card">
+            <div class="fc-icon">📋</div>
+            <div class="fc-title">Field Study / Baseline</div>
+            <span class="fc-freq" style="background:var(--green-light);color:var(--green-dark);">Within 1st Month · ~60 min</span>
+            <div class="fc-desc">Completed after orientation. Captures KYC status, Udyami Shakti & Udyam Swasthya baseline scores.</div>
+            <div class="fc-fields">📌 KYC · Shakti Scores (8) · Swasthya Scores (12) · Needs</div>
+            <div class="fc-actions">
+              <button class="fc-btn fc-btn-fill" onclick="openForm('fieldreport')">Fill Form</button>
+              <button class="fc-btn fc-btn-import" onclick="openFormImport('fieldreport')">Import CSV</button>
+            </div>
+          </div>
+          <div class="form-card">
+            <div class="fc-icon">📍</div>
+            <div class="fc-title">Visit Form</div>
+            <span class="fc-freq" style="background:var(--orange-light);color:var(--orange-dark);">Every 10–15 Days · ~30 min</span>
+            <div class="fc-desc">Regular visit record. Captures financial updates, BMC/UE/BP progress, flag status, and observations.</div>
+            <div class="fc-fields">📌 Financials · Diary · BMC/UE/BP · Flag · Dropout</div>
+            <div class="fc-actions">
+              <button class="fc-btn fc-btn-fill" onclick="openForm('visit')">Fill Form</button>
+              <button class="fc-btn fc-btn-import" onclick="openFormImport('visit')">Import CSV</button>
+            </div>
+          </div>
+          <div class="form-card">
+            <div class="fc-icon">📊</div>
+            <div class="fc-title">Assessment Form</div>
+            <span class="fc-freq" style="background:var(--purple-light);color:var(--purple);">Periodic · 6M / 1Y / 2Y / 3Y</span>
+            <div class="fc-desc">Periodic re-assessment. Re-scores Shakti + Swasthya, updates level, and tracks transformation.</div>
+            <div class="fc-fields">📌 Shakti · Swasthya · Level · BMC/UE/BP · Sales</div>
+            <div class="fc-actions">
+              <button class="fc-btn fc-btn-fill" onclick="openForm('assessment')">Fill Form</button>
+              <button class="fc-btn fc-btn-import" onclick="openFormImport('assessment')">Import CSV</button>
+            </div>
+          </div>
+        </div>
+        <div class="sl">Recent Activity</div>
+        <div class="recent-imports" id="recent-imports">
+          <div style="color:var(--grey-med);font-size:12px;text-align:center;padding:16px;">No recent form submissions found in local storage.</div>
+        </div>
+      </div>
+
+      <!-- ══ ANALYTICS SCREEN ══ -->
+      <div id="screen-analytics" class="screen">
+        <div class="sl">Batch Performance Overview</div>
+        <div class="chart-grid">
+          <div class="chart-card">
+            <div class="pc-title">Level Distribution</div>
+            <canvas id="analytics-level-chart"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="pc-title">Health Score Distribution</div>
+            <canvas id="analytics-health-chart"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="pc-title">Business Tool Completion</div>
+            <canvas id="analytics-tools-chart"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="pc-title">Sales by Village GP</div>
+            <canvas id="analytics-village-chart"></canvas>
+          </div>
+        </div>
+        <div class="sl">Industry Breakdown</div>
+        <div class="panel-card">
+          <div id="industry-breakdown"></div>
+        </div>
+      </div>
+
+      <!-- ══ PROFILE SCREEN ══ -->
+      <div id="screen-profile" class="screen">
+        <div class="sl">Your Account</div>
+        <div class="profile-card">
+          <div class="prof-av" id="prof-av">IO</div>
+          <div>
+            <div class="prof-name" id="prof-name">Loading…</div>
+            <div class="prof-role" id="prof-role">—</div>
+            <div class="prof-uid" id="prof-uid">—</div>
+          </div>
+        </div>
+        <div class="sl">Settings & Tools</div>
+        <div class="settings-list">
+          <div class="setting-item" onclick="window.open('io_dashboard_v7.html','_blank')">
+            <div class="si-icon" style="background:var(--green-light);">📊</div>
+            <div><div class="si-label">IO Batch Dashboard</div><div class="si-sub">Full dashboard view (v7)</div></div>
+            <div class="si-arrow">›</div>
+          </div>
+          <div class="setting-item" onclick="window.open('udyami_vikas_dashboard (3).html','_blank')">
+            <div class="si-icon" style="background:var(--blue-light);">👤</div>
+            <div><div class="si-label">Entrepreneur Dashboard (v3)</div><div class="si-sub">Individual entrepreneur full view</div></div>
+            <div class="si-arrow">›</div>
+          </div>
+          <div class="setting-item" onclick="window.open('gr_signup.html','_blank')">
+            <div class="si-icon" style="background:var(--purple-light);">🔐</div>
+            <div><div class="si-label">User Management</div><div class="si-sub">Sign up new field officers</div></div>
+            <div class="si-arrow">›</div>
+          </div>
+          <div class="setting-item" onclick="window.open('data_mismatch.html','_blank')">
+            <div class="si-icon" style="background:var(--orange-light);">⚠️</div>
+            <div><div class="si-label">Data Mismatch Report</div><div class="si-sub">Form ↔ Dashboard field mapping</div></div>
+            <div class="si-arrow">›</div>
+          </div>
+          <div class="setting-item" onclick="exportAllData()">
+            <div class="si-icon" style="background:var(--grey-xlight);">💾</div>
+            <div><div class="si-label">Export All Data</div><div class="si-sub">Download local storage as JSON</div></div>
+            <div class="si-arrow">›</div>
+          </div>
+          <div class="setting-item" onclick="clearAllData()">
+            <div class="si-icon" style="background:var(--red-light);">🗑</div>
+            <div><div class="si-label">Clear Local Data</div><div class="si-sub">Remove all stored form submissions</div></div>
+            <div class="si-arrow">›</div>
+          </div>
+        </div>
+        <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+        <div style="text-align:center;margin-top:14px;font-size:10px;color:var(--grey-med);font-family:var(--fh);">
+          Udyami Vikas · Grassroutes Platform · v2.0
+        </div>
+      </div>
+
+      <!-- ══ SURVEY PIPELINE SCREEN ══ -->
+      <div id="screen-survey" class="screen">
+        <style>
+          .sp-stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+          .sp-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px;}
+          .sp-tab{padding:10px 20px;font-family:var(--fh);font-size:11px;font-weight:700;cursor:pointer;color:var(--grey-med);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;}
+          .sp-tab.active{color:var(--green-dark);border-bottom-color:var(--green-dark);}
+          .sp-tab:hover:not(.active){color:var(--ink);}
+          .sp-filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+          .sp-filters input,.sp-filters select{padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--rs);font-family:var(--fh);font-size:11px;font-weight:600;outline:none;background:var(--white);transition:border-color .15s;}
+          .sp-filters input:focus,.sp-filters select:focus{border-color:var(--green);}
+          .sp-filters input{flex:1;min-width:160px;}
+          .survey-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow-sm);transition:all .15s;position:relative;}
+          .survey-card:hover{box-shadow:var(--shadow-md);border-color:var(--green-mid);}
+          .survey-card.shortlisted{border-color:var(--green);border-width:2px;}
+          .survey-card.rejected{opacity:.55;}
+          .sc-selected-badge{position:absolute;top:10px;right:10px;background:var(--green-dark);color:#fff;font-family:var(--fh);font-size:8px;font-weight:800;padding:3px 8px;border-radius:10px;letter-spacing:.5px;}
+          .sc-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+          .sc-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:13px;font-weight:900;color:#fff;flex-shrink:0;cursor:pointer;}
+          .sc-info{flex:1;min-width:0;}
+          .sc-name{font-family:var(--fh);font-size:13px;font-weight:800;color:var(--charcoal);cursor:pointer;text-decoration:underline;}
+          .sc-name:hover{color:var(--green-dark);}
+          .sc-loc{font-size:10px;color:var(--grey-med);margin-top:2px;}
+          .sc-biz{display:flex;align-items:center;gap:6px;margin:8px 0 6px;}
+          .sc-biz-name{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--ink);}
+          .sc-ind-badge{font-size:8px;font-family:var(--fh);font-weight:800;padding:2px 7px;border-radius:8px;background:var(--blue-light);color:var(--blue);white-space:nowrap;}
+          .sc-officer-row{font-size:10px;color:var(--grey-med);margin-bottom:8px;}
+          .sc-officer-link{color:var(--blue);cursor:pointer;text-decoration:underline;}
+          .sc-officer-link:hover{color:var(--green-dark);}
+          .sc-date{font-size:10px;color:var(--grey-med);margin-bottom:10px;}
+          .sc-actions{display:flex;gap:6px;}
+          .sc-btn{flex:1;padding:7px 4px;border-radius:var(--rs);font-family:var(--fh);font-size:10px;font-weight:700;cursor:pointer;border:none;text-align:center;transition:all .15s;white-space:nowrap;}
+          .sc-btn-shortlist{background:var(--green-light);color:var(--green-dark);border:1.5px solid var(--green-mid);}
+          .sc-btn-shortlist:hover{background:var(--green-dark);color:#fff;}
+          .sc-btn-shortlist.done{background:var(--green-dark);color:#fff;cursor:default;}
+          .sc-btn-reject{background:var(--red-light);color:var(--red);border:1.5px solid #f5c0c0;}
+          .sc-btn-reject:hover{background:var(--red);color:#fff;}
+          .sc-btn-reject.done{background:var(--red);color:#fff;cursor:default;}
+          .sc-btn-view{background:var(--grey-xlight);color:var(--ink);border:1.5px solid var(--border);}
+          .sc-btn-view:hover{border-color:var(--green);color:var(--green-dark);}
+          @media(max-width:900px){.sp-stat-strip{grid-template-columns:1fr 1fr;}.sp-filters{flex-direction:column;}}
+        </style>
+
+        <!-- Stats strip -->
+        <div class="sp-stat-strip" id="sp-stat-strip"></div>
+
+        <!-- Filters -->
+        <div class="sp-filters">
+          <input type="text" id="survey-search" placeholder="🔍  Search name, village, enterprise…" oninput="filterSurvey()"/>
+          <select id="survey-filter-district" onchange="filterSurvey()">
+            <option value="">All Regions</option>
+          </select>
+          <select id="survey-filter-year" onchange="filterSurvey()">
+            <option value="">All Years</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+          </select>
+          <select id="survey-filter-batch" onchange="filterSurvey()">
+            <option value="">All Batches</option>
+          </select>
+        </div>
+
+        <!-- Tab bar -->
+        <div class="sp-tabs">
+          <div class="sp-tab active" id="sp-tab-all"        onclick="setSurveyTab('all')">All</div>
+          <div class="sp-tab"       id="sp-tab-pending"     onclick="setSurveyTab('pending')">Pending</div>
+          <div class="sp-tab"       id="sp-tab-shortlisted" onclick="setSurveyTab('shortlisted')">Shortlisted</div>
+          <div class="sp-tab"       id="sp-tab-rejected"    onclick="setSurveyTab('rejected')">Rejected</div>
+        </div>
+
+        <!-- Card grid -->
+        <div id="survey-card-list" class="ent-list"></div>
+      </div>
+
+    </div><!-- /screens -->
+  </main>
+
+  <!-- BOTTOM NAV (mobile) -->
+  <nav class="bottom-nav">
+    <div class="bn-inner">
+      <div class="bn-item active" id="bn-dashboard" onclick="navigate('dashboard')">
+        <div class="bn-icon">🏠</div><div class="bn-label">Dashboard</div>
+      </div>
+      <div class="bn-item" id="bn-entrepreneurs" onclick="navigate('entrepreneurs')">
+        <div class="bn-icon">👥</div><div class="bn-label">Udyamis</div>
+        <span class="bn-badge" id="bn-flag-count">6</span>
+      </div>
+      <div class="bn-item" id="bn-forms" onclick="navigate('forms')">
+        <div class="bn-icon">📋</div><div class="bn-label">Forms</div>
+      </div>
+      <div class="bn-item" id="bn-analytics" onclick="navigate('analytics')">
+        <div class="bn-icon">📊</div><div class="bn-label">Analytics</div>
+      </div>
+      <div class="bn-item" id="bn-profile" onclick="navigate('profile')">
+        <div class="bn-icon">⚙️</div><div class="bn-label">Profile</div>
+      </div>
+    </div>
+  </nav>
+
+</div><!-- /app-shell -->
+
+<!-- MOBILE DRAWER -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+<nav class="drawer" id="drawer">
+  <div class="sb-brand" style="padding:calc(var(--safe-top) + 18px) 16px 14px;">
+    <div class="sb-logo"><svg viewBox="0 0 40 40" fill="none" width="18" height="18"><circle cx="20" cy="14" r="7" fill="white" opacity=".9"/><path d="M8 32 Q20 18 32 32" stroke="white" stroke-width="2.5" fill="none" opacity=".8"/></svg></div>
+    <div class="sb-name">Udyami Vikas<small>Grassroutes</small></div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-item" onclick="navigate('dashboard');closeDrawer()"><span class="sb-icon">🏠</span><span class="sb-label">Dashboard</span></div>
+    <div class="sb-item" onclick="navigate('survey');closeDrawer()"><span class="sb-icon">🌱</span><span class="sb-label">Survey Pipeline</span></div>
+    <div class="sb-item" onclick="navigate('entrepreneurs');closeDrawer()"><span class="sb-icon">👥</span><span class="sb-label">Entrepreneurs</span></div>
+    <div class="sb-item" onclick="navigate('forms');closeDrawer()"><span class="sb-icon">📋</span><span class="sb-label">Field Forms</span></div>
+    <div class="sb-item" onclick="navigate('analytics');closeDrawer()"><span class="sb-icon">📊</span><span class="sb-label">Analytics</span></div>
+    <div class="sb-item" onclick="navigate('profile');closeDrawer()"><span class="sb-icon">⚙️</span><span class="sb-label">Profile</span></div>
+  </div>
+</nav>
+
+<!-- ENTREPRENEUR DETAIL PANEL -->
+<div class="detail-overlay" id="detail-overlay" onclick="closeDetail()"></div>
+<div class="detail-panel" id="detail-panel">
+  <div class="dp-header">
+    <button class="dp-close" onclick="closeDetail()">‹</button>
+    <div>
+      <div class="dp-name" id="dp-name">—</div>
+      <div class="dp-sub" id="dp-sub">—</div>
+    </div>
+  </div>
+  <div class="dp-body" id="dp-body"></div>
+</div>
+
+<!-- INSTALL PROMPT -->
+<div id="install-prompt">
+  <div class="ip-title"><span>📱</span> Install Udyami Vikas App</div>
+  <div class="ip-sub">Add to your home screen for offline access during field visits — works without internet.</div>
+  <div class="ip-actions">
+    <button class="ip-install" id="ip-install-btn">Install App</button>
+    <button class="ip-dismiss" onclick="dismissInstall()">Not now</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════
+   DATA — SAMPLE UDYAMIS (from io_dashboard_v7)
+═══════════════════════════════════════════════════ */
+let udyamis = [
+  {id:'001',name:'Anita Patel',      gp:'Baghli GP',    ind:'Agri / Agri-Allied',level:3,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'done',  sales:14200,profit:5800, salesBL:9800, health:80,lastVisit:'28 Mar',flag:false},
+  {id:'002',name:'Bimla Yadav',      gp:'Thandla GP',   ind:'Manufacturing',     level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'pend',  sales:7400, profit:2600, salesBL:5200, health:74,lastVisit:'28 Mar',flag:false},
+  {id:'003',name:'Champa Rawat',     gp:'Baghli GP',    ind:'Manufacturing',     level:3,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'done',  sales:18600,profit:7200, salesBL:12400,health:80,lastVisit:'28 Mar',flag:false},
+  {id:'004',name:'Durga Vishwakarma',gp:'Sujakpur GP',  ind:'Service',           level:2,diary:'daily',kyc:'done',bmc:'done',ue:'pend',bp:'pend',  sales:6200, profit:2100, salesBL:5800, health:66,lastVisit:'21 Mar',flag:false},
+  {id:'005',name:'Geeta Tiwari',     gp:'Chitoda GP',   ind:'Agri / Agri-Allied',level:2,diary:'some', kyc:'done',bmc:'pend',ue:'done',bp:'pend',  sales:5400, profit:1800, salesBL:5600, health:60,lastVisit:'14 Mar',flag:false},
+  {id:'006',name:'Hemlata Singh',    gp:'Baghli GP',    ind:'Trading',           level:1,diary:'daily',kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:3800, profit:900,  salesBL:3200, health:52,lastVisit:'28 Mar',flag:false},
+  {id:'007',name:'Indira Meena',     gp:'Dingawada GP', ind:'Agri / Agri-Allied',level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'done',  sales:9200, profit:3400, salesBL:6600, health:80,lastVisit:'21 Mar',flag:false},
+  {id:'008',name:'Jyoti Kurmi',      gp:'Pathri GP',    ind:'Agri / Agri-Allied',level:1,diary:'some', kyc:'pend',bmc:'pend',ue:'pend',bp:'pend',  sales:2100, profit:400,  salesBL:2400, health:34,lastVisit:'7 Mar', flag:false},
+  {id:'009',name:'Kamla Sharma',     gp:'Chitoda GP',   ind:'Service',           level:1,diary:'some', kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:3100, profit:600,  salesBL:5200, health:38,lastVisit:'21 Mar',flag:true},
+  {id:'010',name:'Lalita Bai',       gp:'Baghli GP',    ind:'Agri / Agri-Allied',level:2,diary:'daily',kyc:'done',bmc:'done',ue:'pend',bp:'pend',  sales:6800, profit:2200, salesBL:5400, health:63,lastVisit:'28 Mar',flag:false},
+  {id:'011',name:'Leela Banjare',    gp:'Thandla GP',   ind:'Manufacturing',     level:1,diary:'miss', kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:1800, profit:200,  salesBL:2200, health:29,lastVisit:'14 Mar',flag:true},
+  {id:'012',name:'Manjula Prajapati',gp:'Dingawada GP', ind:'Trading',           level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'pend',  sales:8400, profit:3100, salesBL:6200, health:71,lastVisit:'28 Mar',flag:false},
+  {id:'013',name:'Meera Meena',      gp:'Dingawada GP', ind:'Agri / Agri-Allied',level:1,diary:'miss', kyc:'pend',bmc:'pend',ue:'pend',bp:'pend',  sales:1200, profit:-200, salesBL:2800, health:21,lastVisit:'22 Jan',flag:true},
+  {id:'014',name:'Nirmala Jatav',    gp:'Sujakpur GP',  ind:'Service',           level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'pend',  sales:7600, profit:2800, salesBL:5600, health:69,lastVisit:'21 Mar',flag:false},
+  {id:'015',name:'Parvati Thakur',   gp:'Pathri GP',    ind:'Agri / Agri-Allied',level:3,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'done',  sales:16400,profit:6400, salesBL:10200,health:80,lastVisit:'28 Mar',flag:false},
+  {id:'016',name:'Pushpa Devi',      gp:'Pathri GP',    ind:'Agri / Agri-Allied',level:1,diary:'some', kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:3600, profit:800,  salesBL:3400, health:43,lastVisit:'28 Mar',flag:true},
+  {id:'017',name:'Radha Bai',        gp:'Sujakpur GP',  ind:'Agri / Agri-Allied',level:1,diary:'miss', kyc:'pend',bmc:'pend',ue:'pend',bp:'pend',  sales:0,    profit:0,    salesBL:1800, health:18,lastVisit:'15 Jan',flag:true},
+  {id:'018',name:'Rekha Sahu',       gp:'Sujakpur GP',  ind:'Manufacturing',     level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'pend',  sales:7200, profit:2500, salesBL:5200, health:67,lastVisit:'28 Mar',flag:false},
+  {id:'019',name:'Saroj Mandal',     gp:'Thandla GP',   ind:'Trading',           level:2,diary:'daily',kyc:'done',bmc:'pend',ue:'done',bp:'pend',  sales:6400, profit:2000, salesBL:5000, health:61,lastVisit:'21 Mar',flag:false},
+  {id:'020',name:'Savita Kashyap',   gp:'Chitoda GP',   ind:'Service',           level:1,diary:'miss', kyc:'pend',bmc:'pend',ue:'pend',bp:'pend',  sales:0,    profit:0,    salesBL:1600, health:0, lastVisit:'—',     flag:false,dropout:true},
+  {id:'021',name:'Shanti Devi',      gp:'Thandla GP',   ind:'Agri / Agri-Allied',level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'done',  sales:10400,profit:4200, salesBL:7200, health:80,lastVisit:'28 Mar',flag:false},
+  {id:'022',name:'Shobha Patel',     gp:'Dingawada GP', ind:'Trading',           level:1,diary:'some', kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:3200, profit:700,  salesBL:3000, health:45,lastVisit:'7 Mar', flag:false},
+  {id:'023',name:'Sita Devi',        gp:'Thandla GP',   ind:'Manufacturing',     level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'pend',  sales:8800, profit:3300, salesBL:6400, health:72,lastVisit:'28 Mar',flag:false},
+  {id:'024',name:'Sunita Kumari',    gp:'Thandla GP',   ind:'Agri / Agri-Allied',level:1,diary:'miss', kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:1400, profit:100,  salesBL:2400, health:24,lastVisit:'14 Feb',flag:true},
+  {id:'025',name:'Tulsi Bai',        gp:'Baghli GP',    ind:'Agri / Agri-Allied',level:2,diary:'daily',kyc:'done',bmc:'done',ue:'pend',bp:'pend',  sales:6000, profit:1900, salesBL:4800, health:60,lastVisit:'21 Mar',flag:false},
+  {id:'026',name:'Uma Pal',          gp:'Chitoda GP',   ind:'Agri / Agri-Allied',level:3,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'done',  sales:19200,profit:7800, salesBL:12800,health:80,lastVisit:'28 Mar',flag:false},
+  {id:'027',name:'Urmila Gond',      gp:'Dingawada GP', ind:'Manufacturing',     level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'pend',  sales:7800, profit:2900, salesBL:5600, health:68,lastVisit:'28 Mar',flag:false},
+  {id:'028',name:'Vandana Kurre',    gp:'Pathri GP',    ind:'Service',           level:1,diary:'some', kyc:'pend',bmc:'pend',ue:'pend',bp:'pend',  sales:2400, profit:500,  salesBL:2600, health:36,lastVisit:'14 Mar',flag:false},
+  {id:'029',name:'Vidya Dhurve',     gp:'Sujakpur GP',  ind:'Agri / Agri-Allied',level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'done',  sales:9600, profit:3800, salesBL:7000, health:79,lastVisit:'28 Mar',flag:false},
+  {id:'030',name:'Yamuna Bai',       gp:'Baghli GP',    ind:'Trading',           level:1,diary:'daily',kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:4200, profit:1100, salesBL:3600, health:50,lastVisit:'21 Mar',flag:false},
+  {id:'031',name:'Zeenat Bi',        gp:'Sujakpur GP',  ind:'Agri / Agri-Allied',level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'pend',  sales:8200, profit:3000, salesBL:6200, health:70,lastVisit:'21 Mar',flag:false},
+  {id:'032',name:'Phulo Bai',        gp:'Thandla GP',   ind:'Manufacturing',     level:2,diary:'some', kyc:'done',bmc:'done',ue:'pend',bp:'pend',  sales:5600, profit:1700, salesBL:4800, health:58,lastVisit:'14 Mar',flag:false},
+  {id:'033',name:'Basanti Soni',     gp:'Dingawada GP', ind:'Trading',           level:1,diary:'daily',kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:3800, profit:900,  salesBL:3200, health:48,lastVisit:'28 Mar',flag:false},
+  {id:'034',name:'Ruma Dhurve',      gp:'Chitoda GP',   ind:'Service',           level:1,diary:'miss', kyc:'pend',bmc:'pend',ue:'pend',bp:'pend',  sales:0,    profit:0,    salesBL:1400, health:0, lastVisit:'—',     flag:false,dropout:true},
+  {id:'035',name:'Kaushalya Sen',    gp:'Pathri GP',    ind:'Agri / Agri-Allied',level:1,diary:'some', kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:3400, profit:800,  salesBL:3000, health:42,lastVisit:'21 Mar',flag:false},
+];
+
+/* ═══════════════════════════════════════════════════
+   MERGE LOCALSTORAGE (gr_udyami_records)
+   Only SHORTLISTED survey records are promoted into udyamis[].
+   Non-survey records (visit, fieldreport, assessment) always merge.
+═══════════════════════════════════════════════════ */
+function mergeLocalData() {
+  // Remove previously merged LS records so we start clean
+  const baseIds = new Set(['001','002','003','004','005','006','007','008','009','010',
+    '011','012','013','014','015','016','017','018','019','020','021','022','023','024',
+    '025','026','027','028','029','030','031','032','033','034','035']);
+  // Trim udyamis to only the original static set
+  while (udyamis.length > 35) udyamis.pop();
+
+  let stored = [];
+  try { stored = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]'); } catch(e) {}
+
+  const shortlistedSet = new Set();
+  try { JSON.parse(localStorage.getItem('gr_shortlisted') || '[]').forEach(id => shortlistedSet.add(id)); } catch(e) {}
+
+  stored.forEach(r => {
+    const isSurvey = r.formType === 'survey' || r._formType === 'survey';
+    // Survey records: only merge if shortlisted
+    if (isSurvey && !shortlistedSet.has(r.udyamiId)) return;
+
+    const match = udyamis.find(u => u.name === r.name || ('GR-MP-24A-' + u.id) === r.udyamiId);
+    if (match) {
+      ['sales','profit','health','level','diary','kyc','bmc','ue','bp','lastVisit','flag','dropout'].forEach(k => {
+        if (r[k] !== undefined) match[k] = r[k];
+      });
+    } else if (r.name) {
+      udyamis.push({
+        id: r.udyamiId || ('LS-' + udyamis.length),
+        name: r.name,
+        gp: r.gp || (r.village ? r.village + ' GP' : '—'),
+        ind: r.ind || '—', level: r.level || 1,
+        diary: r.diary || 'miss', kyc: r.kyc || 'pend',
+        bmc: r.bmc || 'pend', ue: r.ue || 'pend', bp: r.bp || 'pend',
+        sales: r.sales || r.salesBL || 0,
+        profit: r.profit || r.profitBL || 0,
+        salesBL: r.salesBL || 0, health: r.health || 0,
+        lastVisit: r.lastVisit || '—',
+        flag: r.flag || false, dropout: r.dropout || false,
+        officer: r.officer || '—',
+        district: r.district || '—', block: r.block || '—',
+        village: r.village || '—', batchId: r.batchId || '—',
+        surveyDate: r.surveyDate || r.baselineDate || '—',
+        enterpriseName: r.enterpriseName || '—',
+        shortlisted: true,
+      });
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   SEED DEMO DATA
+═══════════════════════════════════════════════════ */
+function seedDemoData() {
+  if (localStorage.getItem('gr_demo_seeded')) return;
+
+  const pad3 = n => String(n).padStart(3,'0');
+  const diaryOpts  = ['daily','daily','some','some','miss','miss','miss'];
+  const yearsOpts  = ['Less than 6 months','6–12 months','1–2 years','2–5 years'];
+
+  // Helper to build a date string in Jan–Mar 2025 spread
+  function spreadDate(index, total, startDay, endDay) {
+    const range = endDay - startDay;
+    const day = startDay + Math.round((index / (total - 1 || 1)) * range);
+    const d = new Date(2025, 0, day); // Jan 1 + day offset across Jan–Mar
+    return d.toISOString().slice(0,10);
+  }
+
+  const records = [];
+
+  // ── DSC · Nandurbar block (officer: Pankaj Thakre) ──
+  const dscNanEntrepreneurs = [
+    {name:'Sunita Patil',   village:'Nandurbar', ind:'Trading',           enterpriseName:'Sunita Vegetable Stall',  salesBL:8000,  expensesBL:5000,  category:'ST'},
+    {name:'Meena Pavra',    village:'Akkalkuwa', ind:'Manufacturing',     enterpriseName:'Meena Tailoring',         salesBL:6000,  expensesBL:3500,  category:'ST'},
+    {name:'Rekha Bhil',     village:'Dhadgaon',  ind:'Trading',           enterpriseName:'Rekha Grocery',           salesBL:12000, expensesBL:8000,  category:'ST'},
+    {name:'Kavita Tadvi',   village:'Taloda',    ind:'Manufacturing',     enterpriseName:'Kavita Pickles',          salesBL:5000,  expensesBL:2500,  category:'ST'},
+    {name:'Priya Desai',    village:'Nandurbar', ind:'Service',           enterpriseName:'Priya Beauty Parlour',    salesBL:9000,  expensesBL:4000,  category:'OBC'},
+    {name:'Anita More',     village:'Shahada',   ind:'Agri / Agri-Allied',enterpriseName:'Anita Dairy',             salesBL:7000,  expensesBL:3500,  category:'OBC'},
+    {name:'Sushila Borse',  village:'Nandurbar', ind:'Manufacturing',     enterpriseName:'Sushila Agarbatti',       salesBL:4500,  expensesBL:2000,  category:'SC'},
+    {name:'Laxmi Bhoi',     village:'Dhadgaon',  ind:'Agri / Agri-Allied',enterpriseName:'Laxmi Rice Mill',         salesBL:15000, expensesBL:9000,  category:'ST'},
+    {name:'Nirmala Sonawane',village:'Taloda',   ind:'Manufacturing',     enterpriseName:'Nirmala Snacks',          salesBL:7500,  expensesBL:4000,  category:'OBC'},
+    {name:'Geeta Valvi',    village:'Akkalkuwa', ind:'Trading',           enterpriseName:'Geeta Saree Centre',      salesBL:10000, expensesBL:7000,  category:'ST'},
+  ];
+  dscNanEntrepreneurs.forEach((e, i) => {
+    const seq = i + 1;
+    const officerId = 'DSC-MAH-NAN-NAN-I';
+    const udyamiId  = `${officerId}-012025-01-${pad3(seq)}`;
+    const surveyDate = spreadDate(i, dscNanEntrepreneurs.length, 15, 46); // Jan 15 – Feb 15
+    records.push({
+      formType:'survey', _formType:'survey',
+      udyamiId, name:e.name, ngo:'DSC', officerId,
+      officer:'Pankaj Thakre', officerRole:'I',
+      batchId:'DSC-MAH-NAN-NAN-012025-01', batchNum:'1',
+      state:'Maharashtra', district:'Nandurbar', block:'Nandurbar',
+      village:e.village, gp:e.village + ' GP',
+      surveyDate, baselineDate:surveyDate,
+      gender:'Female / महिला', category:e.category,
+      ind:e.ind, enterpriseName:e.enterpriseName,
+      yearsInBusiness: yearsOpts[i % yearsOpts.length],
+      finPeriod:'monthly',
+      salesRaw:e.salesBL, expensesRaw:e.expensesBL,
+      salesBL:e.salesBL, expensesBL:e.expensesBL, profitBL:e.salesBL - e.expensesBL,
+      sales:e.salesBL, expenses:e.expensesBL, profit:e.salesBL - e.expensesBL,
+      diary: diaryOpts[i % diaryOpts.length],
+      kyc:'pend', bmc:'pend', ue:'pend', bp:'pend',
+      level:1, health:0,
+      lastVisit: new Date(surveyDate).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}),
+      flag:false, dropout:false, shortlisted:false,
+      submittedAt: new Date(surveyDate).toISOString(),
+    });
+  });
+
+  // ── DSC · Nawapur block (officer: Vipul Chaudhari) ──
+  const dscNawEntrepreneurs = [
+    {name:'Pushpa Nandurkar', village:'Nawapur',   ind:'Agri / Agri-Allied',enterpriseName:'Pushpa Goat Farm',    salesBL:6000,  expensesBL:3000,  category:'ST'},
+    {name:'Sangita Mahajan',  village:'Pimpalner', ind:'Trading',           enterpriseName:'Sangita Cloth House', salesBL:11000, expensesBL:7500,  category:'OBC'},
+    {name:'Asha Pawar',       village:'Nawapur',   ind:'Manufacturing',     enterpriseName:'Asha Masala',         salesBL:5500,  expensesBL:2800,  category:'OBC'},
+    {name:'Vandana Chavan',   village:'Sindkhede', ind:'Service',           enterpriseName:'Vandana Canteen',     salesBL:8500,  expensesBL:5000,  category:'OBC'},
+    {name:'Bharti Rathod',    village:'Pimpalner', ind:'Manufacturing',     enterpriseName:'Bharti Embroidery',   salesBL:4000,  expensesBL:1800,  category:'ST'},
+    {name:'Savita Jadhav',    village:'Nawapur',   ind:'Agri / Agri-Allied',enterpriseName:'Savita Fruit Stall',  salesBL:6500,  expensesBL:4000,  category:'OBC'},
+    {name:'Kalpana Bari',     village:'Sindkhede', ind:'Service',           enterpriseName:'Kalpana Catering',    salesBL:9000,  expensesBL:5500,  category:'ST'},
+    {name:'Sunanda Gavit',    village:'Nawapur',   ind:'Agri / Agri-Allied',enterpriseName:'Sunanda Poultry',     salesBL:7000,  expensesBL:4000,  category:'ST'},
+    {name:'Deepa Patel',      village:'Pimpalner', ind:'Service',           enterpriseName:'Deepa Tuition Centre',salesBL:5000,  expensesBL:1500,  category:'OBC'},
+    {name:'Manisha Borse',    village:'Sindkhede', ind:'Manufacturing',     enterpriseName:'Manisha Jam',         salesBL:6000,  expensesBL:3200,  category:'SC'},
+  ];
+  dscNawEntrepreneurs.forEach((e, i) => {
+    const seq = i + 1;
+    const officerId = 'DSC-MAH-NAN-NAW-I';
+    const udyamiId  = `${officerId}-012025-01-${pad3(seq)}`;
+    const surveyDate = spreadDate(i, dscNawEntrepreneurs.length, 15, 46);
+    records.push({
+      formType:'survey', _formType:'survey',
+      udyamiId, name:e.name, ngo:'DSC', officerId,
+      officer:'Vipul Chaudhari', officerRole:'I',
+      batchId:'DSC-MAH-NAN-NAW-012025-01', batchNum:'1',
+      state:'Maharashtra', district:'Nandurbar', block:'Nawapur',
+      village:e.village, gp:e.village + ' GP',
+      surveyDate, baselineDate:surveyDate,
+      gender:'Female / महिला', category:e.category,
+      ind:e.ind, enterpriseName:e.enterpriseName,
+      yearsInBusiness: yearsOpts[i % yearsOpts.length],
+      finPeriod:'monthly',
+      salesRaw:e.salesBL, expensesRaw:e.expensesBL,
+      salesBL:e.salesBL, expensesBL:e.expensesBL, profitBL:e.salesBL - e.expensesBL,
+      sales:e.salesBL, expenses:e.expensesBL, profit:e.salesBL - e.expensesBL,
+      diary: diaryOpts[i % diaryOpts.length],
+      kyc:'pend', bmc:'pend', ue:'pend', bp:'pend',
+      level:1, health:0,
+      lastVisit: new Date(surveyDate).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}),
+      flag:false, dropout:false, shortlisted:false,
+      submittedAt: new Date(surveyDate).toISOString(),
+    });
+  });
+
+  // ── WOTR · Parner block (officer: Anjana Patil) ──
+  const wotrParEntrepreneurs = [
+    {name:'Shakuntala Mane',  village:'Parner',    ind:'Manufacturing',     enterpriseName:'Shakuntala Flour Mill',       salesBL:14000, expensesBL:9000,  category:'OBC'},
+    {name:'Nalini Shinde',    village:'Shrigonda', ind:'Agri / Agri-Allied',enterpriseName:'Nalini Nursery',              salesBL:8000,  expensesBL:4000,  category:'OBC'},
+    {name:'Poonam Gaikwad',   village:'Parner',    ind:'Trading',           enterpriseName:'Poonam Mobile Shop',          salesBL:9000,  expensesBL:6000,  category:'OBC'},
+    {name:'Ashwini Rajput',   village:'Karjat',    ind:'Manufacturing',     enterpriseName:'Ashwini Pickle & Papad',      salesBL:5500,  expensesBL:2500,  category:'OBC'},
+    {name:'Ranjana Kale',     village:'Shrigonda', ind:'Agri / Agri-Allied',enterpriseName:'Ranjana Goat Farm',           salesBL:7000,  expensesBL:3500,  category:'ST'},
+    {name:'Seema Bangar',     village:'Parner',    ind:'Trading',           enterpriseName:'Seema Flower Shop',           salesBL:6000,  expensesBL:3500,  category:'SC'},
+    {name:'Vijaya Suple',     village:'Karjat',    ind:'Manufacturing',     enterpriseName:'Vijaya Handloom',             salesBL:8000,  expensesBL:4500,  category:'OBC'},
+    {name:'Mamta Shirke',     village:'Shrigonda', ind:'Service',           enterpriseName:'Mamta Snack Stall',           salesBL:7500,  expensesBL:4500,  category:'OBC'},
+    {name:'Usha Darekar',     village:'Parner',    ind:'Agri / Agri-Allied',enterpriseName:'Usha Mushroom Farm',          salesBL:6000,  expensesBL:3000,  category:'OBC'},
+    {name:'Nisha Kadam',      village:'Karjat',    ind:'Manufacturing',     enterpriseName:'Nisha Beauty Products',       salesBL:5000,  expensesBL:2500,  category:'ST'},
+    {name:'Pratibha Landge',  village:'Shrigonda', ind:'Trading',           enterpriseName:'Pratibha Grocery',            salesBL:13000, expensesBL:9000,  category:'OBC'},
+    {name:'Sangeeta Thite',   village:'Parner',    ind:'Manufacturing',     enterpriseName:'Sangeeta Incense Sticks',     salesBL:4500,  expensesBL:2000,  category:'OBC'},
+  ];
+  wotrParEntrepreneurs.forEach((e, i) => {
+    const seq = i + 1;
+    const officerId = 'WOT-MAH-AHM-PAR-I';
+    const udyamiId  = `${officerId}-012025-01-${pad3(seq)}`;
+    const surveyDate = spreadDate(i, wotrParEntrepreneurs.length, 15, 74); // Jan 15 – Mar 15
+    records.push({
+      formType:'survey', _formType:'survey',
+      udyamiId, name:e.name, ngo:'WOTR', officerId,
+      officer:'Anjana Patil', officerRole:'I',
+      batchId:'WOT-MAH-AHM-PAR-012025-01', batchNum:'1',
+      state:'Maharashtra', district:'Ahmednagar', block:'Parner',
+      village:e.village, gp:e.village + ' GP',
+      surveyDate, baselineDate:surveyDate,
+      gender:'Female / महिला', category:e.category,
+      ind:e.ind, enterpriseName:e.enterpriseName,
+      yearsInBusiness: yearsOpts[i % yearsOpts.length],
+      finPeriod:'monthly',
+      salesRaw:e.salesBL, expensesRaw:e.expensesBL,
+      salesBL:e.salesBL, expensesBL:e.expensesBL, profitBL:e.salesBL - e.expensesBL,
+      sales:e.salesBL, expenses:e.expensesBL, profit:e.salesBL - e.expensesBL,
+      diary: diaryOpts[i % diaryOpts.length],
+      kyc:'pend', bmc:'pend', ue:'pend', bp:'pend',
+      level:1, health:0,
+      lastVisit: new Date(surveyDate).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}),
+      flag:false, dropout:false, shortlisted:false,
+      submittedAt: new Date(surveyDate).toISOString(),
+    });
+  });
+
+  // Merge with any existing records (don't overwrite)
+  let existing = [];
+  try { existing = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]'); } catch(e) {}
+  const existingIds = new Set(existing.map(r => r.udyamiId));
+  const fresh = records.filter(r => !existingIds.has(r.udyamiId));
+  localStorage.setItem('gr_udyami_records', JSON.stringify([...existing, ...fresh]));
+  localStorage.setItem('gr_demo_seeded', '1');
+}
+
+/* ═══════════════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════════════ */
+const DEFAULT_USERS = [
+  {id:'IO001',pw:'Test@123',role:'Incubation Officer',initials:'IO'},
+  {id:'SP001',pw:'Test@123',role:'NGO Supervisor',initials:'SP'},
+  {id:'FD001',pw:'Test@123',role:'Funder',initials:'FD'},
+  {id:'GR001',pw:'Test@123',role:'Grassroutes Admin',initials:'GR'},
+];
+let currentUser = null;
+
+function quickLogin(id, pw, role, initials) {
+  document.getElementById('l-uid').value = id;
+  document.getElementById('l-pw').value = pw;
+  doLogin();
+}
+
+function doLogin() {
+  const uid = document.getElementById('l-uid').value.trim();
+  const pw  = document.getElementById('l-pw').value;
+  const err = document.getElementById('login-err');
+  err.classList.remove('show');
+
+  let user = DEFAULT_USERS.find(u => u.id === uid && u.pw === pw);
+  if (!user) {
+    const stored = JSON.parse(localStorage.getItem('gr_users') || '[]');
+    const local = stored.find(u => u.userId === uid && u.password === pw);
+    if (local) {
+      user = { id: local.userId, pw: local.password, role: local.role,
+               initials: local.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase(),
+               name: local.name };
+    }
+  }
+  if (!user) { err.classList.add('show'); return; }
+
+  currentUser = { ...user, name: user.name || uid };
+  localStorage.setItem('gr_session', JSON.stringify(currentUser));
+  showApp();
+}
+
+function doLogout() {
+  localStorage.removeItem('gr_session');
+  currentUser = null;
+  document.getElementById('app-shell').classList.remove('show');
+  document.getElementById('login-screen').style.display = 'flex';
+  showToast('Signed out successfully');
+}
+
+/* ═══════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════ */
+const screenTitles = {
+  dashboard: 'Dashboard', survey: 'Survey Pipeline',
+  entrepreneurs: 'Entrepreneurs', forms: 'Field Forms',
+  analytics: 'Analytics', profile: 'Profile'
+};
+let activeScreen = 'dashboard';
+let analyticsInited = false;
+
+function navigate(screen) {
+  if (activeScreen === screen) return;
+  activeScreen = screen;
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screen)?.classList.add('active');
+
+  // sidebar — match by onclick attribute
+  document.querySelectorAll('.sb-item').forEach(el => {
+    const fn = el.getAttribute('onclick') || '';
+    el.classList.toggle('active', fn.includes("navigate('" + screen + "')"));
+  });
+  document.querySelectorAll('.bn-item').forEach(el => el.classList.remove('active'));
+  const bn = document.getElementById('bn-' + screen);
+  if (bn) bn.classList.add('active');
+
+  document.getElementById('at-title').textContent = screenTitles[screen] || screen;
+
+  if (screen === 'analytics' && !analyticsInited) {
+    initAnalytics(); analyticsInited = true;
+  }
+  if (screen === 'entrepreneurs') renderEntCards(udyamis);
+  if (screen === 'survey') renderSurveyPipeline();
+  if (screen === 'forms') renderRecentImports();
+}
+
+/* ═══════════════════════════════════════════════════
+   SHOW APP
+═══════════════════════════════════════════════════ */
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-shell').classList.add('show');
+  mergeLocalData();
+  populateBatchFilter();
+  renderUser();
+  renderDashboard();
+}
+
+function renderUser() {
+  const u = currentUser;
+  if (!u) return;
+  ['sb-av','prof-av','dp-av'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = u.initials || '?';
+  });
+  const sbUname = document.getElementById('sb-uname');
+  const sbUrole = document.getElementById('sb-urole');
+  if (sbUname) sbUname.textContent = u.name || u.id;
+  if (sbUrole) sbUrole.textContent = u.role || '—';
+  const profName = document.getElementById('prof-name');
+  const profRole = document.getElementById('prof-role');
+  const profUid  = document.getElementById('prof-uid');
+  if (profName) profName.textContent = u.name || u.id;
+  if (profRole) profRole.textContent = u.role || '—';
+  if (profUid)  profUid.textContent  = u.id;
+}
+
+/* ═══════════════════════════════════════════════════
+   DASHBOARD RENDER
+═══════════════════════════════════════════════════ */
+function fmtInr(v) {
+  if (v === 0 || isNaN(v)) return '—';
+  const abs = Math.abs(v);
+  const sign = v < 0 ? '−' : '';
+  if (abs >= 100000) return sign + '₹' + (abs/100000).toFixed(1) + 'L';
+  if (abs >= 1000)   return sign + '₹' + (abs/1000).toFixed(1) + 'K';
+  return sign + '₹' + abs;
+}
+function sd(v) {
+  const cls = v === 'done' ? 'sd-g' : v === 'daily' ? 'sd-g' : v === 'some' ? 'sd-o' : v === 'pend' ? 'sd-o' : 'sd-r';
+  return `<span class="status-dot ${cls}"></span>`;
+}
+function lp(lv, d) {
+  if (d) return '<span class="lv-pill" style="background:#fde;color:var(--red);">Out</span>';
+  const s = {3:'background:var(--green-light);color:var(--green-dark);',2:'background:var(--blue-light);color:var(--blue);',1:'background:#fff3e0;color:#c07000;'};
+  return `<span class="lv-pill" style="${s[lv]||s[1]}">L${lv}</span>`;
+}
+function hp(sc, d) {
+  if (d) return '<span class="score-pill" style="background:#f0f0f0;color:#aaa;">—</span>';
+  const cls = sc >= 70 ? 'sp-g' : sc >= 45 ? 'sp-o' : 'sp-r';
+  return `<span class="score-pill ${cls}">${sc}</span>`;
+}
+function diaryDot(v) {
+  const cls = v === 'daily' ? 'sd-g' : v === 'some' ? 'sd-o' : 'sd-r';
+  return `<span class="status-dot ${cls}"></span>`;
+}
+function lvColor(lv) { return {3:'#8bb25a',2:'#4a7fc1',1:'#f9a556'}[lv] || '#ccc'; }
+function initials(name) { return name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase(); }
+function avatarColor(name) {
+  const colors = ['#5e8332','#4a7fc1','#d9760f','#7c5cbf','#c94444','#2e7a9e'];
+  return colors[name.charCodeAt(0) % colors.length];
+}
+
+function renderDashboard() {
+  const active = udyamis.filter(u => !u.dropout);
+  const dropouts = udyamis.filter(u => u.dropout);
+  const totalGMV = active.reduce((s, u) => s + u.sales, 0);
+  const totalProfit = active.reduce((s, u) => s + u.profit, 0);
+  const totalEmp = 62;
+  const flagged = active.filter(u => u.flag);
+
+  // Stat strip
+  document.getElementById('stat-strip').innerHTML = `
+    <div class="stat-card sg"><div class="sc-icon" style="background:var(--green-light);">💰</div><div class="sc-val">${fmtInr(totalGMV)}</div><div class="sc-lbl">Batch GMV / Month</div><div class="sc-delta delta-up">▲ +45% vs baseline</div></div>
+    <div class="stat-card sg"><div class="sc-icon" style="background:#e8f5e0;">📈</div><div class="sc-val">${fmtInr(totalProfit)}</div><div class="sc-lbl">Net Profit / Month</div><div class="sc-delta delta-up">▲ +65% vs baseline</div></div>
+    <div class="stat-card sb"><div class="sc-icon" style="background:var(--blue-light);">👥</div><div class="sc-val">${totalEmp}</div><div class="sc-lbl">Employment Generated</div><div class="sc-delta delta-up">▲ +15 new jobs</div></div>
+    <div class="stat-card ${dropouts.length > 0 ? 'sr' : 'sg'}"><div class="sc-icon" style="background:var(--orange-light);">🌱</div><div class="sc-val">${active.length}<span style="font-size:13px;color:var(--grey-med);font-weight:500;"> / ${udyamis.length}</span></div><div class="sc-lbl">Active Udyamis</div><div class="sc-delta delta-dn">${dropouts.length} dropout · ${flagged.length} flagged</div></div>
+    <div class="stat-card sp"><div class="sc-icon" style="background:var(--purple-light);">🔗</div><div class="sc-val">11</div><div class="sc-lbl">Ecosystem Connections</div><div class="sc-delta delta-up">+2 this month</div></div>
+  `;
+
+  // Indicators
+  const diary = { daily: active.filter(u => u.diary==='daily').length, some: active.filter(u => u.diary==='some').length, miss: active.filter(u => u.diary==='miss').length };
+  const kycDone = active.filter(u => u.kyc==='done').length;
+  const bmcDone = active.filter(u => u.bmc==='done').length;
+  const ueDone  = active.filter(u => u.ue==='done').length;
+  const bpDone  = active.filter(u => u.bp==='done').length;
+  const indRows = [
+    {label:'Financial Diary', dot:'var(--orange)', val:Math.round(diary.daily/active.length*100), chips:`<span class="ind-chip chip-g">${diary.daily} Daily</span><span class="ind-chip chip-o">${diary.some} Irregular</span><span class="ind-chip chip-r">${diary.miss} Not Filling</span>`, fill:'var(--green)'},
+    {label:'KYC', dot:'var(--purple)', val:Math.round(kycDone/active.length*100), chips:`<span class="ind-chip chip-g">${kycDone} Complete</span><span class="ind-chip chip-o">${active.length-kycDone} Pending</span>`, fill:'var(--green-dark)'},
+    {label:'BMC', dot:'var(--blue)', val:Math.round(bmcDone/active.length*100), chips:`<span class="ind-chip chip-g">${bmcDone} Done</span><span class="ind-chip chip-o">${active.length-bmcDone} Pending</span>`, fill:'var(--blue)'},
+    {label:'Unit Economics', dot:'var(--orange)', val:Math.round(ueDone/active.length*100), chips:`<span class="ind-chip chip-g">${ueDone} Done</span><span class="ind-chip chip-o">${active.length-ueDone} Pending</span>`, fill:'var(--orange)'},
+    {label:'Business Plan', dot:'var(--green-dark)', val:Math.round(bpDone/active.length*100), chips:`<span class="ind-chip chip-g">${bpDone} Done</span><span class="ind-chip chip-o">${active.length-bpDone} Pending</span>`, fill:'var(--orange-dark)'},
+  ];
+  document.getElementById('ind-grid').innerHTML = indRows.map(r =>
+    `<div class="ind-card"><div class="ind-label"><div class="ind-dot" style="background:${r.dot}"></div>${r.label}</div><div class="ind-pct">${r.val}<span>%</span></div><div class="prog-bar"><div class="prog-fill" style="width:${r.val}%;background:${r.fill}"></div></div><div class="ind-chips">${r.chips}</div></div>`
+  ).join('');
+
+  // Level rows
+  const l3 = active.filter(u=>u.level===3).length;
+  const l2 = active.filter(u=>u.level===2).length;
+  const l1 = active.filter(u=>u.level===1).length;
+  const tot = active.length;
+  document.getElementById('level-rows').innerHTML = [
+    {lbl:'L3',cls:'lv-3',n:l3,fill:'var(--green)'},
+    {lbl:'L2',cls:'lv-2',n:l2,fill:'var(--blue)'},
+    {lbl:'L1',cls:'lv-1',n:l1,fill:'var(--orange)'},
+    {lbl:'Out',cls:'lv-d',n:dropouts.length,fill:'var(--red)'},
+  ].map(r=>`<div class="level-row"><div class="lv-badge ${r.cls}">${r.lbl}</div><div class="lv-bar-wrap"><div class="lv-bar-fill" style="width:${Math.round(r.n/(tot+dropouts.length)*100)||0}%;background:${r.fill}"></div></div><div class="lv-count">${r.n}</div><div class="lv-pct" style="color:${r.fill}">${Math.round(r.n/(tot+dropouts.length)*100)||0}%</div></div>`).join('');
+
+  new Chart(document.getElementById('level-chart'), {
+    type:'bar',
+    data:{labels:['L1','L2','L3','Out'],datasets:[{data:[l1,l2,l3,dropouts.length],backgroundColor:['#f9a556','#4a7fc1','#8bb25a','#c94444'],borderRadius:5,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{family:'Montserrat',weight:'700',size:10}}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{stepSize:5,font:{size:10}},beginAtZero:true}}}
+  });
+
+  // Flagged list
+  document.getElementById('flagged-list').innerHTML = flagged.length === 0
+    ? '<div style="color:var(--grey-med);font-size:12px;padding:8px 0;">No flagged entrepreneurs</div>'
+    : flagged.slice(0,5).map(u => `
+    <div class="alert-card ac-red" style="margin-bottom:7px;" onclick="openDetail('${u.id}')">
+      <div class="ac-av" style="background:var(--red);">${initials(u.name)}</div>
+      <div><div class="ac-name">${u.name}</div><div class="ac-detail">${u.gp} · Health ${u.health}/80 · Last visit ${u.lastVisit}</div></div>
+    </div>`).join('');
+
+  // Overdue list (last visit before 15 days ago — using static data for demo)
+  const overdue = active.filter(u => ['15 Jan','22 Jan','14 Feb'].includes(u.lastVisit));
+  document.getElementById('overdue-list').innerHTML = overdue.length === 0
+    ? '<div style="color:var(--grey-med);font-size:12px;padding:8px 0;">No overdue visits</div>'
+    : overdue.map(u => `
+    <div class="alert-card ac-orange" style="margin-bottom:7px;" onclick="openDetail('${u.id}')">
+      <div class="ac-av" style="background:var(--orange-dark);">${initials(u.name)}</div>
+      <div><div class="ac-name">${u.name}</div><div class="ac-detail">${u.gp} · Last visit ${u.lastVisit}</div></div>
+    </div>`).join('');
+
+  // Entrepreneur table
+  const flagCount = flagged.length;
+  document.getElementById('sb-flag-count').textContent = flagCount;
+  document.getElementById('bn-flag-count').style.display = flagCount > 0 ? 'block' : 'none';
+  document.getElementById('bn-flag-count').textContent = flagCount;
+
+  document.getElementById('ent-table-body').innerHTML = udyamis.map(u => {
+    const rs = u.dropout ? 'opacity:.5;' : u.flag ? 'background:#fffaf4;' : '';
+    return `<tr style="${rs}">
+      <td style="padding-left:16px;min-width:130px;" onclick="openDetail('${u.id}')"><div class="ent-name-cell" style="cursor:pointer;color:var(--green-dark);text-decoration:underline;" onclick="event.stopPropagation();openFullDashboard('${u.name}')" title="Open Full Dashboard">${u.name}</div><div class="ent-id-cell">GR-MP-24A-${u.id}${u.dropout ? ' · DROPOUT' : ''}</div></td>
+      <td style="font-size:10px;color:var(--grey-dark);">${u.gp}</td>
+      <td style="font-size:10px;color:var(--grey-dark);">${u.ind}</td>
+      <td>${lp(u.level,u.dropout)}</td>
+      <td style="text-align:center;">${diaryDot(u.diary)}</td>
+      <td style="text-align:center;">${sd(u.kyc)}</td>
+      <td style="text-align:center;">${sd(u.bmc)}</td>
+      <td style="text-align:center;">${sd(u.ue)}</td>
+      <td style="text-align:center;">${sd(u.bp)}</td>
+      <td style="font-family:var(--fh);font-size:10px;font-weight:700;color:var(--green-dark);">${fmtInr(u.sales)}</td>
+      <td style="font-family:var(--fh);font-size:10px;font-weight:700;${u.profit<0?'color:var(--red);':'color:var(--blue);'}">${fmtInr(u.profit)}</td>
+      <td>${hp(u.health,u.dropout)}</td>
+      <td style="font-size:10px;color:var(--grey-dark);">${u.lastVisit}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════════════
+   ENTREPRENEUR CARDS
+═══════════════════════════════════════════════════ */
+function renderEntCards(list) {
+  document.getElementById('ent-card-list').innerHTML = list.map(u => `
+    <div class="ent-item-card ${u.flag?'flagged':''} ${u.dropout?'dropout':''}">
+      <div class="eic-header">
+        <div class="eic-av" style="background:${avatarColor(u.name)};cursor:pointer;" onclick="openFullDashboard('${u.name}')">${initials(u.name)}</div>
+        <div>
+          <div class="eic-name">
+            <span style="cursor:pointer;color:var(--green-dark);text-decoration:underline;" onclick="openFullDashboard('${u.name}')" title="Open Full Dashboard">${u.name}</span>${u.flag?' <span style="background:var(--red);color:#fff;font-size:8px;padding:2px 6px;border-radius:5px;font-family:var(--fh);font-weight:800;margin-left:4px;">⚑</span>':''}${u.dropout?' <span style="background:var(--grey-light);color:var(--grey-dark);font-size:8px;padding:2px 6px;border-radius:5px;font-family:var(--fh);font-weight:700;">DROPOUT</span>':''}
+          </div>
+          <div class="eic-meta">${u.gp} · ${u.ind} · ${lp(u.level,u.dropout)}</div>
+        </div>
+      </div>
+      <div class="eic-stats" onclick="openDetail('${u.id}')" style="cursor:pointer;">
+        <div class="eic-stat"><div class="eic-stat-val" style="color:var(--green-dark);">${fmtInr(u.sales)}</div><div class="eic-stat-lbl">Sales/Mo</div></div>
+        <div class="eic-stat"><div class="eic-stat-val">${hp(u.health,u.dropout)}</div><div class="eic-stat-lbl">Health</div></div>
+        <div class="eic-stat"><div class="eic-stat-val" style="font-size:10px;font-family:var(--fh);">${u.lastVisit}</div><div class="eic-stat-lbl">Last Visit</div></div>
+      </div>
+    </div>`).join('');
+}
+
+/* ═══════════════════════════════════════════════════
+   SURVEY PIPELINE
+═══════════════════════════════════════════════════ */
+let _surveyPipeline = [];
+let _surveyTab = 'all';
+
+function setSurveyTab(tab) {
+  _surveyTab = tab;
+  ['all','pending','shortlisted','rejected'].forEach(t => {
+    document.getElementById('sp-tab-' + t)?.classList.toggle('active', t === tab);
+  });
+  filterSurvey();
+}
+
+function renderSurveyPipeline() {
+  let lsRecords = [];
+  try { lsRecords = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]'); } catch(e) {}
+
+  const shortlistedSet = _getShortlistedSet();
+  const rejectedSet    = _getRejectedSet();
+
+  const surveyRecs = lsRecords.filter(r => r.formType === 'survey' || r._formType === 'survey');
+
+  const pipeline = surveyRecs.map(r => ({
+    id:             r.udyamiId,
+    name:           r.name || '—',
+    district:       r.district || '—',
+    block:          r.block || '—',
+    village:        r.village || '—',
+    gp:             r.gp || (r.village ? r.village + ' GP' : '—'),
+    ngo:            r.ngo || '—',
+    officer:        r.officer || '—',
+    officerId:      r.officerId || '—',
+    batchId:        r.batchId || '—',
+    surveyDate:     r.surveyDate || r.baselineDate || r.submittedAt?.slice(0,10) || '—',
+    enterpriseName: r.enterpriseName || '—',
+    ind:            r.ind || '—',
+    category:       r.category || '—',
+    salesBL:        r.salesBL || 0,
+    profitBL:       r.profitBL || 0,
+    shortlisted:    shortlistedSet.has(r.udyamiId),
+    rejected:       rejectedSet.has(r.udyamiId),
+    source:         'ls'
+  }));
+
+  // Stats
+  const total       = pipeline.length;
+  const shortlisted = pipeline.filter(p => p.shortlisted).length;
+  const rejected    = pipeline.filter(p => p.rejected).length;
+  const pending     = pipeline.filter(p => !p.shortlisted && !p.rejected).length;
+
+  const spStrip = document.getElementById('sp-stat-strip');
+  if (spStrip) {
+    spStrip.innerHTML = `
+      <div class="stat-card sb"><div class="sc-icon" style="background:var(--blue-light);">📋</div><div class="sc-val">${total}</div><div class="sc-lbl">Total Surveyed</div></div>
+      <div class="stat-card sg"><div class="sc-icon" style="background:var(--green-light);">✅</div><div class="sc-val">${shortlisted}</div><div class="sc-lbl">Shortlisted</div></div>
+      <div class="stat-card so"><div class="sc-icon" style="background:var(--orange-light);">⏳</div><div class="sc-val">${pending}</div><div class="sc-lbl">Pending Review</div></div>
+      <div class="stat-card sr"><div class="sc-icon" style="background:var(--red-light);">✗</div><div class="sc-val">${rejected}</div><div class="sc-lbl">Rejected</div></div>
+    `;
+  }
+
+  // Update count badge
+  const badge = document.getElementById('sb-survey-count');
+  if (badge) { badge.textContent = pending; badge.style.display = pending > 0 ? 'block' : 'none'; }
+
+  // Populate district filter
+  const districts = [...new Set(pipeline.map(p => p.district).filter(d => d && d !== '—'))].sort();
+  const distSel = document.getElementById('survey-filter-district');
+  if (distSel) {
+    const cur = distSel.value;
+    distSel.innerHTML = '<option value="">All Regions</option>' +
+      districts.map(d => `<option value="${d}"${d===cur?' selected':''}>${d}</option>`).join('');
+  }
+
+  // Populate batch filter
+  const batches = [...new Set(pipeline.map(p => p.batchId).filter(b => b && b !== '—'))].sort();
+  const batchSel = document.getElementById('survey-filter-batch');
+  if (batchSel) {
+    const cur = batchSel.value;
+    batchSel.innerHTML = '<option value="">All Batches</option>' +
+      batches.map(b => `<option value="${b}"${b===cur?' selected':''}>${b}</option>`).join('');
+  }
+
+  _surveyPipeline = pipeline;
+  filterSurvey();
+}
+
+function filterSurvey() {
+  const q    = (document.getElementById('survey-search')?.value || '').toLowerCase();
+  const dist = document.getElementById('survey-filter-district')?.value || '';
+  const yr   = document.getElementById('survey-filter-year')?.value || '';
+  const bt   = document.getElementById('survey-filter-batch')?.value || '';
+
+  let list = _surveyPipeline.filter(p => {
+    if (q && !p.name.toLowerCase().includes(q) &&
+             !p.village.toLowerCase().includes(q) &&
+             !p.enterpriseName.toLowerCase().includes(q) &&
+             !(p.id || '').toLowerCase().includes(q)) return false;
+    if (dist && p.district !== dist) return false;
+    if (yr && !(p.surveyDate || '').startsWith(yr)) return false;
+    if (bt && p.batchId !== bt) return false;
+    if (_surveyTab === 'pending'     && (p.shortlisted || p.rejected)) return false;
+    if (_surveyTab === 'shortlisted' && !p.shortlisted) return false;
+    if (_surveyTab === 'rejected'    && !p.rejected)    return false;
+    return true;
+  });
+  _renderSurveyCards(list);
+}
+
+function _getShortlistedSet() {
+  try { return new Set(JSON.parse(localStorage.getItem('gr_shortlisted') || '[]')); } catch(e) { return new Set(); }
+}
+function _getRejectedSet() {
+  try { return new Set(JSON.parse(localStorage.getItem('gr_rejected') || '[]')); } catch(e) { return new Set(); }
+}
+
+function shortlistEntrepreneur(udyamiId) {
+  const sl = _getShortlistedSet();
+  const wasShortlisted = sl.has(udyamiId);
+  if (wasShortlisted) { sl.delete(udyamiId); } else { sl.add(udyamiId); }
+  localStorage.setItem('gr_shortlisted', JSON.stringify([...sl]));
+
+  // Update flag in gr_udyami_records
+  try {
+    const recs = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]');
+    const idx = recs.findIndex(r => r.udyamiId === udyamiId);
+    if (idx >= 0) { recs[idx].shortlisted = !wasShortlisted; }
+    localStorage.setItem('gr_udyami_records', JSON.stringify(recs));
+  } catch(e) {}
+
+  // Rebuild main udyamis array and re-render dashboard
+  mergeLocalData();
+  renderSurveyPipeline();
+  showToast(wasShortlisted ? 'Removed from shortlist' : '✅ Entrepreneur shortlisted!');
+}
+
+function rejectEntrepreneur(udyamiId) {
+  const rj = _getRejectedSet();
+  if (rj.has(udyamiId)) { rj.delete(udyamiId); showToast('Rejection removed'); }
+  else { rj.add(udyamiId); showToast('Entrepreneur marked as rejected'); }
+  localStorage.setItem('gr_rejected', JSON.stringify([...rj]));
+  renderSurveyPipeline();
+}
+
+function _renderSurveyCards(list) {
+  const el = document.getElementById('survey-card-list');
+  if (!el) return;
+  if (!list.length) {
+    el.innerHTML = '<div style="color:var(--grey-med);text-align:center;padding:40px;font-size:13px;">No entrepreneurs match the current filters.</div>';
+    return;
+  }
+  el.innerHTML = list.map(p => {
+    const sl = p.shortlisted;
+    const rj = p.rejected;
+    const indColor = {
+      'Trading':'var(--blue)','Manufacturing':'var(--purple)','Service':'var(--orange-dark)','Agri / Agri-Allied':'var(--green-dark)'
+    }[p.ind] || 'var(--grey-dark)';
+    const indBg = {
+      'Trading':'var(--blue-light)','Manufacturing':'var(--purple-light)','Service':'var(--orange-light)','Agri / Agri-Allied':'var(--green-light)'
+    }[p.ind] || 'var(--grey-xlight)';
+    return `
+    <div class="survey-card${sl?' shortlisted':''}${rj?' rejected':''}">
+      ${sl ? '<div class="sc-selected-badge">SELECTED</div>' : ''}
+      <div class="sc-top">
+        <div class="sc-av" style="background:${avatarColor(p.name)};"
+             onclick="openFullDashboardById('${p.id}')">${initials(p.name)}</div>
+        <div class="sc-info">
+          <div class="sc-name" onclick="openFullDashboardById('${p.id}')">${p.name}</div>
+          <div class="sc-loc">${p.village} · ${p.district} · ${p.block}</div>
+        </div>
+      </div>
+      <div class="sc-biz">
+        <span class="sc-biz-name">${p.enterpriseName}</span>
+        <span class="sc-ind-badge" style="background:${indBg};color:${indColor};">${p.ind}</span>
+      </div>
+      <div class="sc-officer-row">Officer: <span class="sc-officer-link" onclick="openOfficerProfile('${p.officer}')">${p.officer}</span></div>
+      <div class="sc-date">Survey date: ${p.surveyDate}</div>
+      <div class="sc-actions">
+        <button class="sc-btn sc-btn-shortlist${sl?' done':''}"
+                onclick="shortlistEntrepreneur('${p.id}')">
+          ${sl ? '✓ Shortlisted' : '✓ Shortlist'}
+        </button>
+        <button class="sc-btn sc-btn-reject${rj?' done':''}"
+                onclick="rejectEntrepreneur('${p.id}')">
+          ${rj ? '✗ Rejected' : '✗ Reject'}
+        </button>
+        <button class="sc-btn sc-btn-view"
+                onclick="openFullDashboardById('${p.id}')">→ View</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function populateBatchFilter() {
+  const batches = [...new Set(udyamis.map(u => u.batchId || u.batch || '').filter(Boolean))];
+  const sel = document.getElementById('ent-filter-batch');
+  if (!sel || batches.length === 0) return;
+  sel.innerHTML = '<option value="">All Batches</option>' + batches.sort().map(b => `<option value="${b}">${b}</option>`).join('');
+}
+
+function filterEntrepreneurs() {
+  const q  = (document.getElementById('ent-search')?.value || '').toLowerCase();
+  const lv = document.getElementById('ent-filter-level')?.value || '';
+  const fl = document.getElementById('ent-filter-flag')?.value || '';
+  const bt = document.getElementById('ent-filter-batch')?.value || '';
+  const df = document.getElementById('ent-filter-date-from')?.value || '';
+  const dt = document.getElementById('ent-filter-date-to')?.value || '';
+
+  let list = udyamis.filter(u => {
+    if (q && !u.name.toLowerCase().includes(q) && !(u.gp||'').toLowerCase().includes(q) && !String(u.id).includes(q)) return false;
+    if (lv && u.level !== parseInt(lv)) return false;
+    if (fl === 'flag'    && !u.flag)    return false;
+    if (fl === 'dropout' && !u.dropout) return false;
+    if (bt && (u.batchId || u.batch || '') !== bt) return false;
+    const sd = u.surveyDate || u.baselineDate || '';
+    if (df && sd && sd < df) return false;
+    if (dt && sd && sd > dt) return false;
+    return true;
+  });
+  renderEntCards(list);
+}
+
+/* ═══════════════════════════════════════════════════
+   ENTREPRENEUR DETAIL PANEL
+═══════════════════════════════════════════════════ */
+function openDetail(id) {
+  const u = udyamis.find(u => u.id === id);
+  if (!u) return;
+  document.getElementById('dp-name').textContent = u.name;
+  document.getElementById('dp-sub').textContent = `${u.gp} · ${u.ind} · Batch MP-2024-A`;
+
+  const pct = p => `<div class="dp-score-bar"><div class="dp-bar-label">${p.label}</div><div class="dp-bar-wrap"><div class="dp-bar-fill" style="width:${p.pct}%;background:${p.color}"></div></div><div class="dp-bar-val">${p.val}</div></div>`;
+
+  document.getElementById('dp-body').innerHTML = `
+    <div class="dp-section">
+      <div class="dp-section-title">Overview</div>
+      <div class="dp-field-grid">
+        <div class="dp-field"><div class="dp-field-lbl">Level</div><div class="dp-field-val">${lp(u.level,u.dropout)}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Health Score</div><div class="dp-field-val">${hp(u.health,u.dropout)} <span style="font-size:10px;color:var(--grey-med);">/ 80</span></div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Monthly Sales</div><div class="dp-field-val" style="color:var(--green-dark);">${fmtInr(u.sales)}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Monthly Profit</div><div class="dp-field-val" style="color:${u.profit<0?'var(--red)':'var(--blue);'}">${fmtInr(u.profit)}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Village GP</div><div class="dp-field-val">${u.gp}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Last Visit</div><div class="dp-field-val">${u.lastVisit}</div></div>
+        ${u.officer ? `<div class="dp-field"><div class="dp-field-lbl">Field Officer</div><div class="dp-field-val"><span style="cursor:pointer;color:var(--blue);text-decoration:underline;" onclick="openOfficerProfile('${u.officer}')">${u.officer}</span></div></div>` : ''}
+      </div>
+    </div>
+    <div class="dp-section">
+      <div class="dp-section-title">Tool Progress</div>
+      ${pct({label:'Business Model Canvas',pct:u.bmc==='done'?100:0,color:'var(--green)',val:u.bmc==='done'?'✅ Done':'⏳ Pending'})}
+      ${pct({label:'Unit Economics',pct:u.ue==='done'?100:0,color:'var(--blue)',val:u.ue==='done'?'✅ Done':'⏳ Pending'})}
+      ${pct({label:'Business Plan',pct:u.bp==='done'?100:0,color:'var(--orange)',val:u.bp==='done'?'✅ Done':'⏳ Pending'})}
+      ${pct({label:'Daily Diary',pct:u.diary==='daily'?100:u.diary==='some'?50:0,color:'var(--purple)',val:u.diary==='daily'?'✅ Daily':u.diary==='some'?'⏳ Sometimes':'❌ Not Filling'})}
+      ${pct({label:'KYC Status',pct:u.kyc==='done'?100:0,color:'var(--green-dark)',val:u.kyc==='done'?'✅ Complete':'⏳ Pending'})}
+    </div>
+    ${u.flag?'<div style="background:var(--red-light);border:1.5px solid #f5c0c0;border-radius:var(--rs);padding:12px;margin-bottom:16px;font-size:12px;color:var(--red);font-family:var(--fh);font-weight:700;">⚑ Flagged for urgent review</div>':''}
+    ${u.dropout?'<div style="background:var(--grey-xlight);border:1.5px solid var(--grey-light);border-radius:var(--rs);padding:12px;margin-bottom:16px;font-size:12px;color:var(--grey-dark);font-family:var(--fh);font-weight:700;">✗ Marked as programme dropout</div>':''}
+    <div class="dp-open-full">
+      <button class="dp-btn dp-btn-primary" onclick="openFullDashboard('${u.name}')">Open Full Dashboard →</button>
+      <button class="dp-btn dp-btn-secondary" onclick="openVisitForm('${u.id}')">+ Log Visit</button>
+    </div>
+  `;
+
+  document.getElementById('detail-overlay').classList.add('show');
+  document.getElementById('detail-panel').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detail-overlay').classList.remove('show');
+  document.getElementById('detail-panel').classList.remove('open');
+}
+
+function openFullDashboard(name) {
+  const u = udyamis.find(u => u.name === name);
+  if (u) {
+    const bridged = bridgeToEntDashboard(u);
+    localStorage.setItem('udyami_vikas_data', JSON.stringify(bridged));
+  }
+  window.open('udyami_vikas_dashboard (3).html', '_blank');
+}
+
+function openFullDashboardById(id) {
+  const u = udyamis.find(u => u.id === id || u.id === parseInt(id));
+  if (u) return openFullDashboard(u.name);
+  // Check localStorage for survey record
+  try {
+    const recs = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]');
+    const r = recs.find(r => r.udyamiId === id || r.udyamiId === parseInt(id));
+    if (r) { localStorage.setItem('udyami_vikas_data', JSON.stringify(r)); }
+  } catch(e) {}
+  window.open('udyami_vikas_dashboard (3).html', '_blank');
+}
+
+function openOfficerProfile(officerName) {
+  if (!officerName || officerName === '—') return;
+  // Find all entrepreneurs this officer handles
+  const managed = udyamis.filter(u => (u.officer || '').toLowerCase() === officerName.toLowerCase());
+  // Build a simple info panel via the detail overlay
+  document.getElementById('dp-name').textContent = officerName;
+  document.getElementById('dp-sub').textContent = 'Field Officer · ' + managed.length + ' entrepreneur(s) managed';
+  document.getElementById('dp-body').innerHTML = `
+    <div class="dp-section">
+      <div class="dp-section-title">Officer Summary</div>
+      <div class="dp-field-grid">
+        <div class="dp-field"><div class="dp-field-lbl">Total Entrepreneurs</div><div class="dp-field-val">${managed.length}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Active</div><div class="dp-field-val">${managed.filter(u=>!u.dropout).length}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Flagged</div><div class="dp-field-val" style="color:var(--red);">${managed.filter(u=>u.flag).length}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Avg Health Score</div><div class="dp-field-val">${managed.length ? Math.round(managed.reduce((s,u)=>s+u.health,0)/managed.length) : '—'}</div></div>
+      </div>
+    </div>
+    <div class="dp-section">
+      <div class="dp-section-title">Entrepreneurs Under This Officer</div>
+      ${managed.length === 0 ? '<div style="color:var(--grey-med);font-size:12px;">No matching entrepreneurs found in current batch data.</div>' :
+        managed.map(u => `<div class="alert-card ac-${u.flag?'red':'orange'}" style="margin-bottom:6px;cursor:pointer;" onclick="closeDetail();openDetail('${u.id}')">
+          <div class="ac-av" style="background:${avatarColor(u.name)};">${initials(u.name)}</div>
+          <div><div class="ac-name">${u.name}</div><div class="ac-detail">${u.gp} · Health ${u.health}/80 · Last visit ${u.lastVisit}</div></div>
+        </div>`).join('')
+      }
+    </div>
+  `;
+  document.getElementById('detail-overlay').classList.add('show');
+  document.getElementById('detail-panel').classList.add('open');
+}
+
+function openVisitForm(id) {
+  closeDetail();
+  window.open('io_form_v12.html', '_blank');
+  showToast('Visit Form opened. Use Udyami ID GR-MP-24A-' + id);
+}
+
+/* ═══════════════════════════════════════════════════
+   DATA BRIDGE: gr_udyami_records → udyami_vikas_data
+   Converts io_form_v12 format to entrepreneur dashboard format
+═══════════════════════════════════════════════════ */
+function bridgeToEntDashboard(u) {
+  return {
+    _version: 1,
+    _savedAt: new Date().toISOString(),
+    _formType: 'visit',
+    udyamiId: 'GR-MP-2024-A-' + u.id,
+    name: u.name,
+    nameHindi: '',
+    mobile: '',
+    gender: 'Female',
+    category: '—',
+    state: 'Madhya Pradesh',
+    district: u.gp.replace(' GP',''),
+    block: '—',
+    village: u.gp.replace(' GP',''),
+    education: '—',
+    marital: '—',
+    dependents: 0,
+    groups: [],
+    partner: currentUser ? (currentUser.name || currentUser.id) : 'Priya Rawat',
+    batchId: u.batchId || 'MP-2024-A',
+    surveyDate: u.surveyDate || u.baselineDate || '2024-01-15',
+    baselineDate: u.surveyDate || u.baselineDate || '2024-01-15',
+    enterpriseName: u.name.split(' ')[0] + ' Enterprise',
+    enterpriseType: [u.ind],
+    nic: {},
+    yearsInBusiness: '1–2 years',
+    businessLocation: ['Home-based'],
+    marketReach: 'Multiple villages',
+    fixedAssets: 0,
+    fixedAssetNotes: '',
+    inventory: 0,
+    inventoryNotes: '',
+    sales: u.salesBL || u.sales,
+    expenses: (u.salesBL || u.sales) - (u.profitBL || u.profit),
+    profit: u.profitBL || u.profit,
+    diary: u.diary === 'daily' ? 'Daily' : u.diary === 'some' ? 'Sometimes' : 'Not filling',
+    salesFreq: 'Daily',
+    customers: 20,
+    avgSale: Math.round((u.salesBL || u.sales) / 20) || 0,
+    liabilities: {savings:0, shg:0, supplier:0, bank:0},
+    emi: 0,
+    employmentFT: 1,
+    employmentPT: 0,
+    fieldReportDate: new Date().toISOString().slice(0,10),
+    fieldOfficer: currentUser ? (currentUser.name || currentUser.id) : 'Field Officer',
+    kyc: { aadhaar: u.kyc === 'done' ? '✅ Verified — copy taken' : '⏳ Has it — not collected' },
+    kycNotes: '',
+    // Use exact score arrays from Field Study; fallback to health-based estimate only if absent
+    shakti:   Array.isArray(u.shaktiScores)   ? u.shaktiScores   : Array(8).fill(Math.round((u.health||40)/80*4) || 2),
+    swasthya: Array.isArray(u.swasthyaScores) ? u.swasthyaScores : Array(12).fill(Math.round((u.health||40)/80*4) || 2),
+    // Business Model Canvas / Unit Economics / Business Plan — string → 1-4 integer
+    bmc: u.bmc === 'done' ? 4 : u.bmc === 'in-progress' ? 2 : 1,
+    ue:  u.ue  === 'done' ? 4 : u.ue  === 'in-progress' ? 2 : 1,
+    bp:  u.bp  === 'done' ? 4 : u.bp  === 'in-progress' ? 2 : 1,
+    needs: [],
+    needsNotes: '',
+    financialHistory: [
+      {month:'Baseline', sales: u.salesBL, expenses: (u.salesBL - (u.profitBL || 0))},
+      {month:'Current',  sales: u.sales,   expenses: (u.sales - u.profit)},
+    ],
+    visits: [
+      {date: u.surveyDate||u.baselineDate||'2024-01-15', type:'Survey', officer: u.officer||currentUser?.name||'Field Officer', duration:90, notes:'Auto-populated from app data.', actions:[]},
+    ],
+  };
+}
+
+/* ═══════════════════════════════════════════════════
+   FORMS SCREEN
+═══════════════════════════════════════════════════ */
+function openForm(type) {
+  const params = {baseline:'?tab=baseline',fieldreport:'?tab=fieldreport',visit:'?tab=visit',assessment:'?tab=assessment'};
+  window.open('io_form_v12.html', '_blank');
+  showToast('Opened ' + type + ' form in new tab');
+}
+
+function openFormImport(type) {
+  window.open('io_form_v12.html', '_blank');
+  showToast('Use the Import CSV button in the ' + type + ' tab');
+}
+
+function renderRecentImports() {
+  let stored = [];
+  try { stored = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]'); } catch(e) {}
+  const el = document.getElementById('recent-imports');
+  if (!stored.length) {
+    el.innerHTML = '<div style="color:var(--grey-med);font-size:12px;text-align:center;padding:16px;">No recent form submissions found. Open the Field Forms tab to start collecting data.</div>';
+    return;
+  }
+  const recent = stored.slice(-10).reverse();
+  el.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-size:11px;">
+      <thead><tr style="border-bottom:1px solid var(--border);">
+        <th style="padding:8px;text-align:left;font-family:var(--fh);font-size:9px;color:var(--grey-med);">Type</th>
+        <th style="padding:8px;text-align:left;font-family:var(--fh);font-size:9px;color:var(--grey-med);">Name / ID</th>
+        <th style="padding:8px;text-align:left;font-family:var(--fh);font-size:9px;color:var(--grey-med);">Submitted</th>
+      </tr></thead>
+      <tbody>${recent.map(r => `<tr style="border-bottom:1px solid var(--grey-xlight);">
+        <td style="padding:8px;"><span style="background:var(--green-light);color:var(--green-dark);font-family:var(--fh);font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;">${r.formType||'—'}</span></td>
+        <td style="padding:8px;font-family:var(--fh);font-size:11px;font-weight:700;">${r.name||r.udyamiId||'—'}</td>
+        <td style="padding:8px;font-size:10px;color:var(--grey-med);">${r.submittedAt ? new Date(r.submittedAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—'}</td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   ANALYTICS
+═══════════════════════════════════════════════════ */
+function initAnalytics() {
+  const active = udyamis.filter(u=>!u.dropout);
+  const l1=active.filter(u=>u.level===1).length;
+  const l2=active.filter(u=>u.level===2).length;
+  const l3=active.filter(u=>u.level===3).length;
+  const drops=udyamis.filter(u=>u.dropout).length;
+
+  new Chart(document.getElementById('analytics-level-chart'),{
+    type:'doughnut',
+    data:{labels:['L1 Early','L2 Growing','L3 Strong','Dropout'],datasets:[{data:[l1,l2,l3,drops],backgroundColor:['#f9a556','#4a7fc1','#8bb25a','#c94444'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'bottom',labels:{font:{family:'Montserrat',size:10},padding:8}}}}
+  });
+
+  const hBuckets = [0,0,0,0]; // <30, 30-50, 50-70, 70+
+  active.forEach(u=>{ if(u.health<30)hBuckets[0]++; else if(u.health<50)hBuckets[1]++; else if(u.health<70)hBuckets[2]++; else hBuckets[3]++; });
+  new Chart(document.getElementById('analytics-health-chart'),{
+    type:'bar',
+    data:{labels:['< 30 (At Risk)','30–50 (Low)','50–70 (Moderate)','70+ (Strong)'],datasets:[{data:hBuckets,backgroundColor:['#c94444','#f9a556','#4a7fc1','#8bb25a'],borderRadius:6,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{beginAtZero:true,ticks:{stepSize:5,font:{size:9}}}}}
+  });
+
+  const bmcDone=active.filter(u=>u.bmc==='done').length;
+  const ueDone=active.filter(u=>u.ue==='done').length;
+  const bpDone=active.filter(u=>u.bp==='done').length;
+  const kycDone=active.filter(u=>u.kyc==='done').length;
+  new Chart(document.getElementById('analytics-tools-chart'),{
+    type:'bar',
+    data:{labels:['KYC','BMC','Unit Economics','Business Plan'],
+          datasets:[
+            {label:'Complete',data:[kycDone,bmcDone,ueDone,bpDone],backgroundColor:'#8bb25a',borderRadius:[4,4,0,0]},
+            {label:'Pending',data:[active.length-kycDone,active.length-bmcDone,active.length-ueDone,active.length-bpDone],backgroundColor:'#fdd9ad',borderRadius:[0,0,4,4]},
+          ]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'bottom',labels:{font:{family:'Montserrat',size:10},padding:8}}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:9}}},y:{stacked:true,beginAtZero:true,ticks:{stepSize:5,font:{size:9}}}}}
+  });
+
+  const villages = [...new Set(udyamis.map(u=>u.gp))];
+  const vilSales = villages.map(gp=>udyamis.filter(u=>u.gp===gp&&!u.dropout).reduce((s,u)=>s+u.sales,0));
+  new Chart(document.getElementById('analytics-village-chart'),{
+    type:'bar',
+    data:{labels:villages.map(v=>v.replace(' GP','')),datasets:[{data:vilSales,backgroundColor:'#4a7fc1',borderRadius:5,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{beginAtZero:true,ticks:{font:{size:9},callback:v=>'₹'+(v/1000).toFixed(0)+'K'}}}}
+  });
+
+  const inds = {'Agri / Agri-Allied':0,'Manufacturing':0,'Service':0,'Trading':0};
+  active.forEach(u=>{ if(inds[u.ind]!==undefined)inds[u.ind]++; });
+  document.getElementById('industry-breakdown').innerHTML = Object.entries(inds).map(([k,v])=>`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+      <div style="width:110px;font-size:11px;color:var(--grey-dark);">${k}</div>
+      <div style="flex:1;height:10px;background:var(--grey-light);border-radius:5px;overflow:hidden;"><div style="height:100%;width:${Math.round(v/active.length*100)}%;background:var(--green);border-radius:5px;"></div></div>
+      <div style="font-family:var(--fh);font-size:11px;font-weight:800;color:var(--ink);min-width:60px;text-align:right;">${v} <span style="font-weight:500;color:var(--grey-med);">(${Math.round(v/active.length*100)}%)</span></div>
+    </div>`).join('');
+}
+
+/* ═══════════════════════════════════════════════════
+   MISC ACTIONS
+═══════════════════════════════════════════════════ */
+function refreshData() {
+  mergeLocalData();
+  renderDashboard();
+  showToast('✅ Data refreshed from local storage');
+}
+
+function exportAllData() {
+  const data = {
+    udyamis: udyamis,
+    formRecords: JSON.parse(localStorage.getItem('gr_udyami_records') || '[]'),
+    exportedAt: new Date().toISOString(),
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'UdyamiVikas_Export_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('✅ Data exported as JSON');
+}
+
+function clearAllData() {
+  if (!confirm('Clear all locally stored form data? Sample data will be preserved.')) return;
+  localStorage.removeItem('gr_udyami_records');
+  showToast('🗑 Local form data cleared');
+  refreshData();
+}
+
+/* ═══════════════════════════════════════════════════
+   DRAWER (mobile)
+═══════════════════════════════════════════════════ */
+function openDrawer() {
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('show');
+}
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('show');
+}
+
+/* ═══════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════ */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ═══════════════════════════════════════════════════
+   PWA — SERVICE WORKER + INSTALL PROMPT
+═══════════════════════════════════════════════════ */
+let deferredPrompt = null;
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').then(reg => {
+    console.log('[SW] Registered:', reg.scope);
+  }).catch(err => console.log('[SW] Error:', err));
+}
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  setTimeout(() => {
+    if (currentUser) showInstallPrompt();
+  }, 15000);
+});
+
+function showInstallPrompt() {
+  document.getElementById('install-prompt').classList.add('show');
+  document.getElementById('ip-install-btn').onclick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const {outcome} = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') showToast('✅ App installed! Find it on your home screen.');
+    deferredPrompt = null;
+    dismissInstall();
+  };
+}
+
+function dismissInstall() {
+  document.getElementById('install-prompt').classList.remove('show');
+  sessionStorage.setItem('install-dismissed', '1');
+}
+
+window.addEventListener('appinstalled', () => showToast('✅ Udyami Vikas installed successfully!'));
+
+/* ═══════════════════════════════════════════════════
+   OFFLINE DETECTION
+═══════════════════════════════════════════════════ */
+function updateOnlineStatus() {
+  document.getElementById('offline-bar').style.display = navigator.onLine ? 'none' : 'block';
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+updateOnlineStatus();
+
+/* ═══════════════════════════════════════════════════
+   INIT — check session on load
+═══════════════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  const session = localStorage.getItem('gr_session');
+  if (session) {
+    try {
+      currentUser = JSON.parse(session);
+      showApp();
+    } catch(e) {
+      document.getElementById('login-screen').style.display = 'flex';
+    }
+  } else {
+    document.getElementById('login-screen').style.display = 'flex';
+  }
+
+  // Enter key on login
+  document.getElementById('l-pw').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+  document.getElementById('l-uid').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('l-pw').focus(); });
+});
+</script>
+</body>
+</html>

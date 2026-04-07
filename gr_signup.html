@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Udyami Vikas — Sign Up / Login · Grassroutes</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --green:#8bb25a;--green-dark:#5e8332;--green-deep:#3d5c1f;--green-light:#eef4e5;--green-mid:#c8e0a0;
+  --orange:#f9a556;--orange-dark:#d9760f;--orange-light:#fff5ea;--orange-mid:#fdd9ad;
+  --charcoal:#1e2a16;--ink:#2e3d20;--grey-dark:#555f4a;--grey-med:#7a8a6a;--grey-light:#e2e9d8;--grey-xlight:#f4f7ef;
+  --white:#ffffff;--red:#c94444;--red-light:#fdf0f0;--blue:#4a7fc1;--blue-light:#eef4fc;--purple:#7c5cbf;--purple-light:#f0ecf9;
+  --border:#d6e2c4;--border-strong:#b8d08a;
+  --shadow-sm:0 1px 3px rgba(30,42,22,.07);--shadow:0 2px 8px rgba(30,42,22,.09);--shadow-md:0 4px 20px rgba(30,42,22,.14);
+  --fh:'Montserrat',sans-serif;--fb:'Open Sans',sans-serif;--r:12px;--rs:7px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;min-height:100vh;}
+body{background:var(--grey-xlight);color:var(--ink);font-family:var(--fb);font-size:13px;display:flex;flex-direction:column;}
+
+/* ── PAGE LAYOUT ── */
+.page-wrap{display:flex;min-height:100vh;}
+
+/* ── LEFT PANEL ── */
+.left-panel{width:400px;flex-shrink:0;background:var(--charcoal);padding:40px 36px;display:flex;flex-direction:column;gap:0;position:relative;overflow:hidden;}
+.left-panel::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;border-radius:50%;background:rgba(139,178,90,.06);pointer-events:none;}
+.left-panel::after{content:'';position:absolute;bottom:-60px;left:-60px;width:240px;height:240px;border-radius:50%;background:rgba(139,178,90,.04);pointer-events:none;}
+
+.lp-brand{display:flex;align-items:center;gap:13px;margin-bottom:36px;}
+.logo-mark{width:44px;height:44px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(139,178,90,.35);}
+.brand-name{font-family:var(--fh);font-size:17px;font-weight:800;color:#fff;letter-spacing:.4px;line-height:1.15;}
+.brand-name span{color:var(--green);}
+.brand-sub{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:1.5px;text-transform:uppercase;font-family:var(--fh);font-weight:500;}
+
+.lp-headline{font-family:var(--fh);font-size:22px;font-weight:900;color:#fff;line-height:1.3;margin-bottom:8px;}
+.lp-headline span{color:var(--green);}
+.lp-tagline{font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:28px;}
+
+.lp-divider{height:1px;background:rgba(255,255,255,.07);margin:0 0 24px;}
+
+/* Role cards */
+.lp-section-title{font-family:var(--fh);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.3);margin-bottom:13px;}
+.role-cards{display:flex;flex-direction:column;gap:9px;}
+.role-card{border-radius:var(--rs);padding:13px 14px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04);transition:border-color .15s;}
+.role-card:hover{border-color:rgba(139,178,90,.25);}
+.rc-header{display:flex;align-items:center;gap:9px;margin-bottom:7px;}
+.rc-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.rc-title{font-family:var(--fh);font-size:11px;font-weight:800;color:#fff;}
+.rc-access{display:flex;flex-wrap:wrap;gap:4px;}
+.rc-tag{font-size:9px;font-family:var(--fh);font-weight:700;padding:2px 7px;border-radius:8px;}
+.rt-edit{background:rgba(139,178,90,.18);color:var(--green);}
+.rt-view{background:rgba(74,127,193,.18);color:#7ab0e0;}
+.rt-full{background:rgba(249,165,86,.18);color:var(--orange);}
+.rt-admin{background:rgba(124,92,191,.18);color:#b4a0e0;}
+
+.lp-footer{margin-top:auto;padding-top:24px;font-size:10px;color:rgba(255,255,255,.25);line-height:1.6;font-family:var(--fh);}
+
+/* ── RIGHT PANEL ── */
+.right-panel{flex:1;padding:48px 52px;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;}
+.form-container{width:100%;max-width:560px;}
+
+/* Toggle */
+.tab-toggle{display:flex;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:4px;margin-bottom:28px;box-shadow:var(--shadow-sm);}
+.tt-btn{flex:1;padding:10px;text-align:center;border-radius:9px;cursor:pointer;font-family:var(--fh);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--grey-med);transition:all .18s;border:none;background:transparent;}
+.tt-btn.active{background:var(--charcoal);color:#fff;box-shadow:0 2px 8px rgba(30,42,22,.18);}
+
+.form-panel{display:none;}
+.form-panel.active{display:block;}
+
+/* Section label */
+.fc-title{font-family:var(--fh);font-size:18px;font-weight:900;color:var(--charcoal);margin-bottom:4px;}
+.fc-sub{font-size:12px;color:var(--grey-med);margin-bottom:22px;line-height:1.5;}
+
+.sl{font-family:var(--fh);font-size:9px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:var(--grey-med);margin-bottom:11px;margin-top:16px;display:flex;align-items:center;gap:8px;}
+.sl::before{content:'';width:3px;height:13px;border-radius:2px;background:var(--green);flex-shrink:0;}
+.sl::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* Fields */
+.field-row{margin-bottom:14px;}
+.fg-2{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:14px;}
+label{display:block;font-family:var(--fh);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--grey-dark);margin-bottom:5px;}
+label .req{color:var(--red);}
+label .opt{color:var(--grey-med);font-weight:500;text-transform:none;letter-spacing:0;font-size:9px;}
+input[type=text],input[type=email],input[type=tel],input[type=date],input[type=password],select{
+  width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:var(--rs);
+  font-family:var(--fb);font-size:13px;color:var(--ink);background:var(--white);
+  transition:border-color .15s,box-shadow .15s;outline:none;-webkit-appearance:none;appearance:none;}
+input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(139,178,90,.15);}
+input.error,select.error{border-color:var(--red);box-shadow:0 0 0 3px rgba(201,68,68,.1);}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a8a6a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+select:disabled{background-color:var(--grey-xlight);color:var(--grey-med);cursor:not-allowed;}
+.field-hint{font-size:11px;color:var(--grey-med);margin-top:4px;font-style:italic;}
+.field-error{font-size:11px;color:var(--red);margin-top:4px;display:none;}
+.field-error.show{display:block;}
+
+/* Password field */
+.pw-wrap{position:relative;}
+.pw-toggle{position:absolute;right:13px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:13px;color:var(--grey-med);user-select:none;}
+
+/* Generated ID display */
+.uid-display{background:var(--charcoal);border-radius:var(--rs);padding:13px 16px;display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.uid-label{font-family:var(--fh);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);}
+.uid-value{font-family:var(--fh);font-size:15px;font-weight:900;color:var(--green);letter-spacing:1px;flex:1;}
+.uid-copy{cursor:pointer;font-size:11px;font-family:var(--fh);font-weight:700;color:rgba(255,255,255,.5);background:rgba(255,255,255,.08);border:none;border-radius:5px;padding:4px 10px;transition:all .15s;}
+.uid-copy:hover{background:rgba(139,178,90,.2);color:var(--green);}
+
+/* Submit button */
+.submit-btn{width:100%;background:var(--green-dark);color:#fff;border:none;border-radius:var(--rs);padding:14px;font-family:var(--fh);font-size:12px;font-weight:800;cursor:pointer;letter-spacing:.4px;transition:background .15s;margin-top:4px;}
+.submit-btn:hover{background:var(--green-deep);}
+.submit-btn:disabled{background:var(--grey-med);cursor:not-allowed;}
+
+/* Or divider */
+.or-divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--grey-med);font-size:11px;font-family:var(--fh);font-weight:700;}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* Default login quick-cards */
+.quick-login-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;}
+.ql-card{border:1.5px solid var(--border);border-radius:var(--rs);padding:11px 13px;cursor:pointer;background:var(--white);transition:all .15s;}
+.ql-card:hover{border-color:var(--green);background:var(--green-light);}
+.ql-role{font-family:var(--fh);font-size:10px;font-weight:800;color:var(--ink);margin-bottom:3px;}
+.ql-cred{font-size:10px;color:var(--grey-med);font-family:var(--fh);}
+.ql-badge{display:inline-block;padding:2px 7px;border-radius:6px;font-size:8px;font-family:var(--fh);font-weight:800;text-transform:uppercase;margin-top:4px;}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--charcoal);color:#fff;padding:13px 20px;border-radius:var(--rs);font-family:var(--fh);font-size:11px;font-weight:700;box-shadow:var(--shadow-md);z-index:1000;transform:translateY(20px);opacity:0;transition:all .25s;pointer-events:none;max-width:340px;line-height:1.5;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-left:4px solid var(--green);}
+.toast.error{border-left:4px solid var(--red);}
+
+/* Success screen */
+.success-screen{display:none;text-align:center;padding:32px 0;}
+.success-screen.show{display:block;}
+.success-icon{font-size:52px;display:block;margin-bottom:16px;}
+.success-title{font-family:var(--fh);font-size:20px;font-weight:900;color:var(--charcoal);margin-bottom:8px;}
+.success-sub{font-size:13px;color:var(--grey-med);margin-bottom:24px;line-height:1.6;}
+.success-uid-box{background:var(--green-light);border:2px solid var(--green-mid);border-radius:var(--r);padding:18px 22px;margin-bottom:20px;text-align:left;}
+.sub-lbl{font-family:var(--fh);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--green-dark);margin-bottom:5px;}
+.sub-uid{font-family:var(--fh);font-size:20px;font-weight:900;color:var(--green-deep);letter-spacing:1.5px;}
+.sub-name{font-size:12px;color:var(--grey-dark);margin-top:4px;}
+.success-actions{display:flex;gap:10px;flex-direction:column;}
+.sa-btn{padding:13px;border-radius:var(--rs);font-family:var(--fh);font-size:11px;font-weight:800;cursor:pointer;border:none;transition:all .15s;letter-spacing:.3px;}
+.sa-primary{background:var(--green-dark);color:#fff;}
+.sa-primary:hover{background:var(--green-deep);}
+.sa-secondary{background:var(--white);color:var(--ink);border:1.5px solid var(--border);}
+.sa-secondary:hover{border-color:var(--green);color:var(--green-dark);}
+
+/* Access badge strip */
+.access-strip{background:var(--white);border:1px solid var(--border);border-radius:var(--rs);padding:12px 15px;margin-bottom:14px;box-shadow:var(--shadow-sm);}
+.as-title{font-family:var(--fh);font-size:10px;font-weight:800;color:var(--ink);margin-bottom:8px;}
+.as-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:6px;font-size:11px;color:var(--grey-dark);}
+.as-row:last-child{margin-bottom:0;}
+.as-icon{width:18px;flex-shrink:0;text-align:center;}
+
+/* Responsive */
+@media(max-width:900px){
+  .left-panel{display:none;}
+  .right-panel{padding:28px 22px;}
+}
+@media(max-width:480px){
+  .fg-2{grid-template-columns:1fr;}
+  .quick-login-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+<!-- ══════════════════════════════════
+     LEFT PANEL — Branding + Role Info
+════════════════════════════════════ -->
+<div class="left-panel">
+  <div class="lp-brand">
+    <div class="logo-mark">
+      <svg viewBox="0 0 40 40" fill="none" width="22" height="22">
+        <circle cx="20" cy="14" r="7" fill="white" opacity=".9"/>
+        <path d="M8 32 Q20 18 32 32" stroke="white" stroke-width="2.5" fill="none" opacity=".8"/>
+        <path d="M20 21 L20 30" stroke="white" stroke-width="2" opacity=".7"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">Udyami <span>Vikas</span></div>
+      <div class="brand-sub">Platform · Grassroutes</div>
+    </div>
+  </div>
+
+  <div class="lp-headline">Field-First<br/><span>Entrepreneur Data</span><br/>Platform</div>
+  <div class="lp-tagline">Track, measure, and grow rural enterprises. Built for Incubation Officers and NGO partners working on the ground.</div>
+
+  <div class="lp-divider"></div>
+
+  <div class="lp-section-title">Role-Based Access</div>
+  <div class="role-cards">
+
+    <div class="role-card">
+      <div class="rc-header">
+        <div class="rc-icon" style="background:rgba(139,178,90,.15);">📋</div>
+        <div class="rc-title">Incubation Officer</div>
+      </div>
+      <div class="rc-access">
+        <span class="rc-tag rt-edit">Edit: Entrepreneur Profiles</span>
+        <span class="rc-tag rt-view">View: Entrepreneur Dashboard</span>
+        <span class="rc-tag rt-view">View: Batch Dashboard</span>
+      </div>
+    </div>
+
+    <div class="role-card">
+      <div class="rc-header">
+        <div class="rc-icon" style="background:rgba(74,127,193,.15);">🏢</div>
+        <div class="rc-title">NGO Supervisor</div>
+      </div>
+      <div class="rc-access">
+        <span class="rc-tag rt-edit">All Officer Access</span>
+        <span class="rc-tag rt-view">View: Supervisor Dashboard</span>
+      </div>
+    </div>
+
+    <div class="role-card">
+      <div class="rc-header">
+        <div class="rc-icon" style="background:rgba(249,165,86,.15);">💰</div>
+        <div class="rc-title">Funder</div>
+      </div>
+      <div class="rc-access">
+        <span class="rc-tag rt-edit">All Supervisor Access</span>
+        <span class="rc-tag rt-full">View: All Supervisors (Funder View)</span>
+      </div>
+    </div>
+
+    <div class="role-card">
+      <div class="rc-header">
+        <div class="rc-icon" style="background:rgba(124,92,191,.15);">⚙️</div>
+        <div class="rc-title">Grassroutes Admin</div>
+      </div>
+      <div class="rc-access">
+        <span class="rc-tag rt-admin">Full Platform Access</span>
+        <span class="rc-tag rt-full">View Across Multiple Funders</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="lp-footer">
+    User ID Format: <strong style="color:rgba(255,255,255,.5);">ORG-STATE-DIST-BLOCK-BATCH-XXXX</strong><br/>
+    e.g. WOTR-MH-NASIK-IGATPURI-B1-0001
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     RIGHT PANEL — Login / Sign Up
+════════════════════════════════════ -->
+<div class="right-panel">
+<div class="form-container">
+
+  <!-- TOGGLE -->
+  <div class="tab-toggle">
+    <button class="tt-btn active" id="tab-login" onclick="switchTab('login')">Login</button>
+    <button class="tt-btn" id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
+  </div>
+
+  <!-- ══ LOGIN PANEL ══ -->
+  <div id="panel-login" class="form-panel active">
+    <div class="fc-title">Welcome back</div>
+    <div class="fc-sub">Sign in to your Udyami Vikas account. Use your User ID and password.</div>
+
+    <div class="sl">Quick Test Login</div>
+    <div class="quick-login-grid">
+      <div class="ql-card" onclick="quickLogin('IO001','Test@123','Incubation Officer')">
+        <div class="ql-role">Incubation Officer</div>
+        <div class="ql-cred">ID: IO001 · Test@123</div>
+        <span class="ql-badge" style="background:var(--green-light);color:var(--green-dark);">IO</span>
+      </div>
+      <div class="ql-card" onclick="quickLogin('SP001','Test@123','NGO Supervisor')">
+        <div class="ql-role">NGO Supervisor</div>
+        <div class="ql-cred">ID: SP001 · Test@123</div>
+        <span class="ql-badge" style="background:var(--blue-light);color:var(--blue);">SP</span>
+      </div>
+      <div class="ql-card" onclick="quickLogin('FD001','Test@123','Funder')">
+        <div class="ql-role">Funder</div>
+        <div class="ql-cred">ID: FD001 · Test@123</div>
+        <span class="ql-badge" style="background:var(--orange-light);color:var(--orange-dark);">FD</span>
+      </div>
+      <div class="ql-card" onclick="quickLogin('GR001','Test@123','Grassroutes Admin')">
+        <div class="ql-role">Grassroutes Admin</div>
+        <div class="ql-cred">ID: GR001 · Test@123</div>
+        <span class="ql-badge" style="background:var(--purple-light);color:var(--purple);">GR</span>
+      </div>
+    </div>
+
+    <div class="or-divider">or enter manually</div>
+
+    <div class="field-row">
+      <label>User ID <span class="req">*</span></label>
+      <input type="text" id="l-userid" placeholder="e.g. WOTR-MH-NASIK-IGATPURI-B1-0001" autocomplete="username"/>
+    </div>
+    <div class="field-row">
+      <label>Password <span class="req">*</span></label>
+      <div class="pw-wrap">
+        <input type="password" id="l-password" placeholder="Enter your password" autocomplete="current-password"/>
+        <span class="pw-toggle" onclick="togglePw('l-password',this)">👁</span>
+      </div>
+      <div class="field-error" id="l-error">Invalid User ID or password. Please try again.</div>
+    </div>
+
+    <button class="submit-btn" onclick="doLogin()">Sign In →</button>
+
+    <p style="margin-top:14px;font-size:11px;color:var(--grey-med);text-align:center;font-family:var(--fh);">
+      No account? <span style="color:var(--green-dark);cursor:pointer;font-weight:700;" onclick="switchTab('signup')">Sign Up here</span>
+    </p>
+
+    <!-- Post-login access info (hidden until login) -->
+    <div id="login-success" style="display:none;margin-top:20px;">
+      <div class="access-strip" id="access-info"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="submit-btn" style="flex:1;" onclick="goToDashboard()">Open Dashboard →</button>
+        <button class="submit-btn" style="flex:0 0 auto;width:auto;padding:14px 18px;background:var(--white);color:var(--ink);border:1.5px solid var(--border);" onclick="goToForm()">Open Form</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SIGN-UP PANEL ══ -->
+  <div id="panel-signup" class="form-panel">
+
+    <!-- Sign-up form -->
+    <div id="signup-form-wrap">
+      <div class="fc-title">Create your account</div>
+      <div class="fc-sub">Register as an Incubation Officer or NGO partner. Your User ID will be auto-generated on submission.</div>
+
+      <div class="sl">Personal Information</div>
+      <div class="fg-2">
+        <div>
+          <label>Full Name <span class="req">*</span></label>
+          <input type="text" id="s-name" placeholder="As per official ID"/>
+          <div class="field-error" id="e-name">Name is required.</div>
+        </div>
+        <div>
+          <label>Mobile Number <span class="req">*</span></label>
+          <input type="tel" id="s-mobile" placeholder="10-digit mobile" maxlength="10"/>
+          <div class="field-error" id="e-mobile">Enter a valid 10-digit mobile number.</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <label>Email ID <span class="req">*</span></label>
+        <input type="email" id="s-email" placeholder="you@organisation.org"/>
+        <div class="field-error" id="e-email">Enter a valid email address.</div>
+      </div>
+
+      <div class="sl">Organisation & Role</div>
+      <div class="fg-2">
+        <div>
+          <label>Organisation <span class="req">*</span></label>
+          <select id="s-org" onchange="updateUid()">
+            <option value="">Select NGO / Partner</option>
+            <option value="WOTR">WOTR</option>
+            <option value="Seva Mandir">Seva Mandir</option>
+            <option value="Development Support Centre (DSC)">Development Support Centre (DSC)</option>
+            <option value="SESTA">SESTA</option>
+            <option value="Harsha Trust">Harsha Trust</option>
+            <option value="IBTADA">IBTADA</option>
+            <option value="SRIJAN">SRIJAN</option>
+            <option value="4S (Society for Social Service)">4S (Society for Social Service)</option>
+            <option value="SPS (Shramik Pragati Sangathan)">SPS (Shramik Pragati Sangathan)</option>
+            <option value="TCL (Tata Community Initiatives Trust / partner entity)">TCL (Tata Community Initiatives Trust / partner entity)</option>
+          </select>
+          <div class="field-error" id="e-org">Please select an organisation.</div>
+        </div>
+        <div>
+          <label>Role <span class="req">*</span></label>
+          <select id="s-role" onchange="updateAccessPreview()">
+            <option value="">Select Role</option>
+            <option value="Incubation Officer">Incubation Officer</option>
+            <option value="NGO Supervisor">NGO Supervisor (Support Partner)</option>
+            <option value="Funder">Funder</option>
+            <option value="Grassroutes Admin">Grassroutes Admin</option>
+          </select>
+          <div class="field-error" id="e-role">Please select a role.</div>
+        </div>
+      </div>
+
+      <!-- Role access preview -->
+      <div id="role-preview" style="display:none;" class="access-strip">
+        <div class="as-title" id="rp-title">Access for this role</div>
+        <div id="rp-items"></div>
+      </div>
+
+      <div class="sl">Location</div>
+      <div class="fg-2">
+        <div>
+          <label>State <span class="req">*</span></label>
+          <select id="s-state" onchange="onStateChange(); updateUid()">
+            <option value="">Select State</option>
+            <option>Andaman And Nicobar Islands</option>
+            <option>Andhra Pradesh</option>
+            <option>Arunachal Pradesh</option>
+            <option>Assam</option>
+            <option>Bihar</option>
+            <option>Chandigarh</option>
+            <option>Chhattisgarh</option>
+            <option>Goa</option>
+            <option>Gujarat</option>
+            <option>Haryana</option>
+            <option>Himachal Pradesh</option>
+            <option>Jammu And Kashmir</option>
+            <option>Jharkhand</option>
+            <option>Karnataka</option>
+            <option>Kerala</option>
+            <option>Ladakh</option>
+            <option>Madhya Pradesh</option>
+            <option>Maharashtra</option>
+            <option>Manipur</option>
+            <option>Meghalaya</option>
+            <option>Mizoram</option>
+            <option>Nagaland</option>
+            <option>Odisha</option>
+            <option>Puducherry</option>
+            <option>Punjab</option>
+            <option>Rajasthan</option>
+            <option>Sikkim</option>
+            <option>Tamil Nadu</option>
+            <option>Telangana</option>
+            <option>Tripura</option>
+            <option>Uttar Pradesh</option>
+            <option>Uttarakhand</option>
+            <option>West Bengal</option>
+          </select>
+          <div class="field-error" id="e-state">Please select a state.</div>
+        </div>
+        <div>
+          <label>District <span class="req">*</span></label>
+          <select id="s-district" disabled onchange="onDistrictChange(); updateUid()">
+            <option value="">Select District</option>
+          </select>
+          <div class="field-error" id="e-district">Please select a district.</div>
+        </div>
+      </div>
+      <div class="fg-2">
+        <div>
+          <label>Block / Taluka <span class="req">*</span></label>
+          <select id="s-block" disabled onchange="updateUid()">
+            <option value="">Select Block</option>
+          </select>
+          <div class="field-error" id="e-block">Please select a block.</div>
+        </div>
+        <div>
+          <label>Incubation Start Date <span class="req">*</span></label>
+          <input type="date" id="s-start-date" onchange="updateUid()"/>
+          <div class="field-error" id="e-date">Please enter the incubation start date.</div>
+        </div>
+      </div>
+
+      <div class="sl">Credentials</div>
+      <div class="fg-2">
+        <div>
+          <label>Password <span class="req">*</span></label>
+          <div class="pw-wrap">
+            <input type="password" id="s-password" placeholder="Min 8 characters"/>
+            <span class="pw-toggle" onclick="togglePw('s-password',this)">👁</span>
+          </div>
+          <div class="field-hint">Use letters, numbers, and a special character.</div>
+          <div class="field-error" id="e-password">Password must be at least 8 characters.</div>
+        </div>
+        <div>
+          <label>Confirm Password <span class="req">*</span></label>
+          <div class="pw-wrap">
+            <input type="password" id="s-confirm" placeholder="Re-enter password"/>
+            <span class="pw-toggle" onclick="togglePw('s-confirm',this)">👁</span>
+          </div>
+          <div class="field-error" id="e-confirm">Passwords do not match.</div>
+        </div>
+      </div>
+
+      <!-- Live User ID Preview -->
+      <div class="sl">Your User ID (Auto-Generated)</div>
+      <div class="uid-display" id="uid-preview-wrap">
+        <div>
+          <div class="uid-label">User ID will be generated</div>
+          <div class="uid-value" id="uid-preview" style="font-size:12px;color:rgba(255,255,255,.4);">Fill in Org · State · District · Block above</div>
+        </div>
+        <button class="uid-copy" onclick="copyUid()" id="uid-copy-btn" style="display:none;">Copy</button>
+      </div>
+
+      <button class="submit-btn" onclick="doSignup()">Create Account →</button>
+
+      <p style="margin-top:14px;font-size:11px;color:var(--grey-med);text-align:center;font-family:var(--fh);">
+        Already have an account? <span style="color:var(--green-dark);cursor:pointer;font-weight:700;" onclick="switchTab('login')">Sign In</span>
+      </p>
+    </div>
+
+    <!-- Success Screen -->
+    <div id="signup-success" class="success-screen">
+      <span class="success-icon">🎉</span>
+      <div class="success-title">Account Created!</div>
+      <div class="success-sub">Welcome to Udyami Vikas. Your User ID has been generated. Save it — you'll need it to log in.</div>
+      <div class="success-uid-box">
+        <div class="sub-lbl">Your User ID</div>
+        <div class="sub-uid" id="ss-uid">—</div>
+        <div class="sub-name" id="ss-name">—</div>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;" id="ss-badges"></div>
+      </div>
+      <div class="success-actions">
+        <button class="sa-btn sa-primary" onclick="goToDashboard()">Open Dashboard →</button>
+        <button class="sa-btn sa-primary" style="background:var(--blue);" onclick="goToForm()">Open Field Form →</button>
+        <button class="sa-btn sa-secondary" onclick="resetSignup()">Register Another User</button>
+      </div>
+    </div>
+
+  </div><!-- /panel-signup -->
+
+</div><!-- /form-container -->
+</div><!-- /right-panel -->
+</div><!-- /page-wrap -->
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   DATA — DISTRICTS & BLOCKS
+═══════════════════════════════════════════════════ */
+const locationData = {
+  'Maharashtra': {
+    'Ahmednagar': ['Akole','Jamkhed','Karjat','Kopargaon','Nevasa','Ngar','Parner','Pathardi','Rahata','Rahuri','Sangamner','Shevgaon','Shrigonda','Shrirampur'],
+    'Nashik': ['Baglan','Chandwad','Deola','Dindori','Igatpuri','Kalwan','Malegaon','Nandgaon','Nashik','Niphad','Peint','Sinnar','Surgana','Trimbakeshwar','Yeola'],
+    'Pune': ['Ambegaon','Baramati','Bhor','Daund','Haveli','Indapur','Junnar','Khed','Maval','Mulshi','Purandar','Shirur','Velhe'],
+    'Aurangabad': ['Aurangabad','Gangapur','Kannad','Khuldabad','Paithan','Phulambri','Sillod','Soegaon','Vaijapur'],
+    'Jalgaon': ['Amalner','Bhusawal','Bodwad','Chalisgaon','Chopda','Dharangaon','Erandol','Jalgaon','Jamner','Muktainagar','Pachora','Parola','Raver','Yawal'],
+    'Kolhapur': ['Ajra','Bhudargad','Chandgad','Gadhinglaj','Hatkanangle','Kagal','Karveer','Panhala','Radhanagari','Shahuwadi','Shirol'],
+    'Nanded': ['Ardhapur','Biloli','Deglur','Dharmabad','Hadgaon','Himayatnagar','Kandhar','Kinwat','Loha','Mudkhed','Mukhed','Naigaon','Nanded','Umri'],
+    'Amravati': ['Achalpur','Anjangaon','Chandur Bazar','Chandur Railway','Chikhaldara','Daryapur','Dharni','Dhamangaon','Morshi','Nandgaon','Tivsa','Warud'],
+    'Wardha': ['Arvi','Ashti','Deoli','Hinganghat','Karanja','Samudrapur','Seloo','Sindi','Wardha'],
+    'Nagpur': ['Bhiwapur','Hingna','Kamptee','Katol','Kuhi','Mauda','Nagpur City','Narkhed','Parseoni','Ramtek','Savner','Umred'],
+  },
+  'Rajasthan': {
+    'Udaipur': ['Bhinder','Girwa','Gogunda','Jhadol','Kherwara','Kotra','Lasadiya','Mavli','Pahada','Salumbar','Sarada','Vallabhnagar'],
+    'Alwar': ['Alwar','Bahror','Bansur','Govindgarh','Kathumar','Kishangarh Bas','Kotkasim','Laxmangarh','Mandawar','Mundawar','Neemrana','Ramgarh','Rajgarh','Thanagazi','Tijara'],
+    'Barmer': ['Baitu','Barmer','Balotra','Chohtan','Dhorimana','Gudamalani','Pachpadra','Ramsar','Samdari','Sheo','Siwana'],
+    'Jaipur': ['Amber','Amer','Bassi','Chaksu','Chomu','Dudu','Jaipur','Jamwa Ramgarh','Kotputli','Phagi','Phulera','Sanganer','Shahpura','Toonga','Viratnagar'],
+    'Jodhpur': ['Aau','Balesar','Bap','Baori','Bilara','Bhopalgarh','Jodhpur','Lohawat','Mandore','Osian','Phalodi','Pipar','Shergarh','Sherpa'],
+    'Kota': ['Digod','Itawa','Kanwas','Kaithoon','Kota','Ladpura','Pipalda','Ramganj Mandi','Sangar','Sultanpur'],
+    'Dungarpur': ['Aspur','Bichhiwara','Chikhali','Dungarpur','Galiyakot','Obri','Sabla','Sagwara','Simalwara'],
+    'Banswara': ['Anandpuri','Bagidora','Banswara','Ghatol','Garhi','Kushalgarh','Peetliya'],
+  },
+  'Madhya Pradesh': {
+    'Barwani': ['Barwani','Gandhwani','Junapani','Pansemal','Pati','Rajpur','Sendhwa','Thikri'],
+    'Dhar': ['Badnawar','Bagli','Dhar','Dharampuri','Gandhwani','Kukshi','Manawar','Nalcha','Sardarpur','Tirla','Umarban'],
+    'Jhabua': ['Alirajpur','Bhabra','Jhabua','Jobat','Meghnagar','Petlawad','Rama','Thandla','Udaigarh'],
+    'Indore': ['Depalpur','Indore','Mhow','Sanwer'],
+    'Bhopal': ['Bhopal','Berasia','Phanda'],
+    'Rewa': ['Gangeo','Hanumana','Huzur','Mauganj','Naigarhi','Rewa','Sirmour','Teonthar','Tyonthar'],
+    'Satna': ['Amarpatan','Baitha','Maihar','Majhgawan','Nagod','Rampur Baghelan','Ramnagar','Satna','Unchahara'],
+    'Shahdol': ['Anuppur','Beohari','Burhar','Jaisingnagar','Jaitpur','Pushprajgarh','Shahdol','Sohagpur'],
+    'Sidhi': ['Churhat','Gopad Banas','Kusmi','Majhauli','Rampur Naikin','Sidhi','Singrauli'],
+    'Shivpuri': ['Badarwas','Karera','Khaniadhana','Narwar','Pichhore','Pohri','Shivpuri'],
+  },
+  'Jharkhand': {
+    'Ranchi': ['Angara','Bero','Bundu','Chanho','Kanke','Lapung','Mandar','Namkum','Ormanjhi','Ratu','Silli','Sonahatu','Tamar'],
+    'West Singhbhum': ['Chakradharpur','Chaibasa','Goilkera','Gudri','Jagannathpur','Khutpani','Manjhgaon','Manoharpur','Noamundi','Sonua','Tonto'],
+    'East Singhbhum': ['Baharagora','Boram','Dhalbhumgarh','Dhalbhum','Jamshedpur','Patamda','Potka'],
+    'Hazaribagh': ['Barkatha','Barki Saria','Barkagaon','Churchu','Daru','Hazaribagh','Ichak','Katkamsandi','Mandu','Padma'],
+    'Dumka': ['Dumka','Gopikandar','Jama','Jarmundi','Masalia','Ramgarh','Saraiyahat','Shikaripara'],
+    'Giridih': ['Bengabad','Birni','Deori','Dumri','Gandey','Giridih','Gawan','Jamua','Peterbar','Tisri'],
+  },
+  'Karnataka': {
+    'Dharwad': ['Dharwad','Hubli','Kalghatgi','Navalgund','Naragund'],
+    'Gadag': ['Gadag-Betageri','Mundargi','Nargund','Ron','Shirahatti'],
+    'Bagalkot': ['Bagalkot','Badami','Bilagi','Hungund','Jamkhandi','Mudhol'],
+    'Bijapur': ['Basavana Bagewadi','Bijapur','Chadachan','Indi','Muddebihal','Sindagi'],
+    'Raichur': ['Devadurga','Lingsugur','Manvi','Mudugal','Raichur','Sindhanur'],
+    'Gulbarga': ['Afzalpur','Aland','Chincholi','Chittapur','Gulbarga','Jewargi','Kamalapur','Sedam','Shorapur','Yadgir'],
+    'Bellary': ['Bellary','Hadagali','Hospet','Kottur','Kudligi','Sandur','Siraguppa'],
+    'Tumkur': ['Chiknayakanhalli','Gubbi','Koratagere','Kunigal','Madhugiri','Pavagada','Sira','Tiptur','Tumkur'],
+  },
+  'Uttar Pradesh': {
+    'Varanasi': ['Arajiline','Badagaon','Cholapur','Harahua','Kashi Vidyapeeth','Pindra','Sewapuri'],
+    'Lucknow': ['Bakshi Ka Talab','Lucknow','Mal','Mohanlalganj','Sarojini Nagar'],
+    'Allahabad': ['Bara','Chaka','Handia','Karchhana','Koraon','Meja','Phulpur','Shankargarh','Soraon'],
+    'Azamgarh': ['Ahraura','Atraulia','Azamgarh','Lalganj','Mehnagar','Mirzapur','Phoolpur','Tarwa'],
+    'Gorakhpur': ['Bansgaon','Bhathat','Bhojapur','Campierganj','Chauri Chaura','Gola','Gorakhpur','Kauriram','Khajni','Pipraich','Sadar','Sahjanwa','Sardarnagar'],
+    'Mirzapur': ['Chunar','Haliya','Lalganj','Majhawan','Marihan','Mirzapur','Nagar','Pahadi','Rajgarh'],
+    'Sonbhadra': ['Babhani','Dudhi','Ghorawal','Myorpur','Nagwa','Obra','Robert','Sonbhadra'],
+  },
+  'Odisha': {
+    'Koraput': ['Baipariguda','Bandhugaon','Boipariguda','Dasamantapur','Jeypore','Kotpad','Koraput','Kundra','Lamtaput','Laxmipur','Machkund','Narayanpatna','Pottangi','Similiguda'],
+    'Rayagada': ['Bissamcuttack','Gunupur','Gudari','Kashipur','Kolnara','Muniguda','Padampur','Rayagada','Ramanaguda'],
+    'Kalahandi': ['Bhawanipatna','Dharmagarh','Golamunda','Junagarh','Kalampur','Karlamunda','Kesinga','Koksara','Lanjigarh','M Rampur','Madanpur Rampur','Narla','Thuamul Rampur'],
+    'Kandhamal': ['Baliguda','Chakapad','Daringbadi','G Udayagiri','K Nuagaon','Kotagarh','Lodha','Phiringia','Raikia','Tikabali','Tumudibandha'],
+    'Mayurbhanj': ['Badasahi','Bangriposi','Baripada','Baripada Town','Barsahi','Bijatala','Bisoi','Karanjia','Kusumi','Rairangpur','Suliapada','Udala'],
+  },
+  'Bihar': {
+    'Gaya': ['Amas','Atri','Barachatti','Bodh Gaya','Dumaria','Fatehpur','Guraru','Gaya','Imamganj','Khizasarai','Konch','Manpur','Mohanpur','Paraiya','Sherghati','Tankuppa','Wazirganj'],
+    'Munger': ['Asarganj','Bariarpur','Dharhara','Haveli Kharagpur','Jamalpur','Kharagpur','Munger','Sangrampur','Tarapur','Tetia Bambar'],
+    'Bhagalpur': ['Bhagalpur','Bihpur','Gopalpur','Ismailpur','Jagdishpur','Kahalgaon','Kharik','Khirsarai','Narayanpur','Naugachhia','Pirpainti','Sahkund','Shahkund','Sonhaula','Sultanganj'],
+    'Araria': ['Araria','Bhargama','Forbesganj','Jokihat','Kursakanta','Narpatganj','Palasi','Raniganj','Sikti'],
+    'Sitamarhi': ['Bajpatti','Bathnaha','Belsand','Bokhra','Choraut','Dheng','Dumra','Majorganj','Nanpur','Parsauni','Parihar','Pupri','Riga','Runni Saidpur','Sursand'],
+  },
+  'Gujarat': {
+    'Anand': ['Anand','Borsad','Khambhat','Petlad','Sojitra','Tarapur','Umreth'],
+    'Vadodara': ['Dabhoi','Desar','Karjan','Padra','Savli','Shinor','Vaghodia','Vadodara','Waghodia'],
+    'Bharuch': ['Amod','Ankleshwar','Bharuch','Hansot','Jambusar','Jhagadia','Netrang','Vagra','Valia'],
+    'Narmada': ['Dediapada','Garudeshwar','Nandod','Sagbara','Tilakwada'],
+    'Dahod': ['Dahod','Devgadh Baria','Dhanpur','Fatepura','Garbada','Jhalod','Limkheda','Singvad','Zalod'],
+    'Navsari': ['Chikhli','Gandevi','Jalalpore','Khergam','Navsari','Vansda'],
+    'Valsad': ['Bansda','Dharampur','Kaprada','Umbergaon','Valsad','Vapi'],
+  },
+  'Chhattisgarh': {
+    'Raipur': ['Abhanpur','Arang','Baloda Bazar','Bhatapara','Dharsiwa','Gariyaband','Raipur','Simga','Tilda'],
+    'Bilaspur': ['Akaltara','Bilaspur','Gaurela','Kota','Lormi','Marwahi','Mungeli','Pali','Takhatpur'],
+    'Bastar': ['Bastar','Bakawand','Darbha','Jagdalpur','Lohandiguda','Narayanpur','Tokapal'],
+    'Korba': ['Kartala','Katghora','Korba','Pali','Podi-Uparoda'],
+    'Dhamtari': ['Bhakhara','Dhamtari','Kurud','Magarlod','Nagri'],
+    'Kanker': ['Antagarh','Bhanupratappur','Charama','Durgkondal','Kanker','Koylibeda','Narharpur'],
+  },
+};
+
+// Default blocks for any district not listed
+const defaultBlocks = ['Block 1','Block 2','Block 3','Block 4','Block 5'];
+
+// Additional block data for key districts
+const blockData = {
+  'Barwani': ['Barwani','Pansemal','Sendhwa','Thikri','Rajpur','Pati','Gandhwani'],
+  'Nashik': ['Nashik','Niphad','Igatpuri','Sinnar','Dindori','Kalwan','Baglan','Trimbakeshwar','Yeola','Chandwad'],
+  'Udaipur': ['Girwa','Mavli','Sarada','Vallabhnagar','Gogunda','Bhinder','Jhadol','Kherwara','Lasadiya','Salumbar'],
+  'Alwar': ['Alwar','Bahror','Bansur','Thanagazi','Rajgarh','Neemrana','Mandawar','Laxmangarh','Kotkasim','Tijara'],
+  'Ranchi': ['Ratu','Tamar','Burmu','Lapung','Namkum','Kanke','Angara','Chanho','Bero','Silli'],
+  'Koraput': ['Koraput','Jeypore','Kotpad','Dasamantapur','Laxmipur','Kundra','Pottangi','Boipariguda','Narayanpatna','Baipariguda'],
+};
+
+/* ═══════════════════════════════════════════════════
+   CONSTANTS — ORG & STATE CODES
+═══════════════════════════════════════════════════ */
+const orgCodes = {
+  'WOTR': 'WOTR',
+  'Seva Mandir': 'SEVA',
+  'Development Support Centre (DSC)': 'DSC',
+  'SESTA': 'SESTA',
+  'Harsha Trust': 'HT',
+  'IBTADA': 'IBT',
+  'SRIJAN': 'SRJ',
+  '4S (Society for Social Service)': '4S',
+  'SPS (Shramik Pragati Sangathan)': 'SPS',
+  'TCL (Tata Community Initiatives Trust / partner entity)': 'TCL',
+};
+
+const stateCodes = {
+  'Andaman And Nicobar Islands':'AN','Andhra Pradesh':'AP','Arunachal Pradesh':'AR',
+  'Assam':'AS','Bihar':'BR','Chandigarh':'CH','Chhattisgarh':'CG','Goa':'GA',
+  'Gujarat':'GJ','Haryana':'HR','Himachal Pradesh':'HP','Jammu And Kashmir':'JK',
+  'Jharkhand':'JH','Karnataka':'KA','Kerala':'KL','Ladakh':'LA',
+  'Madhya Pradesh':'MP','Maharashtra':'MH','Manipur':'MN','Meghalaya':'ML',
+  'Mizoram':'MZ','Nagaland':'NL','Odisha':'OR','Puducherry':'PY',
+  'Punjab':'PB','Rajasthan':'RJ','Sikkim':'SK','Tamil Nadu':'TN',
+  'Telangana':'TS','Tripura':'TR','Uttar Pradesh':'UP','Uttarakhand':'UK',
+  'West Bengal':'WB',
+};
+
+const roleAccess = {
+  'Incubation Officer': {
+    icon: '📋',
+    color: 'var(--green-dark)',
+    bg: 'var(--green-light)',
+    edit: ['Entrepreneur Profiles'],
+    view: ['Entrepreneur Dashboard', 'Batch Dashboard'],
+  },
+  'NGO Supervisor': {
+    icon: '🏢',
+    color: 'var(--blue)',
+    bg: 'var(--blue-light)',
+    edit: ['All Officer Access (Entrepreneur Profiles)'],
+    view: ['Entrepreneur Dashboard', 'Batch Dashboard', 'Supervisor Dashboard'],
+  },
+  'Funder': {
+    icon: '💰',
+    color: 'var(--orange-dark)',
+    bg: 'var(--orange-light)',
+    edit: ['All Supervisor Access'],
+    view: ['All Dashboards', 'Funder Portfolio View', 'All Supervisors Dashboard'],
+  },
+  'Grassroutes Admin': {
+    icon: '⚙️',
+    color: 'var(--purple)',
+    bg: 'var(--purple-light)',
+    edit: ['Full Platform — All Records'],
+    view: ['All Views Across Multiple Funders', 'Admin Panel', 'User Management'],
+  },
+};
+
+const defaultUsers = [
+  {id:'IO001', password:'Test@123', role:'Incubation Officer', name:'Test IO'},
+  {id:'SP001', password:'Test@123', role:'NGO Supervisor', name:'Test Supervisor'},
+  {id:'FD001', password:'Test@123', role:'Funder', name:'Test Funder'},
+  {id:'GR001', password:'Test@123', role:'Grassroutes Admin', name:'Test Admin'},
+];
+
+/* ═══════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════ */
+let generatedUid = '';
+
+function abbrev(str, len) {
+  return str.replace(/[^A-Za-z0-9]/g,'').substring(0,len).toUpperCase();
+}
+
+function updateUid() {
+  const org   = document.getElementById('s-org').value;
+  const state = document.getElementById('s-state').value;
+  const dist  = document.getElementById('s-district').value;
+  const block = document.getElementById('s-block').value;
+  const date  = document.getElementById('s-start-date').value;
+
+  if (!org || !state || !dist || !block) {
+    document.getElementById('uid-preview').textContent = 'Fill in Org · State · District · Block above';
+    document.getElementById('uid-preview').style.color = 'rgba(255,255,255,.35)';
+    document.getElementById('uid-preview').style.fontSize = '12px';
+    document.getElementById('uid-copy-btn').style.display = 'none';
+    generatedUid = '';
+    return;
+  }
+
+  const orgCode   = orgCodes[org]   || abbrev(org, 4);
+  const stateCode = stateCodes[state] || abbrev(state, 2);
+  const distCode  = abbrev(dist, 6);
+  const blockCode = abbrev(block, 7);
+
+  // Derive batch from start date year
+  let batch = 'B1';
+  if (date) {
+    const yr = new Date(date).getFullYear();
+    batch = 'B' + (yr - 2023);
+  }
+
+  // Sequential counter
+  const stored = JSON.parse(localStorage.getItem('gr_users') || '[]');
+  const seq = (stored.length + 1).toString().padStart(4, '0');
+
+  generatedUid = `${orgCode}-${stateCode}-${distCode}-${blockCode}-${batch}-${seq}`;
+  document.getElementById('uid-preview').textContent = generatedUid;
+  document.getElementById('uid-preview').style.color = 'var(--green)';
+  document.getElementById('uid-preview').style.fontSize = '15px';
+  document.getElementById('uid-copy-btn').style.display = 'inline-block';
+}
+
+function copyUid() {
+  if (!generatedUid) return;
+  navigator.clipboard.writeText(generatedUid).then(() => showToast('✅ User ID copied to clipboard!','success'));
+}
+
+function onStateChange() {
+  const state = document.getElementById('s-state').value;
+  const distSel = document.getElementById('s-district');
+  const blockSel = document.getElementById('s-block');
+  distSel.innerHTML = '<option value="">Select District</option>';
+  blockSel.innerHTML = '<option value="">Select Block</option>';
+  blockSel.disabled = true;
+  if (!state || !locationData[state]) {
+    distSel.disabled = true;
+    return;
+  }
+  distSel.disabled = false;
+  Object.keys(locationData[state]).sort().forEach(d => {
+    const o = document.createElement('option');
+    o.value = d; o.textContent = d;
+    distSel.appendChild(o);
+  });
+}
+
+function onDistrictChange() {
+  const state = document.getElementById('s-state').value;
+  const dist  = document.getElementById('s-district').value;
+  const blockSel = document.getElementById('s-block');
+  blockSel.innerHTML = '<option value="">Select Block</option>';
+  if (!state || !dist) { blockSel.disabled = true; return; }
+  blockSel.disabled = false;
+
+  let blocks = blockData[dist] || (locationData[state] && locationData[state][dist]) || defaultBlocks;
+  blocks.sort().forEach(b => {
+    const o = document.createElement('option');
+    o.value = b; o.textContent = b;
+    blockSel.appendChild(o);
+  });
+}
+
+function updateAccessPreview() {
+  const role = document.getElementById('s-role').value;
+  const preview = document.getElementById('role-preview');
+  const rpTitle = document.getElementById('rp-title');
+  const rpItems = document.getElementById('rp-items');
+  if (!role || !roleAccess[role]) { preview.style.display='none'; return; }
+  preview.style.display = 'block';
+  const ra = roleAccess[role];
+  rpTitle.innerHTML = `${ra.icon} ${role} — Access Level`;
+  rpItems.innerHTML = '';
+  ra.edit.forEach(a => {
+    rpItems.innerHTML += `<div class="as-row"><div class="as-icon">✏️</div><div><strong>Edit:</strong> ${a}</div></div>`;
+  });
+  ra.view.forEach(a => {
+    rpItems.innerHTML += `<div class="as-row"><div class="as-icon">👁️</div><div><strong>View:</strong> ${a}</div></div>`;
+  });
+}
+
+function togglePw(id, btn) {
+  const el = document.getElementById(id);
+  if (el.type === 'password') { el.type = 'text'; btn.textContent = '🙈'; }
+  else { el.type = 'password'; btn.textContent = '👁'; }
+}
+
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+function clearErr(id) {
+  const el = document.getElementById(id);
+  if (el) { el.classList.remove('show'); }
+}
+function showErr(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('show');
+}
+function markErr(fieldId) {
+  const el = document.getElementById(fieldId);
+  if (el) el.classList.add('error');
+}
+function clearFieldErr(fieldId, errId) {
+  const f = document.getElementById(fieldId);
+  if (f) f.classList.remove('error');
+  clearErr(errId);
+}
+
+/* ═══════════════════════════════════════════════════
+   TAB SWITCH
+═══════════════════════════════════════════════════ */
+function switchTab(tab) {
+  ['login','signup'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+    document.getElementById('panel-'+t).classList.toggle('active', t===tab);
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   LOGIN
+═══════════════════════════════════════════════════ */
+function quickLogin(id, pw, role) {
+  document.getElementById('l-userid').value = id;
+  document.getElementById('l-password').value = pw;
+  doLogin();
+}
+
+function doLogin() {
+  const uid  = document.getElementById('l-userid').value.trim();
+  const pw   = document.getElementById('l-password').value;
+  const err  = document.getElementById('l-error');
+  const succ = document.getElementById('login-success');
+  err.classList.remove('show');
+  succ.style.display = 'none';
+
+  if (!uid || !pw) { err.textContent='Please enter your User ID and password.'; err.classList.add('show'); return; }
+
+  // Check default test users
+  const defaults = defaultUsers.find(u => u.id === uid && u.password === pw);
+  // Check locally registered users
+  const stored = JSON.parse(localStorage.getItem('gr_users') || '[]');
+  const localUser = stored.find(u => u.userId === uid && u.password === pw);
+  const user = defaults ? { userId: uid, name: defaults.name, role: defaults.role } : localUser;
+
+  if (!user) {
+    err.textContent = 'Invalid User ID or password.';
+    err.classList.add('show');
+    document.getElementById('l-userid').classList.add('error');
+    document.getElementById('l-password').classList.add('error');
+    return;
+  }
+
+  // Success
+  document.getElementById('l-userid').classList.remove('error');
+  document.getElementById('l-password').classList.remove('error');
+  showToast(`✅ Signed in as ${user.name} (${user.role})`, 'success');
+
+  const ra = roleAccess[user.role] || roleAccess['Incubation Officer'];
+  const ai = document.getElementById('access-info');
+  let html = `<div class="as-title">${ra.icon} ${user.name} — ${user.role}</div>`;
+  ra.edit.forEach(a => html += `<div class="as-row"><div class="as-icon">✏️</div><div><strong>Edit:</strong> ${a}</div></div>`);
+  ra.view.forEach(a => html += `<div class="as-row"><div class="as-icon">👁️</div><div><strong>View:</strong> ${a}</div></div>`);
+  ai.innerHTML = html;
+  succ.style.display = 'block';
+
+  // Save session
+  localStorage.setItem('gr_session', JSON.stringify({ userId: user.userId, name: user.name, role: user.role }));
+}
+
+/* ═══════════════════════════════════════════════════
+   SIGN UP
+═══════════════════════════════════════════════════ */
+function doSignup() {
+  let valid = true;
+
+  const fields = [
+    ['s-name','e-name', v => v.trim().length >= 2, 'Full name is required (min 2 chars).'],
+    ['s-mobile','e-mobile', v => /^[6-9]\d{9}$/.test(v.trim()), 'Enter a valid 10-digit Indian mobile.'],
+    ['s-email','e-email', v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()), 'Enter a valid email address.'],
+    ['s-org','e-org', v => v !== '', 'Please select an organisation.'],
+    ['s-role','e-role', v => v !== '', 'Please select a role.'],
+    ['s-state','e-state', v => v !== '', 'Please select a state.'],
+    ['s-district','e-district', v => v !== '', 'Please select a district.'],
+    ['s-block','e-block', v => v !== '', 'Please select a block.'],
+    ['s-start-date','e-date', v => v !== '', 'Please enter the incubation start date.'],
+    ['s-password','e-password', v => v.length >= 8, 'Password must be at least 8 characters.'],
+  ];
+
+  fields.forEach(([fid, eid, test, msg]) => {
+    const el = document.getElementById(fid);
+    const val = el ? el.value : '';
+    if (!test(val)) {
+      markErr(fid); showErr(eid);
+      document.getElementById(eid).textContent = msg;
+      valid = false;
+    } else {
+      clearFieldErr(fid, eid);
+    }
+  });
+
+  const pw = document.getElementById('s-password').value;
+  const cf = document.getElementById('s-confirm').value;
+  if (pw !== cf) {
+    markErr('s-confirm'); showErr('e-confirm');
+    valid = false;
+  } else {
+    clearFieldErr('s-confirm','e-confirm');
+  }
+
+  if (!valid) { showToast('⚠️ Please fix the errors above.','error'); return; }
+
+  if (!generatedUid) { updateUid(); }
+  if (!generatedUid) { showToast('⚠️ Could not generate User ID. Check org/location.','error'); return; }
+
+  // Save user
+  const users = JSON.parse(localStorage.getItem('gr_users') || '[]');
+  const record = {
+    userId: generatedUid,
+    name: document.getElementById('s-name').value.trim(),
+    mobile: document.getElementById('s-mobile').value.trim(),
+    email: document.getElementById('s-email').value.trim(),
+    org: document.getElementById('s-org').value,
+    role: document.getElementById('s-role').value,
+    state: document.getElementById('s-state').value,
+    district: document.getElementById('s-district').value,
+    block: document.getElementById('s-block').value,
+    startDate: document.getElementById('s-start-date').value,
+    password: document.getElementById('s-password').value,
+    createdAt: new Date().toISOString(),
+  };
+  users.push(record);
+  localStorage.setItem('gr_users', JSON.stringify(users));
+  localStorage.setItem('gr_session', JSON.stringify({ userId: generatedUid, name: record.name, role: record.role }));
+
+  // Show success screen
+  document.getElementById('signup-form-wrap').style.display = 'none';
+  const ss = document.getElementById('signup-success');
+  ss.classList.add('show');
+  document.getElementById('ss-uid').textContent = generatedUid;
+  document.getElementById('ss-name').textContent = `${record.name} · ${record.org} · ${record.role}`;
+
+  const ra = roleAccess[record.role] || roleAccess['Incubation Officer'];
+  const badges = document.getElementById('ss-badges');
+  badges.innerHTML = '';
+  ra.edit.forEach(a => badges.innerHTML += `<span style="font-size:10px;font-family:var(--fh);font-weight:700;padding:3px 9px;border-radius:7px;background:rgba(93,131,50,.15);color:var(--green-dark);border:1px solid var(--green-mid);">✏️ ${a}</span> `);
+  ra.view.forEach(a => badges.innerHTML += `<span style="font-size:10px;font-family:var(--fh);font-weight:700;padding:3px 9px;border-radius:7px;background:var(--blue-light);color:var(--blue);border:1px solid #b8d0ee;">👁 ${a}</span> `);
+
+  showToast(`✅ Account created! User ID: ${generatedUid}`, 'success');
+}
+
+function resetSignup() {
+  document.getElementById('signup-form-wrap').style.display = 'block';
+  document.getElementById('signup-success').classList.remove('show');
+  document.getElementById('signup-success').style.display = 'none';
+  // Reset form
+  ['s-name','s-mobile','s-email','s-password','s-confirm','s-start-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  ['s-org','s-role','s-state'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  const dist = document.getElementById('s-district');
+  const blk  = document.getElementById('s-block');
+  dist.innerHTML = '<option value="">Select District</option>';
+  dist.disabled = true;
+  blk.innerHTML = '<option value="">Select Block</option>';
+  blk.disabled = true;
+  document.getElementById('role-preview').style.display='none';
+  document.getElementById('uid-preview').textContent = 'Fill in Org · State · District · Block above';
+  document.getElementById('uid-preview').style.color = 'rgba(255,255,255,.35)';
+  document.getElementById('uid-preview').style.fontSize = '12px';
+  document.getElementById('uid-copy-btn').style.display='none';
+  generatedUid = '';
+}
+
+/* ═══════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════ */
+function goToDashboard() {
+  const session = JSON.parse(localStorage.getItem('gr_session') || '{}');
+  const role = session.role || 'Incubation Officer';
+  if (role === 'Grassroutes Admin' || role === 'Funder' || role === 'NGO Supervisor') {
+    window.open('io_dashboard_v7.html', '_blank');
+  } else {
+    window.open('io_dashboard_v7.html', '_blank');
+  }
+}
+
+function goToForm() {
+  window.open('io_form_v12.html', '_blank');
+}
+
+/* ═══════════════════════════════════════════════════
+   INIT — restore session if present
+═══════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', function() {
+  const session = localStorage.getItem('gr_session');
+  if (session) {
+    try {
+      const s = JSON.parse(session);
+      if (s && s.userId) {
+        document.getElementById('l-userid').value = s.userId;
+      }
+    } catch(e) {}
+  }
+
+  // Live validation feedback
+  document.getElementById('s-mobile').addEventListener('input', function() {
+    if (/^[6-9]\d{9}$/.test(this.value.trim())) clearFieldErr('s-mobile','e-mobile');
+  });
+  document.getElementById('s-email').addEventListener('input', function() {
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim())) clearFieldErr('s-email','e-email');
+  });
+  document.getElementById('s-password').addEventListener('input', function() {
+    if (this.value.length >= 8) clearFieldErr('s-password','e-password');
+  });
+  document.getElementById('s-confirm').addEventListener('input', function() {
+    if (this.value === document.getElementById('s-password').value) clearFieldErr('s-confirm','e-confirm');
+  });
+  document.getElementById('l-userid').addEventListener('input', function() { this.classList.remove('error'); });
+  document.getElementById('l-password').addEventListener('input', function() { this.classList.remove('error'); document.getElementById('l-error').classList.remove('show'); });
+});
+</script>
+</body>
+</html>

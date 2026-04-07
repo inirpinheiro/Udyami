@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(v7)",
+      "Bash(mismatch\")"
+    ]
+  }
+}

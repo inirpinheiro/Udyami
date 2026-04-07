@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Data Mismatch Report — io_form_v11 ↔ io_dashboard_v6</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════
+   DESIGN TOKENS — matches dashboard/form exactly
+═══════════════════════════════════════ */
+:root{
+  --green:#8bb25a;--green-dark:#5e8332;--green-deep:#3d5c1f;--green-light:#eef4e5;--green-mid:#c8e0a0;
+  --orange:#f9a556;--orange-dark:#d9760f;--orange-light:#fff5ea;--orange-mid:#fdd9ad;
+  --charcoal:#1e2a16;--ink:#2e3d20;--grey-dark:#555f4a;--grey-med:#7a8a6a;--grey-light:#e2e9d8;--grey-xlight:#f4f7ef;
+  --white:#ffffff;--red:#c94444;--red-light:#fdf0f0;--blue:#4a7fc1;--blue-light:#eef4fc;--purple:#7c5cbf;--purple-light:#f0ecf9;
+  --border:#d6e2c4;--border-strong:#b8d08a;
+  --shadow-sm:0 1px 3px rgba(30,42,22,.07);--shadow:0 2px 8px rgba(30,42,22,.09);--shadow-md:0 4px 16px rgba(30,42,22,.12);
+  --fh:'Montserrat',sans-serif;--fb:'Open Sans',sans-serif;--r:10px;--rs:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--grey-xlight);color:var(--ink);font-family:var(--fb);font-size:13px;min-height:100vh;}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:58px;background:var(--charcoal);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.25);}
+.tl{display:flex;align-items:center;gap:12px;}
+.logo-mark{width:36px;height:36px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.brand-name{font-family:var(--fh);font-size:15px;font-weight:800;color:var(--white);letter-spacing:.5px;line-height:1.1;}
+.brand-name span{color:var(--green);}
+.brand-sub{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:1.5px;text-transform:uppercase;font-family:var(--fh);font-weight:500;}
+.tr{display:flex;gap:8px;align-items:center;}
+.tb-badge{background:rgba(139,178,90,.18);border:1px solid rgba(139,178,90,.35);padding:4px 12px;border-radius:16px;font-size:10px;font-family:var(--fh);font-weight:600;color:var(--green);letter-spacing:.3px;}
+
+/* PAGE HEADER */
+.page-header{background:var(--ink);padding:28px 28px 24px;border-bottom:3px solid var(--green);}
+.ph-tag{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--green);margin-bottom:8px;}
+.ph-title{font-family:var(--fh);font-size:22px;font-weight:900;color:var(--white);line-height:1.25;margin-bottom:6px;}
+.ph-sub{font-size:12px;color:rgba(255,255,255,.5);line-height:1.5;}
+.ph-files{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+.ph-file{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:var(--rs);padding:6px 14px;font-family:var(--fh);font-size:10px;font-weight:700;color:rgba(255,255,255,.75);letter-spacing:.3px;}
+.ph-file span{color:var(--green);}
+
+/* SUMMARY SCORECARD */
+.scorecard{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:22px 28px;background:var(--white);border-bottom:2px solid var(--border);}
+.sc-box{border-radius:var(--r);padding:18px 20px;display:flex;align-items:center;gap:14px;}
+.sc-box.direct{background:var(--green-light);border:2px solid var(--border-strong);}
+.sc-box.transform{background:var(--orange-light);border:2px solid var(--orange-mid);}
+.sc-box.missing{background:var(--red-light);border:2px solid #f5c0c0;}
+.sc-num{font-family:var(--fh);font-size:36px;font-weight:900;line-height:1;}
+.sc-box.direct .sc-num{color:var(--green-dark);}
+.sc-box.transform .sc-num{color:var(--orange-dark);}
+.sc-box.missing .sc-num{color:var(--red);}
+.sc-label{font-family:var(--fh);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px;}
+.sc-box.direct .sc-label{color:var(--green-dark);}
+.sc-box.transform .sc-label{color:var(--orange-dark);}
+.sc-box.missing .sc-label{color:var(--red);}
+.sc-desc{font-size:11px;line-height:1.4;}
+.sc-box.direct .sc-desc{color:var(--green-deep);}
+.sc-box.transform .sc-desc{color:var(--orange-dark);}
+.sc-box.missing .sc-desc{color:var(--red);}
+
+/* CONTENT */
+.content{padding:24px 28px 60px;}
+
+/* SECTION LABEL */
+.sl{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--grey-med);margin-bottom:14px;margin-top:6px;display:flex;align-items:center;gap:8px;}
+.sl::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--green);flex-shrink:0;}
+.sl::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* SECTION CARD */
+.section-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);margin-bottom:24px;box-shadow:var(--shadow);overflow:hidden;}
+.section-title{font-family:var(--fh);font-size:13px;font-weight:800;color:var(--ink);padding:14px 18px;border-bottom:1px solid var(--border);background:var(--grey-xlight);display:flex;align-items:center;gap:10px;}
+.section-title-num{width:28px;height:28px;border-radius:50%;background:var(--green-dark);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:11px;font-weight:800;flex-shrink:0;}
+
+/* TABLES */
+.mismatch-table{width:100%;border-collapse:collapse;font-size:12px;}
+.mismatch-table thead tr{background:var(--charcoal);}
+.mismatch-table th{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.6);padding:10px 12px;text-align:left;white-space:nowrap;}
+.mismatch-table tbody tr{border-bottom:1px solid var(--grey-light);transition:background .12s;}
+.mismatch-table tbody tr:hover{background:var(--green-light);}
+.mismatch-table td{padding:9px 12px;vertical-align:middle;}
+.field-name{font-family:var(--fh);font-size:11px;font-weight:800;color:var(--ink);}
+.field-source{font-size:10px;color:var(--grey-dark);}
+.field-id{font-family:'Courier New',monospace;font-size:11px;background:var(--grey-xlight);padding:2px 6px;border-radius:4px;color:var(--green-deep);border:1px solid var(--border);}
+.field-transform{font-size:10px;color:var(--grey-dark);line-height:1.4;max-width:220px;}
+
+/* STATUS BADGES */
+.status-badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--fh);font-size:10px;font-weight:800;padding:3px 10px;border-radius:10px;white-space:nowrap;}
+.sb-direct{background:var(--green-light);color:var(--green-dark);border:1px solid var(--border-strong);}
+.sb-transform{background:var(--orange-light);color:var(--orange-dark);border:1px solid var(--orange-mid);}
+.sb-missing{background:var(--red-light);color:var(--red);border:1px solid #f5c0c0;}
+.sb-derived{background:var(--blue-light);color:var(--blue);border:1px solid #b8d0ee;}
+.sb-compat{background:var(--green-light);color:var(--green-dark);border:1px solid var(--border-strong);}
+
+/* VALUE MAP TABLE */
+.valmap-table{width:100%;border-collapse:collapse;font-size:12px;}
+.valmap-table th{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.6);padding:10px 12px;text-align:left;background:var(--charcoal);}
+.valmap-table td{padding:9px 12px;border-bottom:1px solid var(--grey-light);vertical-align:middle;}
+.valmap-table tbody tr:hover{background:var(--green-light);}
+.code-val{font-family:'Courier New',monospace;font-size:11px;background:var(--grey-xlight);padding:2px 6px;border-radius:4px;color:var(--ink);border:1px solid var(--border);}
+.arrow{color:var(--green-dark);font-weight:900;font-family:var(--fh);margin:0 4px;}
+
+/* MISSING FIELDS */
+.missing-list{padding:18px 20px;display:flex;flex-direction:column;gap:12px;}
+.missing-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1.5px solid #f5c0c0;border-radius:var(--rs);background:var(--red-light);}
+.mi-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.mi-field{font-family:var(--fh);font-size:12px;font-weight:800;color:var(--red);margin-bottom:3px;}
+.mi-desc{font-size:11px;color:var(--ink);line-height:1.4;}
+
+/* RECOMMENDATIONS */
+.rec-list{padding:18px 20px;display:flex;flex-direction:column;gap:10px;}
+.rec-item{display:flex;align-items:flex-start;gap:12px;padding:11px 14px;border:1px solid var(--border);border-radius:var(--rs);background:var(--white);}
+.rec-item.high{border-left:4px solid var(--red);background:var(--red-light);}
+.rec-item.med{border-left:4px solid var(--orange);background:var(--orange-light);}
+.rec-item.low{border-left:4px solid var(--green);background:var(--green-light);}
+.ri-priority{font-family:var(--fh);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;padding:2px 7px;border-radius:8px;white-space:nowrap;flex-shrink:0;margin-top:2px;}
+.ri-priority.high{background:var(--red-light);color:var(--red);}
+.ri-priority.med{background:var(--orange-light);color:var(--orange-dark);}
+.ri-priority.low{background:var(--green-light);color:var(--green-dark);}
+.ri-text{font-size:12px;color:var(--ink);line-height:1.5;}
+.ri-text strong{font-family:var(--fh);}
+
+/* PRINT */
+@media print{
+  .topbar{display:none!important;}
+  body{background:white;}
+  .section-card{box-shadow:none;break-inside:avoid;}
+}
+@media(max-width:800px){
+  .scorecard{grid-template-columns:1fr;}
+  .content,.page-header{padding-left:14px;padding-right:14px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tl">
+    <div class="logo-mark">
+      <svg viewBox="0 0 40 40" fill="none" width="20" height="20">
+        <circle cx="20" cy="14" r="7" fill="white" opacity=".9"/>
+        <path d="M8 32 Q20 18 32 32" stroke="white" stroke-width="2.5" fill="none" opacity=".8"/>
+        <path d="M20 21 L20 30" stroke="white" stroke-width="2" opacity=".7"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">Udyami <span>Vikas</span></div>
+      <div class="brand-sub">Data Mismatch Report · Grassroutes</div>
+    </div>
+  </div>
+  <div class="tr">
+    <div class="tb-badge">🔍 Field Mapping Report</div>
+  </div>
+</div>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="ph-tag">Technical Reference Document</div>
+  <div class="ph-title">Data Mismatch &amp; Field Mapping Report</div>
+  <div class="ph-sub">Documents all field mapping gaps, value transformations required, and missing fields between the Field Data Collection Form and the IO Dashboard. Use this as a reference when building the data integration layer.</div>
+  <div class="ph-files">
+    <div class="ph-file"><span>Source:</span> io_form_v11.html — Field Data Collection (4 panels: Baseline, Field Report, Visit, Assessment)</div>
+    <div class="ph-file"><span>Target:</span> io_dashboard_v6.html — IO Dashboard (hardcoded udyamis array, 15 fields per record)</div>
+  </div>
+</div>
+
+<!-- SUMMARY SCORECARD -->
+<div class="scorecard">
+  <div class="sc-box direct">
+    <div class="sc-num">3</div>
+    <div>
+      <div class="sc-label">✅ Direct / Compatible</div>
+      <div class="sc-desc">Fields that map without transformation: name (exact), health (compatible sum), and one other direct field.</div>
+    </div>
+  </div>
+  <div class="sc-box transform">
+    <div class="sc-num">9</div>
+    <div>
+      <div class="sc-label">⚠️ Transform Required</div>
+      <div class="sc-desc">Fields exist in the form but require mapping logic, format conversion, or value translation before use in dashboard.</div>
+    </div>
+  </div>
+  <div class="sc-box missing">
+    <div class="sc-num">5</div>
+    <div>
+      <div class="sc-label">❌ Missing from Form</div>
+      <div class="sc-desc">Dashboard fields (bmc, ue, bp, flag, dropout) that have no corresponding input in any of the 4 form panels.</div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- SECTION 1: FIELD MAPPING TABLE -->
+<div class="sl">Section 1 — Field Mapping Table</div>
+<div class="section-card">
+  <div class="section-title">
+    <div class="section-title-num">1</div>
+    Complete Field-by-Field Mapping: Dashboard ↔ Form Source
+  </div>
+  <div style="overflow-x:auto;">
+    <table class="mismatch-table">
+      <thead>
+        <tr>
+          <th>Dashboard Field</th>
+          <th>Form Source</th>
+          <th>Form Field / ID</th>
+          <th>Transform Required</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="field-name">id</div><div class="field-source">Unique Udyami identifier</div></td>
+          <td>Baseline Form — Section A</td>
+          <td><code class="field-id">b-udyami-id</code><br/><span style="font-size:10px;color:var(--grey-med);">readonly input, auto-generated</span></td>
+          <td class="field-transform">Auto-generated as <code>GR-[BATCH]-[TIMESTAMP]</code> if blank. Dashboard uses last segment or full ID as displayed.</td>
+          <td><span class="status-badge sb-transform">⚠️ Partial</span></td>
+        </tr>
+        <tr>
+          <td><div class="field-name">name</div><div class="field-source">Full display name</div></td>
+          <td>Baseline Form — Section A</td>
+          <td><code class="field-id">b-name</code><br/><span style="font-size:10px;color:var(--grey-med);">"Full Name (as in Aadhaar)" text input</span></td>
+          <td class="field-transform">None. Direct string copy.</td>
+          <td><span class="status-badge sb-direct">✅ Direct</span></td>
+        </tr>
+        <tr>
+          <td><div class="field-name">gp</div><div class="field-source">Gram Panchayat / village name</div></td>
+          <td>Baseline Form — Section A</td>
+          <td><code class="field-id">b-village</code><br/><span style="font-size:10px;color:var(--grey-med);">"Village / Town" text input</span></td>
+          <td class="field-transform">Must append " GP" suffix: <code>village + " GP"</code>. No GP dropdown exists in form.</td>
+          <td><span class="status-badge sb-transform">⚠️ Transform needed</span></td>
+        </tr>
+        <tr>
+          <td><div class="field-name">ind</div><div class="field-source">Industry / enterprise type string</div></td>
+          <td>Baseline Form — Section B</td>
+          <td><code class="field-id">input[name="ent-type"]</code><br/><span style="font-size:10px;color:var(--grey-med);">Checkboxes: agri / mfg / svc / trade</span></td>
+          <td class="field-transform">Map first checked value: agri→"Agri / Agri-Allied", mfg→"Manufacturing", svc→"Service", trade→"Trading". Multi-select is flattened to primary selection.</td>
+          <td><span class="status-badge sb-transform">⚠️ Transform needed</span></td>
+        </tr>
+        <tr>
+          <td><div class="field-name">level</div><div class="field-source">Entrepreneur level (L1 / L2 / L3)</div></td>
+          <td>Assessment Form — Sections A + B</td>
+          <td><code class="field-id">as1–as8, aw1–aw12</code><br/><span style="font-size:10px;color:var(--grey-med);">Hidden inputs, Shakti + Swasthya rubric scores</span></td>
+          <td class="field-transform">Not a direct field. Derived: sum all scores → health/80. Level: &lt;40→L1, 40–63→L2, ≥64→L3.</td>
+          <td><span class="status-badge sb-derived">⬡ Derived</span></td>
+        </tr>
+        <tr>
+          <td><div class="field-name">diary</div><div class="field-source">Financial diary status: daily/some/miss</div></td>
+          <td>Baseline Form — Section C &amp; Visit Form</td>
+          <td><code class="field-id">input[name="b-diary"]</code>, <code class="field-id">input[name="v-diary-check"]</code><br/><span style="font-size:10px;color:var(--grey-med);">Radio buttons on both forms</span></td>
+          <td class="field-transform">Baseline: "daily"→"daily", "sometimes"→"some", "not-filling"→"miss". Visit: "reviewed"→"daily", "verbal"→"some", "not-maintained"→"miss".</td>
+          <td><span class="status-badge sb-transform">⚠️ Value mapping</span></td>
+        </tr>
+        <tr>
+          <td><div class="field-name">kyc</div><div class="field-source">KYC completion status: done/pend</div></td>
+          <td>Field Report — Section 1</td>
+          <td><code class="field-id">kyc-aadhaar</code>, <code class="field-id">kyc-pan</code><br/><span style="font-size:10px;color:var(--grey-med);">21-item KYC document checklist selects</span></td>
+          <td class="field-transform">No single summary field exists. Must derive: if Aadhaar AND PAN both have "✅ Verified" → "done", else "pend". All 21 documents do not map cleanly to a binary status.</td>
+          <td><span class="status-badge sb-missing">❌ No direct field</span></td>
+        </tr>
+        <tr>
+          <td><div class="field-name">bmc</div><div class="field-source">Business Model Canvas completion: done/pend</div></td>
+          <td>Visit Form</td>
+          <td><em style="color:var(--grey-med);font-size:11px;">Not found in Visit Form v11 as a named input</em><br/><span style="font-size:10px;color:var(--grey-med);">Scored in Assessment Section E as <code>bt_bmc</code></span></td>
+          <td class="field-transform">Assessment Section E has <code>bt_bmc</code> (1–4 rubric). Map: score≥4→"done", score≥2→"pend", else "pend". Not captured in Visit Form at all.</td>
+          <td><span class="status-badge sb-missing">❌ Missing field</span></td>
+        </tr>
+        <tr>
+          <td><div class="field-name">ue</div><div class="field-source">Unit Economics completion: done/pend</div></td>
+          <td>Visit Form</td>
+          <td><em style="color:var(--grey-med);font-size:11px;">Not found as a named form field in v11</em><br/><span style="font-size:10px;color:var(--grey-med);">Scored in Assessment Section E as <code>bt_ue</code></span></td>
+          <td class="field-transform">Assessment Section E has <code>bt_ue</code> (1–4 rubric). Map: score≥4→"done", else "pend". Not tracked in Visit Form — completion status must come from Assessment only.</td>
+          <td><span class="status-badge sb-missing">❌ Missing field</span></td>
+        </tr>
+        <tr>
+          <td><div class="field-name">bp</div><div class="field-source">Business Plan completion: done/pend</div></td>
+          <td>Visit Form</td>
+          <td><em style="color:var(--grey-med);font-size:11px;">Not found as a named form field in v11</em><br/><span style="font-size:10px;color:var(--grey-med);">Scored in Assessment Section E as <code>bt_bp</code></span></td>
+          <td class="field-transform">Assessment Section E has <code>bt_bp</code> (1–4 rubric). Map: score≥4→"done", else "pend". Not tracked as a discrete Visit Form field.</td>
+          <td><span class="status-badge sb-missing">❌ Missing field</span></td>
+        </tr>
+        <tr>
+          <td><div class="field-name">sales</div><div class="field-source">Current monthly sales ₹</div></td>
+          <td>Baseline Section C &amp; Visit Form &amp; Assessment</td>
+          <td><code class="field-id">b-sales</code> (baseline), <code class="field-id">mfj-sales</code> (monthly journal), <code class="field-id">a-sales</code> (assessment)<br/><span style="font-size:10px;color:var(--grey-med);">Three separate inputs across forms</span></td>
+          <td class="field-transform">Baseline sales = starting figure (salesBL). Current sales should come from the most recent Visit Form monthly journal or Assessment financial review. Requires temporal logic to pick the latest value.</td>
+          <td><span class="status-badge sb-transform">⚠️ Two sources</span></td>
+        </tr>
+        <tr>
+          <td><div class="field-name">profit</div><div class="field-source">Current monthly net profit ₹</div></td>
+          <td>Baseline Section C &amp; Visit Form &amp; Assessment</td>
+          <td><code class="field-id">b-profit</code> (baseline, readonly/auto), <code class="field-id">mfj-profit</code> (monthly journal), <code class="field-id">a-profit</code> (assessment)</td>
+          <td class="field-transform">Same as sales — multiple sources. Baseline profit is auto-calculated. Current profit comes from latest visit or assessment. Must resolve to a single current value.</td>
+          <td><span class="status-badge sb-transform">⚠️ Two sources</span></td>
+        </tr>
+        <tr>
+          <td><div class="field-name">salesBL</div><div class="field-source">Baseline sales figure ₹ (for delta calculation)</div></td>
+          <td>Baseline Form — Section C</td>
+          <td><code class="field-id">b-sales</code><br/><span style="font-size:10px;color:var(--grey-med);">Same input field as current sales at time of baseline</span></td>
+          <td class="field-transform">Same field as <code>b-sales</code> — captured once at baseline time and stored separately as salesBL. Timing-dependent: must be frozen at first submission.</td>
+          <td><span class="status-badge sb-transform">⚠️ Timing dependent</span></td>
+        </tr>
+        <tr>
+          <td><div class="field-name">health</div><div class="field-source">Combined health score (0–80)</div></td>
+          <td>Field Report — Sections 2 &amp; 3 / Assessment — Sections A &amp; B</td>
+          <td><code class="field-id">bs1–bs8</code> (Shakti /32) + <code class="field-id">bw1–bw12</code> (Swasthya /48) — Field Report<br/><code class="field-id">as1–as8</code> + <code class="field-id">aw1–aw12</code> — Assessment</td>
+          <td class="field-transform">Sum all scored hidden inputs. Field Report gives baseline health; Assessment gives updated health. Both use the same /80 scale as the dashboard. Formula: Shakti total + Swasthya total = health.</td>
+          <td><span class="status-badge sb-compat">✅ Compatible (sum)</span></td>
+        </tr>
+        <tr>
+          <td><div class="field-name">lastVisit</div><div class="field-source">Date of last recorded visit</div></td>
+          <td>Visit Form &amp; Assessment</td>
+          <td><code class="field-id">v-date</code> (visit), <code class="field-id">a-date</code> (assessment), <code class="field-id">fr-date</code> (field report)<br/><span style="font-size:10px;color:var(--grey-med);">Date inputs across multiple forms</span></td>
+          <td class="field-transform">Form stores ISO date "YYYY-MM-DD". Dashboard displays "DD Mon" format (e.g. "28 Mar"). Requires <code>formatDate()</code> helper function.</td>
+          <td><span class="status-badge sb-transform">⚠️ Format transform</span></td>
+        </tr>
+        <tr>
+          <td><div class="field-name">flag</div><div class="field-source">At-risk flag (boolean)</div></td>
+          <td>None</td>
+          <td><em style="color:var(--grey-med);font-size:11px;">No flag field in any form panel (v11)</em></td>
+          <td class="field-transform">Manually set by officer in dashboard. Not captured in any form. Officers flag udyamis by visual inspection of dashboard — no form input mechanism exists.</td>
+          <td><span class="status-badge sb-missing">❌ Missing field</span></td>
+        </tr>
+        <tr>
+          <td><div class="field-name">dropout</div><div class="field-source">Programme dropout status (boolean)</div></td>
+          <td>None</td>
+          <td><em style="color:var(--grey-med);font-size:11px;">No dropout field in any form panel (v11)</em></td>
+          <td class="field-transform">Programme exit/dropout status is not captured in any form. Critical for reporting — affects active count, GMV calculations, and dashboard display.</td>
+          <td><span class="status-badge sb-missing">❌ Missing field</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- SECTION 2: VALUE MAPPING MISMATCHES -->
+<div class="sl">Section 2 — Value Mapping Mismatches</div>
+<div class="section-card">
+  <div class="section-title">
+    <div class="section-title-num">2</div>
+    Specific Value Transformations Required Between Form and Dashboard
+  </div>
+  <div style="overflow-x:auto;">
+    <table class="valmap-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Form Raw Value</th>
+          <th>Dashboard Expected Value</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-family:var(--fh);font-size:11px;font-weight:800;">diary</td>
+          <td><code class="code-val">daily</code></td>
+          <td><span class="arrow">→</span><code class="code-val">daily</code></td>
+          <td style="font-size:11px;color:var(--grey-dark);">Direct match — no mapping needed</td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--fh);font-size:11px;font-weight:800;">diary</td>
+          <td><code class="code-val">sometimes</code></td>
+          <td><span class="arrow">→</span><code class="code-val">some</code></td>
+          <td style="font-size:11px;color:var(--grey-dark);">Baseline diary radio value truncated for dashboard</td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--fh);font-size:11px;font-weight:800;">diary</td>
+          <td><code class="code-val">not-filling</code></td>
+          <td><span class="arrow">→</span><code class="code-val">miss</code></td>
+          <td style="font-size:11px;color:var(--grey-dark);">Baseline diary radio value shortened for dashboard display</td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--fh);font-size:11px;font-weight:800;">diary (visit)</td>
+          <td><code class="code-val">reviewed</code></td>
+          <td><span class="arrow">→</span><code class="code-val">daily</code></td>
+          <td style="font-size:11px;color:var(--grey-dark);">Visit form "diary verified by officer" → interpreted as regular filling</td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--fh);font-size:11px;font-weight:800;">diary (visit)</td>
+          <td><code class="code-val">verbal</code></td>
+          <td><span class="arrow">→</span><code class="code-val">some</code></td>
+          <td style="font-size:11px;color:var(--grey-dark);">Verbal report only → treated as irregular (some)</td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--fh);font-size:11px;font-weight:800;">diary (visit)</td>
+          <td><code class="code-val">not-maintained</code></td>
+          <td><span class="arrow">→</span><code class="code-val">miss</code></td>
+          <td style="font-size:11px;color:var(--grey-dark);">Not maintained → miss</td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--fh);font-size:11px;font-weight:800;">kyc</td>
+          <td><em style="color:var(--grey-med);">No unified field — 21 document checkboxes</em></td>
+          <td><span class="arrow">→</span><code class="code-val">done</code> / <code class="code-val">pend</code></td>
+          <td style="font-size:11px;color:var(--grey-dark);">Must derive: Aadhaar AND PAN both = "✅ Verified" → "done". Any other combination → "pend". This is a significant simplification of 21 document states.</td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--fh);font-size:11px;font-weight:800;">ind (industry)</td>
+          <td><code class="code-val">agri</code> (checkbox value)</td>
+          <td><span class="arrow">→</span><code class="code-val">Agri / Agri-Allied</code></td>
+          <td style="font-size:11px;color:var(--grey-dark);">Checkbox values are shortcodes; dashboard uses full display strings</td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--fh);font-size:11px;font-weight:800;">ind (industry)</td>
+          <td><code class="code-val">mfg</code></td>
+          <td><span class="arrow">→</span><code class="code-val">Manufacturing</code></td>
+          <td style="font-size:11px;color:var(--grey-dark);">Shortcode to display string mapping</td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--fh);font-size:11px;font-weight:800;">ind (industry)</td>
+          <td><code class="code-val">svc</code></td>
+          <td><span class="arrow">→</span><code class="code-val">Service</code></td>
+          <td style="font-size:11px;color:var(--grey-dark);">Shortcode to display string mapping</td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--fh);font-size:11px;font-weight:800;">ind (industry)</td>
+          <td><code class="code-val">trade</code></td>
+          <td><span class="arrow">→</span><code class="code-val">Trading</code></td>
+          <td style="font-size:11px;color:var(--grey-dark);">Shortcode to display string mapping</td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--fh);font-size:11px;font-weight:800;">level</td>
+          <td><em style="color:var(--grey-med);">health score (0–80 integer)</em></td>
+          <td><span class="arrow">→</span><code class="code-val">1</code> / <code class="code-val">2</code> / <code class="code-val">3</code></td>
+          <td style="font-size:11px;color:var(--grey-dark);">Derived: health &lt; 40 → L1 (Beej/Ankur), 40–63 → L2 (Paudha), ≥64 → L3 (Ped). Matches programme thresholds (50% = L2, 80% = L3).</td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--fh);font-size:11px;font-weight:800;">lastVisit</td>
+          <td><code class="code-val">2024-03-28</code> (ISO date)</td>
+          <td><span class="arrow">→</span><code class="code-val">28 Mar</code></td>
+          <td style="font-size:11px;color:var(--grey-dark);">Format conversion: YYYY-MM-DD → DD Mon (day + 3-letter month abbreviation)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- SECTION 3: MISSING FIELDS -->
+<div class="sl">Section 3 — Fields Missing from Form (Dashboard needs but form doesn't capture)</div>
+<div class="section-card">
+  <div class="section-title">
+    <div class="section-title-num">3</div>
+    Dashboard Fields with No Form Counterpart — Require Form Enhancement
+  </div>
+  <div class="missing-list">
+    <div class="missing-item">
+      <div class="mi-icon">❌</div>
+      <div>
+        <div class="mi-field">bmc — Business Model Canvas Completion Status</div>
+        <div class="mi-desc">Dashboard shows "done" or "pend" per udyami. The Visit Form (v11) has no dedicated BMC status field. Assessment Form Section E captures a 1–4 rubric score (<code>bt_bmc</code>), but this is a periodic form (4M/1Y/2Y/3Y) — not a regular visit field. The dashboard requires current BMC status that should be updated each visit. <strong>Solution needed:</strong> Add a "BMC Status" select field to the Visit Form.</div>
+      </div>
+    </div>
+    <div class="missing-item">
+      <div class="mi-icon">❌</div>
+      <div>
+        <div class="mi-field">ue — Unit Economics Completion Status</div>
+        <div class="mi-desc">Same gap as BMC. Assessment Section E has <code>bt_ue</code> rubric, but Visit Form v11 has no Unit Economics status field. Officers need a way to update UE completion status during regular visits without filling the full Assessment form. <strong>Solution needed:</strong> Add UE completion status to the Visit Form.</div>
+      </div>
+    </div>
+    <div class="missing-item">
+      <div class="mi-icon">❌</div>
+      <div>
+        <div class="mi-field">bp — Business Plan Completion Status</div>
+        <div class="mi-desc">Same gap as BMC and UE. Assessment Section E has <code>bt_bp</code> rubric, but Visit Form v11 has no Business Plan status field. The dashboard shows this as a progress indicator for all 33+ udyamis, but it can only be updated via the periodic Assessment — creating stale data between assessments. <strong>Solution needed:</strong> Add BP completion status to the Visit Form.</div>
+      </div>
+    </div>
+    <div class="missing-item">
+      <div class="mi-icon">❌</div>
+      <div>
+        <div class="mi-field">flag — At-Risk Flag (boolean)</div>
+        <div class="mi-desc">The dashboard displays a red "⚑ Flag" indicator for udyamis requiring urgent attention (6 flagged in sample data). No form panel in v11 provides a way to set this flag. Currently must be manually toggled in the dashboard's hardcoded data. Officers need to be able to flag a concern during a visit. <strong>Solution needed:</strong> Add a "Flag this entrepreneur" toggle or checkbox to the Visit Form officer sign-off section.</div>
+      </div>
+    </div>
+    <div class="missing-item">
+      <div class="mi-icon">❌</div>
+      <div>
+        <div class="mi-field">dropout — Programme Dropout Status (boolean)</div>
+        <div class="mi-desc">Dashboard shows dropout udyamis with greyed-out rows and "DROPOUT" label, and excludes them from active counts and GMV calculations. No form panel in v11 captures dropout status — not even an exit form or closure reason field exists. This is a critical gap as dropout status fundamentally changes all reporting metrics. <strong>Solution needed:</strong> Add a "Mark as Dropout / Programme Exit" option to the Visit Form or create a separate Exit Form.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SECTION 4: RECOMMENDATIONS -->
+<div class="sl">Section 4 — Recommendations for Form v12+</div>
+<div class="section-card">
+  <div class="section-title">
+    <div class="section-title-num">4</div>
+    Prioritised Recommendations to Close Mapping Gaps
+  </div>
+  <div class="rec-list">
+    <div class="rec-item high">
+      <span class="ri-priority high">High Priority</span>
+      <div class="ri-text">
+        <strong>Add BMC, Unit Economics, and Business Plan completion checkboxes to the Visit Form.</strong>
+        A simple 3-field status group (e.g. "BMC: ☐ Not started / ☐ In progress / ☑ Complete") added to the Visit Form officer section would allow regular status updates without requiring the full Assessment form. This closes the largest data gap — 3 dashboard fields are currently unreachable.
+      </div>
+    </div>
+    <div class="rec-item high">
+      <span class="ri-priority high">High Priority</span>
+      <div class="ri-text">
+        <strong>Add a "Mark as Dropout / Programme Exit" option to the Visit Form.</strong>
+        A simple toggle or select field (with an optional reason: e.g. "Migration", "Family constraint", "Business closed", "Voluntary exit") in the Visit Form sign-off section would allow officers to officially record dropout status. Without this, the dashboard's active count and GMV figures are inaccurate for churned cohorts.
+      </div>
+    </div>
+    <div class="rec-item med">
+      <span class="ri-priority med">Medium Priority</span>
+      <div class="ri-text">
+        <strong>Add a "Flag this entrepreneur — needs urgent attention" toggle to the Visit Form officer sign-off section.</strong>
+        A single checkbox labelled "⚑ Flag for review" with a brief reason field would allow the flag indicator in the dashboard to be set through data collection rather than manually. Recommended for visit forms, not baseline.
+      </div>
+    </div>
+    <div class="rec-item med">
+      <span class="ri-priority med">Medium Priority</span>
+      <div class="ri-text">
+        <strong>Add a "KYC Complete" summary select field to Field Report Section 1.</strong>
+        Currently, KYC status must be derived from 21 individual document checkboxes, which is error-prone. A single officer-assessed summary field ("Overall KYC Status: Pending / Substantially Complete / Fully Complete") added after the checklist would provide the binary done/pend value the dashboard needs, while keeping the detailed checklist for audit purposes.
+      </div>
+    </div>
+    <div class="rec-item med">
+      <span class="ri-priority med">Medium Priority</span>
+      <div class="ri-text">
+        <strong>Standardise village / GP naming in Baseline Section A.</strong>
+        Currently, the village field is a free-text input — meaning "Baghli", "baghli", and "Baghli GP" can all refer to the same location but won't match in dashboard filters. Options: (a) Add " GP" suffix automatically on save, (b) Replace free-text with a dropdown pre-populated from the block's known GP list (available from loc-block selection), or (c) Enforce a standard format hint. Prevents duplicate village entries in the dashboard filter.
+      </div>
+    </div>
+    <div class="rec-item low">
+      <span class="ri-priority low">Low Priority</span>
+      <div class="ri-text">
+        <strong>Add an explicit "Udyami ID" lookup field to Field Report, Visit, and Assessment forms.</strong>
+        Currently these forms have a free-text Udyami ID input with no validation or lookup. If the officer misremembers or mistyped the ID, the merge will create duplicate records instead of updating the correct one. A lookup/autocomplete from stored baseline records would prevent orphaned records.
+      </div>
+    </div>
+    <div class="rec-item low">
+      <span class="ri-priority low">Low Priority</span>
+      <div class="ri-text">
+        <strong>Consider splitting <code>salesBL</code> (baseline sales) from <code>sales</code> (current sales) at the data schema level.</strong>
+        Both use the same form field <code>b-sales</code> — but salesBL must be frozen at first baseline submission while sales updates with each visit. The integration layer must handle this timing logic explicitly. Documenting this as a frozen-at-first-submission field in the schema would prevent future confusion.
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<div style="background:var(--charcoal);padding:14px 28px;font-size:10px;color:rgba(255,255,255,.35);font-family:var(--fh);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+  <span>Data Mismatch Report · Grassroutes Udyami Vikas Programme · io_form_v11 ↔ io_dashboard_v6</span>
+  <span>Generated for: io_form_v12.html + io_dashboard_v7.html integration layer</span>
+</div>
+
+</body>
+</html>

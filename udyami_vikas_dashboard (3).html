@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Udyami Vikas — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ═══════════════════════════════════
+   DESIGN TOKENS — identical to v3/v4
+═══════════════════════════════════ */
+:root{
+  --green:#8bb25a;--green-dark:#5e8332;--green-deep:#3d5c1f;--green-light:#eef4e5;--green-mid:#c8e0a0;
+  --orange:#f9a556;--orange-dark:#d9760f;--orange-light:#fff5ea;--orange-mid:#fdd9ad;
+  --charcoal:#1e2a16;--ink:#2e3d20;--grey-dark:#555f4a;--grey-med:#7a8a6a;--grey-light:#e2e9d8;--grey-xlight:#f4f7ef;
+  --white:#ffffff;--red:#c94444;--red-light:#fdf0f0;--blue:#4a7fc1;--blue-light:#eef4fc;--purple:#7c5cbf;--purple-light:#f0ecf9;
+  --border:#d6e2c4;--border-strong:#b8d08a;
+  --shadow-sm:0 1px 3px rgba(30,42,22,.07);--shadow:0 2px 8px rgba(30,42,22,.09);--shadow-md:0 4px 16px rgba(30,42,22,.12);
+  --fh:'Montserrat',sans-serif;--fb:'Open Sans',sans-serif;--r:10px;--rs:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--grey-xlight);color:var(--ink);font-family:var(--fb);font-size:13px;min-height:100vh;}
+
+/* ── TOPBAR ─────────────────────── */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:58px;background:var(--charcoal);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.25);flex-wrap:wrap;gap:8px;}
+.tl{display:flex;align-items:center;gap:12px;}
+.logo-mark{width:36px;height:36px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.brand-name{font-family:var(--fh);font-size:15px;font-weight:800;color:var(--white);letter-spacing:.5px;line-height:1.1;}
+.brand-name span{color:var(--green);}
+.brand-sub{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:1.5px;text-transform:uppercase;font-family:var(--fh);font-weight:500;}
+.tr{display:flex;gap:8px;align-items:center;}
+.tb-badge{background:rgba(139,178,90,.18);border:1px solid rgba(139,178,90,.35);padding:4px 12px;border-radius:16px;font-size:10px;font-family:var(--fh);font-weight:600;color:var(--green);letter-spacing:.3px;}
+.tb-phase{background:rgba(249,165,86,.15);border:1px solid rgba(249,165,86,.3);padding:4px 12px;border-radius:16px;font-size:10px;font-family:var(--fh);font-weight:700;color:var(--orange);}
+.sync-btn{background:rgba(139,178,90,.15);border:1px solid rgba(139,178,90,.3);color:var(--green);border-radius:var(--rs);padding:6px 14px;font-family:var(--fh);font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:.3px;}
+.sync-btn:hover{background:rgba(139,178,90,.25);}
+.demo-badge{background:rgba(249,165,86,.2);border:1px solid rgba(249,165,86,.4);padding:4px 10px;border-radius:12px;font-size:9px;font-family:var(--fh);font-weight:700;color:var(--orange);letter-spacing:.3px;}
+.live-badge{background:rgba(139,178,90,.2);border:1px solid rgba(139,178,90,.4);padding:4px 10px;border-radius:12px;font-size:9px;font-family:var(--fh);font-weight:700;color:var(--green);letter-spacing:.3px;}
+
+/* ── TABBAR ─────────────────────── */
+.tabbar{display:flex;padding:0 28px;background:var(--ink);overflow-x:auto;gap:0;border-bottom:1px solid rgba(255,255,255,.06);}
+.tab{padding:11px 16px;cursor:pointer;font-family:var(--fh);font-size:10px;font-weight:700;color:rgba(255,255,255,.45);border-bottom:3px solid transparent;transition:all .18s;white-space:nowrap;letter-spacing:.8px;text-transform:uppercase;}
+.tab:hover{color:rgba(255,255,255,.75);background:rgba(255,255,255,.05);}
+.tab.active{color:var(--green);border-bottom-color:var(--green);background:rgba(139,178,90,.08);}
+
+.main{padding:22px 28px 56px;}
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* ── SECTION LABEL ── */
+.sl{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--grey-med);margin-bottom:12px;margin-top:4px;display:flex;align-items:center;gap:8px;}
+.sl::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--green);flex-shrink:0;}
+.sl::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── GRID HELPERS ── */
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px;}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:20px;}
+.g13{display:grid;grid-template-columns:1fr 3fr;gap:14px;margin-bottom:16px;}
+.g31{display:grid;grid-template-columns:200px 1fr 220px;gap:16px;align-items:start;}
+
+/* ── CARD ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);}
+.ct{font-family:var(--fh);font-size:12px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--ink);}
+.ct-tag{font-size:9px;padding:2px 8px;border-radius:8px;font-weight:600;}
+.tag-g{background:var(--green-light);color:var(--green-dark);border:1px solid var(--green-mid);}
+.tag-o{background:var(--orange-light);color:var(--orange-dark);border:1px solid var(--orange-mid);}
+.tag-b{background:var(--blue-light);color:var(--blue);border:1px solid #b8d0ee;}
+.tag-r{background:var(--red-light);color:var(--red);border:1px solid #f5c0c0;}
+.tag-p{background:var(--purple-light);color:var(--purple);border:1px solid #d0c4f0;}
+
+/* ── STAT CARD ── */
+.sc{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0;}
+.sc.sg::before{background:linear-gradient(90deg,var(--green),var(--green-dark));}
+.sc.so::before{background:linear-gradient(90deg,var(--orange),var(--orange-dark));}
+.sc.sr::before{background:linear-gradient(90deg,var(--red),#a83030);}
+.sc.sb::before{background:linear-gradient(90deg,var(--blue),#2f5ea8);}
+.sc.sp::before{background:linear-gradient(90deg,var(--purple),#5a3ca0);}
+.sc .lbl{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--grey-med);margin-bottom:6px;}
+.sc .val{font-family:var(--fh);font-size:24px;font-weight:900;line-height:1;margin-bottom:4px;}
+.sc.sg .val{color:var(--green-dark);}
+.sc.so .val{color:var(--orange-dark);}
+.sc.sr .val{color:var(--red);}
+.sc.sb .val{color:var(--blue);}
+.sc.sp .val{color:var(--purple);}
+.sc .sub{font-size:11px;color:var(--grey-med);}
+
+/* ── PROFILE CARD ── */
+.prof{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:18px;box-shadow:var(--shadow);display:flex;gap:18px;align-items:flex-start;border-left:5px solid var(--green);}
+.av-ph{width:80px;height:80px;border-radius:12px;background:var(--grey-light);border:2px dashed var(--border-strong);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.pi{flex:1;}
+.pname{font-family:var(--fh);font-size:20px;font-weight:900;color:var(--charcoal);margin-bottom:5px;line-height:1.1;}
+.phindi{font-size:13px;color:var(--grey-med);font-weight:400;margin-left:8px;}
+.pmeta{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;}
+.ptag{background:var(--grey-xlight);border:1px solid var(--grey-light);padding:3px 9px;border-radius:14px;font-size:11px;color:var(--grey-dark);font-family:var(--fh);font-weight:500;}
+.ptag.ac{background:var(--green-light);border-color:var(--green);color:var(--green-dark);}
+.ptag.ph{background:var(--orange-light);border-color:var(--orange);color:var(--orange-dark);}
+.pstats{display:flex;gap:18px;flex-wrap:wrap;}
+.pst{font-size:11px;color:var(--grey-med);}
+.pst strong{color:var(--ink);font-size:13px;font-family:var(--fh);font-weight:700;display:block;}
+.pside{display:flex;flex-direction:column;gap:8px;align-items:flex-end;flex-shrink:0;}
+.score-hero{display:flex;gap:8px;}
+.score-box{border-radius:var(--rs);padding:10px 14px;text-align:center;min-width:80px;}
+.score-box.shakti{background:var(--green-light);border:1.5px solid var(--green-mid);}
+.score-box.swasthya{background:var(--orange-light);border:1.5px solid var(--orange-mid);}
+.score-box.total{background:var(--charcoal);border:1.5px solid rgba(139,178,90,.4);}
+.score-num{font-family:var(--fh);font-size:22px;font-weight:900;line-height:1;}
+.score-box.shakti .score-num{color:var(--green-dark);}
+.score-box.swasthya .score-num{color:var(--orange-dark);}
+.score-box.total .score-num{color:var(--green);}
+.score-lbl{font-size:8px;color:var(--grey-med);text-transform:uppercase;letter-spacing:.8px;font-family:var(--fh);font-weight:600;margin-top:2px;}
+.score-box.total .score-lbl{color:rgba(255,255,255,.5);}
+
+/* ── GROWTH TRACK ── */
+.growth-track{display:flex;gap:0;margin-bottom:18px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);}
+.stage{flex:1;padding:12px;position:relative;border-right:1px solid var(--border);}
+.stage:last-child{border-right:none;}
+.stage.done{background:var(--green-light);}
+.stage.current{background:var(--orange-light);border-top:3px solid var(--orange);}
+.stage.pending{background:var(--grey-xlight);}
+.stage-icon{font-size:18px;margin-bottom:4px;}
+.stage-code{font-family:var(--fh);font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:2px;}
+.stage.done .stage-code{color:var(--green-dark);}
+.stage.current .stage-code{color:var(--orange-dark);}
+.stage.pending .stage-code{color:var(--grey-med);}
+.stage-name{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.stage.pending .stage-name{color:var(--grey-med);}
+.stage-desc{font-size:10px;color:var(--grey-med);line-height:1.3;}
+.stage-check{position:absolute;top:8px;right:8px;font-size:12px;}
+.stage-arrow{position:absolute;right:-1px;top:50%;transform:translateY(-50%);width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:7px solid var(--green-mid);z-index:2;}
+.stage.current .stage-arrow{border-left-color:var(--orange-mid);}
+.stage.pending .stage-arrow{border-left-color:var(--grey-light);}
+
+/* ── KPI STRIP ── */
+.kpirow{display:flex;flex-wrap:wrap;background:var(--charcoal);border-radius:var(--r);margin-bottom:18px;box-shadow:var(--shadow-md);overflow:hidden;}
+.kpii{flex:1;min-width:80px;padding:14px;text-align:center;border-right:1px solid rgba(255,255,255,.08);}
+.kpii:last-child{border-right:none;}
+.knum{font-family:var(--fh);font-size:20px;font-weight:900;color:var(--green);margin-bottom:3px;}
+.knum.orange{color:var(--orange);}
+.knum.red{color:#e08080;}
+.klbl{font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.8px;font-family:var(--fh);font-weight:600;}
+
+/* ── PERIOD BAR ── */
+.period-bar{display:flex;gap:4px;margin-bottom:14px;background:var(--white);border:1px solid var(--border);border-radius:var(--rs);padding:4px;box-shadow:var(--shadow-sm);}
+.period-btn{flex:1;padding:6px;text-align:center;font-family:var(--fh);font-size:10px;font-weight:700;color:var(--grey-med);border-radius:4px;cursor:pointer;transition:all .15s;letter-spacing:.3px;}
+.period-btn:hover{background:var(--grey-xlight);}
+.period-btn.active{background:var(--green-dark);color:var(--white);}
+
+/* ── ALERTS ── */
+.alert{display:flex;align-items:flex-start;gap:10px;padding:10px 13px;border-radius:var(--rs);margin-bottom:10px;font-size:12px;border-left:4px solid;line-height:1.5;}
+.alert.green{background:var(--green-light);border-color:var(--green);}
+.alert.orange{background:var(--orange-light);border-color:var(--orange);}
+.alert.red{background:var(--red-light);border-color:var(--red);}
+.alert.blue{background:var(--blue-light);border-color:var(--blue);}
+.alert.purple{background:var(--purple-light);border-color:var(--purple);}
+.alert strong{font-family:var(--fh);font-weight:700;}
+
+/* ── DIM CARDS ── */
+.dim-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+.dim-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rs);padding:13px 14px;box-shadow:var(--shadow-sm);transition:border-color .15s;}
+.dim-card:hover{border-color:var(--border-strong);}
+.dim-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.dim-title{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:1px;}
+.dim-hindi{font-size:10px;color:var(--grey-med);}
+.dim-stage-badge{font-size:8px;padding:2px 7px;border-radius:8px;font-family:var(--fh);font-weight:700;white-space:nowrap;}
+.ds-l1{background:#f0f0f0;color:#888;}
+.ds-l2{background:var(--orange-light);color:var(--orange-dark);border:1px solid var(--orange-mid);}
+.ds-l3{background:var(--green-light);color:var(--green-dark);border:1px solid var(--green-mid);}
+.ds-l4{background:var(--charcoal);color:var(--green);border:1px solid #3d5c1f;}
+.pm-wrap{display:flex;align-items:center;gap:3px;margin-top:8px;}
+.pm-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:10px;font-weight:800;border:2px solid transparent;flex-shrink:0;font-style:normal;}
+.pm-line{flex:1;height:2px;background:var(--grey-light);min-width:4px;max-width:16px;}
+.pm-line.fill{background:var(--green-mid);}
+.pmd-none{background:var(--grey-xlight);color:var(--grey-med);border-color:var(--grey-light);}
+.pmd-1{background:#f5e6e6;color:#c94444;border-color:#f5c0c0;}
+.pmd-2{background:var(--orange-light);color:var(--orange-dark);border-color:var(--orange-mid);}
+.pmd-3{background:var(--green-light);color:var(--green-dark);border-color:var(--green-mid);}
+.pmd-4{background:var(--charcoal);color:var(--green);border-color:var(--green-dark);}
+
+/* ── ACTION FOCUS ── */
+.action-focus{background:var(--green-light);border:1px solid var(--green-mid);border-radius:var(--rs);padding:10px 12px;margin-top:6px;}
+.action-focus-title{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--green-dark);margin-bottom:6px;}
+.action-item{font-size:11px;color:var(--ink);padding:4px 0;border-bottom:1px solid rgba(139,178,90,.2);}
+.action-item:last-child{border-bottom:none;}
+
+/* ── PHOTO PLACEHOLDER ── */
+.photo-ph{background:var(--grey-xlight);border:2px dashed var(--border-strong);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;}
+.photo-ph .ph-icon{font-size:22px;}
+.photo-ph .ph-label{font-size:10px;color:var(--grey-med);font-family:var(--fh);font-weight:600;text-align:center;line-height:1.4;}
+
+/* ── VISIT TABLE ── */
+.vt{width:100%;border-collapse:collapse;font-size:12px;}
+.vt th{text-align:left;padding:9px 10px;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--grey-med);font-weight:700;border-bottom:2px solid var(--border);font-family:var(--fh);background:var(--grey-xlight);}
+.vt td{padding:10px 10px;border-bottom:1px solid var(--grey-xlight);color:var(--ink);vertical-align:top;}
+.vt tr:last-child td{border-bottom:none;}
+.vt tr:hover td{background:var(--grey-xlight);}
+
+/* ── STATUS BADGES ── */
+.sb-done{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:12px;font-family:var(--fh);font-size:10px;font-weight:700;background:var(--green-light);color:var(--green-dark);border:1px solid var(--green-mid);}
+.sb-pend{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:12px;font-family:var(--fh);font-size:10px;font-weight:700;background:var(--orange-light);color:var(--orange-dark);border:1px solid var(--orange-mid);}
+.sb-miss{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:12px;font-family:var(--fh);font-size:10px;font-weight:700;background:var(--red-light);color:var(--red);border:1px solid #f5c0c0;}
+.sb-na{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:12px;font-family:var(--fh);font-size:10px;font-weight:700;background:var(--grey-xlight);color:var(--grey-med);border:1px solid var(--grey-light);}
+
+/* ── KYC ── */
+.kyc-bar{height:10px;background:var(--grey-xlight);border-radius:5px;overflow:hidden;border:1px solid var(--grey-light);margin-bottom:4px;}
+.kyc-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--green),var(--green-dark));}
+.doc-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:var(--rs);border:1px solid var(--border);background:var(--white);margin-bottom:5px;box-shadow:var(--shadow-sm);}
+.doc-item:hover{border-color:var(--border-strong);}
+.di-icon{font-size:15px;flex-shrink:0;}
+.di-name{flex:1;font-size:12px;color:var(--ink);font-weight:500;}
+.di-note{font-size:10px;color:var(--grey-med);}
+.doc-cat{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--grey-dark);background:var(--grey-xlight);padding:7px 12px;border-radius:4px;margin-bottom:6px;margin-top:14px;}
+
+/* ── FINANCIAL CHART AREA ── */
+.chart-type-btn{padding:4px 10px;border:1px solid var(--border);background:var(--white);border-radius:4px;font-family:var(--fh);font-size:9px;font-weight:700;color:var(--grey-med);cursor:pointer;transition:all .15s;letter-spacing:.3px;}
+.chart-type-btn.active{background:var(--green-dark);color:var(--white);border-color:var(--green-dark);}
+.chart-type-btn:hover:not(.active){border-color:var(--border-strong);background:var(--grey-xlight);}
+.fin-insight{margin-top:8px;padding:7px 10px;background:var(--green-light);border-radius:4px;font-size:10px;color:var(--green-dark);font-family:var(--fh);font-weight:600;border-left:3px solid var(--green);}
+
+/* ── LIVELIHOODS ── */
+.lhood{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+.lhood-card{flex:1;min-width:90px;border-radius:var(--rs);padding:12px;text-align:center;}
+.lhood-card.ft{background:var(--green-light);border:1px solid var(--green-mid);}
+.lhood-card.pt{background:var(--orange-light);border:1px solid var(--orange-mid);}
+.lhood-card.tot{background:var(--grey-xlight);border:1px solid var(--grey-light);}
+.lhood-num{font-family:var(--fh);font-size:28px;font-weight:900;line-height:1;margin-bottom:4px;}
+.lhood-card.ft .lhood-num{color:var(--green-dark);}
+.lhood-card.pt .lhood-num{color:var(--orange-dark);}
+.lhood-card.tot .lhood-num{color:var(--ink);}
+.lhood-lbl{font-size:9px;color:var(--grey-med);text-transform:uppercase;letter-spacing:.6px;font-family:var(--fh);font-weight:600;}
+
+/* ── LOAN CALC ── */
+.calc-label{font-size:10px;font-family:var(--fh);font-weight:700;color:var(--grey-dark);text-transform:uppercase;letter-spacing:.5px;margin-top:10px;display:block;margin-bottom:4px;}
+.calc-input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--rs);font-family:var(--fb);font-size:12px;color:var(--ink);background:var(--white);}
+.calc-input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 2px rgba(139,178,90,.15);}
+.calc-result{background:var(--green-light);border:1px solid var(--green-mid);border-radius:var(--rs);padding:12px;margin-top:12px;}
+.calc-result-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(139,178,90,.2);font-size:12px;}
+.calc-result-row:last-child{border-bottom:none;}
+.calc-result-lbl{color:var(--grey-dark);}
+.calc-result-val{font-family:var(--fh);font-weight:800;color:var(--green-dark);}
+.dti-bar-wrap{height:8px;background:var(--grey-xlight);border-radius:4px;overflow:hidden;border:1px solid var(--grey-light);margin-top:4px;}
+.dti-fill{height:100%;border-radius:4px;transition:width .4s ease;}
+
+/* ── COMPARISON ── */
+.cmp-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--grey-xlight);}
+.cmp-row:last-child{border-bottom:none;}
+.cmp-lbl{font-size:11px;width:160px;flex-shrink:0;color:var(--grey-dark);}
+.cmp-base{font-family:var(--fh);font-size:12px;color:var(--grey-med);width:55px;font-weight:600;}
+.cmp-now{font-family:var(--fh);font-size:13px;font-weight:800;width:65px;color:var(--ink);}
+.cmp-d{font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px;font-family:var(--fh);}
+.cup{background:var(--green-light);color:var(--green-dark);}
+.cdn{background:var(--red-light);color:var(--red);}
+.cne{background:var(--grey-xlight);color:var(--grey-med);}
+.cmp-pbar{flex:1;height:5px;background:var(--grey-xlight);border-radius:3px;overflow:hidden;}
+.cmp-pbf{height:100%;border-radius:3px;background:var(--green);}
+
+/* ── INT SUBTABS ── */
+.int-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.int-btn{padding:6px 14px;border-radius:16px;border:1px solid var(--border);background:var(--white);font-family:var(--fh);font-size:10px;font-weight:600;color:var(--grey-med);cursor:pointer;transition:all .15s;}
+.int-btn.active{background:var(--green-dark);color:var(--white);border-color:var(--green-dark);}
+.int-panel{display:none;}
+.int-panel.active{display:block;}
+
+/* ── TIMELINE ── */
+.tl-wrap{position:relative;padding-left:24px;}
+.tl-wrap::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--green-mid);}
+.tli{position:relative;margin-bottom:16px;}
+.tld{position:absolute;left:-24px;top:3px;width:13px;height:13px;border-radius:50%;border:2px solid var(--grey-light);background:var(--white);}
+.tld.done{border-color:var(--green);background:var(--green);}
+.tld.upcoming{border-color:var(--orange);background:var(--orange-light);}
+.tldate{font-size:10px;color:var(--grey-med);margin-bottom:1px;}
+.tltitle{font-size:12px;font-weight:700;font-family:var(--fh);color:var(--ink);margin-bottom:2px;}
+.tlnote{font-size:11px;color:var(--grey-dark);}
+
+/* ── IMPORT MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:var(--r);padding:28px;max-width:560px;width:90%;box-shadow:var(--shadow-md);position:relative;}
+.modal-title{font-family:var(--fh);font-size:16px;font-weight:800;color:var(--ink);margin-bottom:8px;}
+.modal-sub{font-size:12px;color:var(--grey-med);margin-bottom:18px;line-height:1.5;}
+.modal textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--rs);font-family:var(--fb);font-size:11px;min-height:140px;resize:vertical;outline:none;}
+.modal textarea:focus{border-color:var(--green);}
+.modal-btns{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.modal-btn{padding:10px 20px;border-radius:var(--rs);font-family:var(--fh);font-size:11px;font-weight:700;cursor:pointer;border:none;transition:background .15s;}
+.modal-btn.primary{background:var(--green-dark);color:white;}
+.modal-btn.primary:hover{background:var(--green-deep);}
+.modal-btn.secondary{background:var(--grey-xlight);color:var(--ink);border:1px solid var(--border);}
+.modal-btn.secondary:hover{border-color:var(--green);}
+.modal-close{position:absolute;top:14px;right:14px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--grey-med);}
+
+/* ── BT STATUS CARDS ── */
+.bt-card{border:1.5px solid var(--border);border-radius:var(--rs);padding:14px;background:var(--white);text-align:center;}
+.bt-icon{font-size:22px;margin-bottom:4px;}
+.bt-label{font-family:var(--fh);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--grey-dark);margin-bottom:8px;}
+.bt-status{font-family:var(--fh);font-size:13px;font-weight:700;padding:5px 10px;border-radius:12px;display:inline-block;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--grey-xlight);}
+::-webkit-scrollbar-thumb{background:var(--grey-light);border-radius:3px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .g4,.g3,.g5{grid-template-columns:repeat(2,1fr);}
+  .g21,.g13{grid-template-columns:1fr;}
+  .g31{grid-template-columns:1fr;}
+  .dim-grid{grid-template-columns:1fr;}
+  .growth-track{flex-direction:column;}
+  .stage-arrow{display:none;}
+  .prof{flex-direction:column;}
+  .pside{align-items:flex-start;}
+  .score-hero{flex-wrap:wrap;}
+}
+@media(max-width:600px){
+  .g4,.g3,.g2,.g5{grid-template-columns:1fr;}
+  .main{padding:14px 14px 48px;}
+  .topbar{padding:0 14px;}
+  .tabbar{padding:0 6px;}
+  .tab{padding:9px 10px;font-size:9px;}
+  .kpirow{flex-direction:column;}
+  .score-hero{gap:6px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ TOPBAR -->
+<div class="topbar">
+  <div class="tl">
+    <div class="logo-mark">
+      <svg viewBox="0 0 40 40" fill="none" width="20" height="20">
+        <circle cx="20" cy="14" r="7" fill="white" opacity=".9"/>
+        <path d="M8 32 Q20 18 32 32" stroke="white" stroke-width="2.5" fill="none" opacity=".8"/>
+        <path d="M20 21 L20 30" stroke="white" stroke-width="2" opacity=".7"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">Udyami <span>Vikas</span></div>
+      <div class="brand-sub">Grassroutes Microenterprise Program</div>
+    </div>
+  </div>
+  <div class="tr">
+    <span id="data-mode-badge" class="demo-badge">⚡ Demo Mode</span>
+    <span id="tb-batch" class="tb-badge">Batch: —</span>
+    <span id="tb-phase" class="tb-phase">🌱 —</span>
+    <button class="sync-btn" onclick="openImportModal()">📥 Load Data</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ TABS -->
+<div class="tabbar">
+  <div class="tab active" onclick="switchTab('overview',this)">🏠 Overview</div>
+  <div class="tab" onclick="switchTab('shakti',this)">💡 Udyami Shakti</div>
+  <div class="tab" onclick="switchTab('swasthya',this)">🏢 Udyam Swasthya</div>
+  <div class="tab" onclick="switchTab('finance',this)">💰 Financial Health</div>
+  <div class="tab" onclick="switchTab('kyc',this)">📋 KYC &amp; Docs</div>
+  <div class="tab" onclick="switchTab('interactions',this)">📅 Interactions</div>
+</div>
+
+<div class="main">
+
+<!-- ═══════════════════════════════════════════════════
+     PANEL 1 — OVERVIEW
+══════════════════════════════════════════════════════ -->
+<div id="panel-overview" class="panel active">
+
+  <!-- Profile -->
+  <div class="prof">
+    <div class="av-ph">👤</div>
+    <div class="pi">
+      <div class="pname" id="ov-name">— <span class="phindi" id="ov-hindi"></span></div>
+      <div class="pmeta" id="ov-meta"></div>
+      <div class="pstats" id="ov-stats"></div>
+    </div>
+    <div class="pside">
+      <div class="score-hero">
+        <div class="score-box shakti">
+          <div class="score-num" id="ov-sk-score">—<span style="font-size:12px;color:var(--grey-med)">/32</span></div>
+          <div class="score-lbl">Udyami Shakti</div>
+        </div>
+        <div class="score-box swasthya">
+          <div class="score-num" id="ov-sw-score">—<span style="font-size:12px;color:var(--grey-med)">/48</span></div>
+          <div class="score-lbl">Udyam Swasthya</div>
+        </div>
+        <div class="score-box total">
+          <div class="score-num" id="ov-total-score">—<span style="font-size:12px;color:rgba(255,255,255,.4)">/80</span></div>
+          <div class="score-lbl">Combined Score</div>
+        </div>
+      </div>
+      <div style="text-align:right;font-size:10px;color:var(--grey-med);font-family:var(--fh);font-weight:600;">
+        Last updated: <strong id="ov-last-updated" style="color:var(--ink);">—</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Growth Stage -->
+  <div class="sl">Growth Journey &nbsp;|&nbsp; विकास यात्रा</div>
+  <div class="growth-track" id="ov-growth-track">
+    <div class="stage done"><div class="stage-arrow"></div><div class="stage-icon">🌰</div><div class="stage-code">L1 — Beej</div><div class="stage-name">Seed</div><div class="stage-desc">Awareness built; baseline complete</div><div class="stage-check">✅</div></div>
+    <div class="stage current"><div class="stage-arrow"></div><div class="stage-icon">🌱</div><div class="stage-code">L2 — Ankur</div><div class="stage-name">Sprout</div><div class="stage-desc">Trying with hand-holding; consistent effort beginning</div><div class="stage-check">📍</div></div>
+    <div class="stage pending"><div class="stage-arrow"></div><div class="stage-icon">🌿</div><div class="stage-code">L3 — Paudha</div><div class="stage-name">Sapling</div><div class="stage-desc">Regular practice, growing independently</div></div>
+    <div class="stage pending"><div class="stage-icon">🌳</div><div class="stage-code">L4 — Ped</div><div class="stage-name">Tree</div><div class="stage-desc">Strong, independent, guides others</div></div>
+  </div>
+
+  <!-- KPI Strip -->
+  <div class="kpirow">
+    <div class="kpii"><div class="knum" id="kpi-sales">—</div><div class="klbl">Monthly Sales</div></div>
+    <div class="kpii"><div class="knum" id="kpi-profit">—</div><div class="klbl">Monthly Profit</div></div>
+    <div class="kpii"><div class="knum orange" id="kpi-customers">—</div><div class="klbl">Customers</div></div>
+    <div class="kpii"><div class="knum" id="kpi-score">—</div><div class="klbl">Total Score</div></div>
+    <div class="kpii"><div class="knum orange" id="kpi-kyc">—</div><div class="klbl">KYC Complete</div></div>
+    <div class="kpii"><div class="knum red" id="kpi-liab">—</div><div class="klbl">Total Liabilities</div></div>
+    <div class="kpii"><div class="knum" id="kpi-jobs">—</div><div class="klbl">Jobs Created</div></div>
+    <div class="kpii"><div class="knum orange" id="kpi-visits">—</div><div class="klbl">Visits Logged</div></div>
+  </div>
+
+  <!-- Main 2-col -->
+  <div class="g21">
+    <div>
+      <div class="sl">Needs of the Entrepreneur &amp; Enterprise &nbsp;|&nbsp; आवश्यकताएँ</div>
+      <div id="ov-needs-alerts">
+        <div class="alert orange">📋 <strong>No data loaded.</strong> Click <em>"Load Data"</em> above to import form data from the field collection tool, or browse the demo dashboard below.</div>
+      </div>
+
+      <div class="sl" style="margin-top:18px;">Enterprise Snapshot</div>
+      <div class="card" style="margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">
+          <div style="text-align:center;background:var(--green-light);border:1px solid var(--green-mid);border-radius:var(--rs);padding:10px 8px;">
+            <div style="font-family:var(--fh);font-size:15px;font-weight:900;color:var(--green-dark);" id="ov-ent-type">—</div>
+            <div style="font-size:9px;color:var(--grey-med);text-transform:uppercase;margin-top:3px;">Enterprise Type</div>
+          </div>
+          <div style="text-align:center;background:var(--orange-light);border:1px solid var(--orange-mid);border-radius:var(--rs);padding:10px 8px;">
+            <div style="font-family:var(--fh);font-size:15px;font-weight:900;color:var(--orange-dark);" id="ov-market-reach">—</div>
+            <div style="font-size:9px;color:var(--grey-med);text-transform:uppercase;margin-top:3px;">Market Reach</div>
+          </div>
+          <div style="text-align:center;background:var(--grey-xlight);border:1px solid var(--grey-light);border-radius:var(--rs);padding:10px 8px;">
+            <div style="font-family:var(--fh);font-size:15px;font-weight:900;color:var(--ink);" id="ov-years-biz">—</div>
+            <div style="font-size:9px;color:var(--grey-med);text-transform:uppercase;margin-top:3px;">In Business</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="background:var(--blue-light);border:1px solid #b8d0ee;border-radius:var(--rs);padding:10px 12px;">
+            <div style="font-size:9px;font-family:var(--fh);font-weight:700;text-transform:uppercase;color:var(--blue);margin-bottom:4px;">Starting Fixed Assets</div>
+            <div style="font-family:var(--fh);font-size:16px;font-weight:900;color:var(--blue);" id="ov-fixed-assets">—</div>
+            <div style="font-size:10px;color:var(--grey-med);margin-top:2px;" id="ov-fixed-notes">—</div>
+          </div>
+          <div style="background:var(--purple-light);border:1px solid #d0c4f0;border-radius:var(--rs);padding:10px 12px;">
+            <div style="font-size:9px;font-family:var(--fh);font-weight:700;text-transform:uppercase;color:var(--purple);margin-bottom:4px;">Starting Inventory</div>
+            <div style="font-family:var(--fh);font-size:16px;font-weight:900;color:var(--purple);" id="ov-inventory">—</div>
+            <div style="font-size:10px;color:var(--grey-med);margin-top:2px;" id="ov-inv-notes">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <!-- Combined Score Ring -->
+      <div class="sl">Score Snapshot</div>
+      <div class="card" style="margin-bottom:12px;text-align:center;padding:14px;">
+        <svg id="ov-score-ring-svg" width="130" height="130" viewBox="0 0 130 130" style="display:block;margin:0 auto 10px;">
+          <circle cx="65" cy="65" r="52" fill="none" stroke="#e8f0da" stroke-width="14"/>
+          <circle id="ov-sk-ring" cx="65" cy="65" r="52" fill="none" stroke="#5e8332" stroke-width="14" stroke-dasharray="326.7" stroke-dashoffset="326.7" stroke-linecap="round" transform="rotate(-90 65 65)"/>
+          <circle cx="65" cy="65" r="38" fill="none" stroke="#fff3ea" stroke-width="10"/>
+          <circle id="ov-sw-ring" cx="65" cy="65" r="38" fill="none" stroke="#d9760f" stroke-width="10" stroke-dasharray="238.6" stroke-dashoffset="238.6" stroke-linecap="round" transform="rotate(-90 65 65)"/>
+          <text id="ov-ring-total" x="65" y="60" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="18" font-weight="900" fill="#1e2a16">—</text>
+          <text x="65" y="73" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="9" fill="#7a8a6a">/ 80 Total</text>
+          <text id="ov-ring-pct" x="65" y="86" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="9" font-weight="700" fill="#5e8332">0%</text>
+        </svg>
+        <div style="display:flex;justify-content:center;gap:14px;font-size:10px;color:var(--grey-med);margin-bottom:10px;">
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--green-dark);display:inline-block;"></span>Shakti <span id="ov-sk-leg" style="font-weight:700;color:var(--ink);">—/32</span></span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--orange-dark);display:inline-block;"></span>Swasthya <span id="ov-sw-leg" style="font-weight:700;color:var(--ink);">—/48</span></span>
+        </div>
+        <div style="font-size:10px;color:var(--grey-med);border-top:1px solid var(--grey-xlight);padding-top:10px;" id="ov-target-note">Load data to see score</div>
+      </div>
+
+      <!-- Liabilities -->
+      <div class="sl">Current Liabilities</div>
+      <div class="card" style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span style="font-family:var(--fh);font-size:14px;font-weight:800;color:var(--red);" id="ov-liab-total">₹—</span>
+          <span class="ct-tag tag-r">Total Outstanding</span>
+        </div>
+        <div id="ov-liab-rows" style="font-size:11px;color:var(--grey-dark);"></div>
+      </div>
+
+      <!-- Customer Base -->
+      <div class="sl">Customer Base</div>
+      <div class="card">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+          <div style="background:var(--green-light);border:1px solid var(--green-mid);border-radius:var(--rs);padding:10px;text-align:center;">
+            <div style="font-family:var(--fh);font-size:22px;font-weight:900;color:var(--green-dark);" id="ov-cust-num">—</div>
+            <div style="font-size:9px;color:var(--grey-med);text-transform:uppercase;margin-top:2px;" id="ov-cust-freq">Customers / Period</div>
+          </div>
+          <div style="background:var(--orange-light);border:1px solid var(--orange-mid);border-radius:var(--rs);padding:10px;text-align:center;">
+            <div style="font-family:var(--fh);font-size:22px;font-weight:900;color:var(--orange-dark);" id="ov-avg-sale">—</div>
+            <div style="font-size:9px;color:var(--grey-med);text-transform:uppercase;margin-top:2px;">Avg Sale / Customer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /panel-overview -->
+
+
+<!-- ═══════════════════════════════════════════════════
+     PANEL 2 — UDYAMI SHAKTI
+══════════════════════════════════════════════════════ -->
+<div id="panel-shakti" class="panel">
+
+  <div class="g13" style="margin-bottom:16px;">
+    <div>
+      <div class="sl">Entrepreneur</div>
+      <div class="photo-ph" style="height:140px;margin-bottom:12px;border-radius:var(--rs);cursor:default;">
+        <span class="ph-icon">📷</span>
+        <span class="ph-label">Entrepreneur Photo</span>
+      </div>
+
+      <!-- Shakti Score Ring -->
+      <div class="card" style="text-align:center;margin-bottom:10px;padding:12px;">
+        <svg width="100" height="100" viewBox="0 0 120 120" style="display:block;margin:0 auto 6px;">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#e8f0da" stroke-width="14"/>
+          <circle id="sk-ring" cx="60" cy="60" r="50" fill="none" stroke="#5e8332" stroke-width="14" stroke-dasharray="314.16" stroke-dashoffset="314.16" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+          <text id="sk-ring-num" x="60" y="55" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="24" font-weight="900" fill="#1e2a16">—</text>
+          <text x="60" y="70" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="11" fill="#7a8a6a">/ 32</text>
+          <text id="sk-ring-pct" x="60" y="85" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="10" font-weight="700" fill="#5e8332">0%</text>
+        </svg>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+          <div style="background:var(--grey-xlight);border-radius:4px;padding:6px;text-align:center;">
+            <div style="font-family:var(--fh);font-size:14px;font-weight:800;color:var(--grey-dark);" id="sk-baseline-num">—</div>
+            <div style="font-size:9px;color:var(--grey-med);">Baseline</div>
+          </div>
+          <div style="background:var(--green-light);border-radius:4px;padding:6px;text-align:center;">
+            <div style="font-family:var(--fh);font-size:14px;font-weight:800;color:var(--green-dark);" id="sk-current-num">—</div>
+            <div style="font-size:9px;color:var(--grey-dark);">Current</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <!-- Radar Chart -->
+      <div class="sl">Strength Radar — 8 Dimensions</div>
+      <div class="card" style="margin-bottom:16px;">
+        <div style="position:relative;height:340px;max-width:640px;margin:0 auto;">
+          <canvas id="sk-radar"></canvas>
+        </div>
+        <div style="display:flex;justify-content:center;gap:16px;font-size:10px;color:var(--grey-med);margin-top:8px;">
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:3px;background:#5e8332;display:inline-block;border-radius:2px;"></span>Current</span>
+          <span style="display:flex;align-items:center;gap:4px;opacity:.5;"><span style="width:12px;height:1px;background:#aaa;display:inline-block;"></span>Baseline</span>
+        </div>
+      </div>
+
+      <!-- Action Focus -->
+      <div class="sl">Action Focus for Next Period</div>
+      <div class="action-focus" id="sk-actions">
+        <div class="action-focus-title">Priority Actions</div>
+        <div class="action-item">Load form data to see recommended actions</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dimension Cards -->
+  <div class="g2">
+    <div>
+      <div class="sl">Mindset &amp; Leadership — मानसिकता और नेतृत्व</div>
+      <div class="dim-grid" id="sk-mindset-cards"></div>
+    </div>
+    <div>
+      <div class="sl">Capability &amp; Skills — क्षमता एवं कौशल</div>
+      <div class="dim-grid" id="sk-skill-cards"></div>
+    </div>
+  </div>
+
+</div><!-- /panel-shakti -->
+
+
+<!-- ═══════════════════════════════════════════════════
+     PANEL 3 — UDYAM SWASTHYA
+══════════════════════════════════════════════════════ -->
+<div id="panel-swasthya" class="panel">
+
+  <div class="g31" style="margin-bottom:18px;">
+
+    <!-- LEFT: Photo column + score ring -->
+    <div>
+      <div class="sl">Enterprise Photos</div>
+      <div class="photo-ph" style="height:78px;margin-bottom:5px;border-radius:var(--rs);cursor:default;">
+        <span class="ph-icon">📸</span><span class="ph-label">At Program Start</span>
+      </div>
+      <div class="photo-ph" style="height:78px;margin-bottom:5px;border-radius:var(--rs);cursor:default;">
+        <span class="ph-icon">📸</span><span class="ph-label">At 4 Months</span>
+      </div>
+      <div class="photo-ph" style="height:78px;margin-bottom:12px;border-radius:var(--rs);cursor:default;">
+        <span class="ph-icon">📸</span><span class="ph-label">At 1 Year</span>
+      </div>
+
+      <div class="card" style="text-align:center;padding:12px;margin-bottom:10px;">
+        <svg width="100" height="100" viewBox="0 0 120 120" style="display:block;margin:0 auto 6px;">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#fff3ea" stroke-width="14"/>
+          <circle id="sw-ring" cx="60" cy="60" r="50" fill="none" stroke="#d9760f" stroke-width="14" stroke-dasharray="314.16" stroke-dashoffset="314.16" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+          <text id="sw-ring-num" x="60" y="55" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="24" font-weight="900" fill="#1e2a16">—</text>
+          <text x="60" y="70" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="11" fill="#7a8a6a">/ 48</text>
+          <text id="sw-ring-pct" x="60" y="85" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="10" font-weight="700" fill="#d9760f">0%</text>
+        </svg>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+          <div style="background:var(--grey-xlight);border-radius:4px;padding:5px;text-align:center;">
+            <div style="font-family:var(--fh);font-size:13px;font-weight:800;color:var(--grey-dark);" id="sw-baseline-num">—</div>
+            <div style="font-size:8px;color:var(--grey-med);">Baseline</div>
+          </div>
+          <div style="background:var(--orange-light);border-radius:4px;padding:5px;text-align:center;">
+            <div style="font-family:var(--fh);font-size:13px;font-weight:800;color:var(--orange-dark);" id="sw-current-num">—</div>
+            <div style="font-size:8px;color:var(--grey-dark);">Current</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Business Tools -->
+      <div class="sl" style="font-size:9px;">Business Tools</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div class="bt-card"><div class="bt-icon">🗺</div><div class="bt-label">BMC</div><div class="bt-status" id="sw-bmc-status" style="background:var(--grey-xlight);color:var(--grey-med);">— Not Scored</div></div>
+        <div class="bt-card"><div class="bt-icon">📊</div><div class="bt-label">Unit Economics</div><div class="bt-status" id="sw-ue-status" style="background:var(--grey-xlight);color:var(--grey-med);">— Not Scored</div></div>
+        <div class="bt-card"><div class="bt-icon">📋</div><div class="bt-label">Business Plan</div><div class="bt-status" id="sw-bp-status" style="background:var(--grey-xlight);color:var(--grey-med);">— Not Scored</div></div>
+      </div>
+    </div>
+
+    <!-- CENTER: Radar + dimension cards -->
+    <div>
+      <div class="sl">Enterprise Health Radar — 12 Dimensions</div>
+      <div class="card" style="margin-bottom:16px;">
+        <div style="position:relative;height:340px;max-width:600px;margin:0 auto;">
+          <canvas id="sw-radar"></canvas>
+        </div>
+        <div style="display:flex;justify-content:center;gap:16px;font-size:10px;color:var(--grey-med);margin-top:8px;">
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:3px;background:#d9760f;display:inline-block;border-radius:2px;"></span>Current</span>
+          <span style="display:flex;align-items:center;gap:4px;opacity:.5;"><span style="width:12px;height:1px;background:#aaa;display:inline-block;"></span>Baseline</span>
+        </div>
+      </div>
+
+      <!-- Swasthya Dimension Cards in 3 groups -->
+      <div class="g3">
+        <div>
+          <div class="sl" style="font-size:9px;">Finance &amp; Records</div>
+          <div id="sw-finance-cards"></div>
+        </div>
+        <div>
+          <div class="sl" style="font-size:9px;">Operations &amp; Supply</div>
+          <div id="sw-ops-cards"></div>
+        </div>
+        <div>
+          <div class="sl" style="font-size:9px;">Market, Digital &amp; Planning</div>
+          <div id="sw-market-cards"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Action focus -->
+    <div>
+      <div class="sl">Action Focus</div>
+      <div class="action-focus" id="sw-actions">
+        <div class="action-focus-title">Priority Actions</div>
+        <div class="action-item">Load form data to see enterprise priorities</div>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /panel-swasthya -->
+
+
+<!-- ═══════════════════════════════════════════════════
+     PANEL 4 — FINANCIAL HEALTH
+══════════════════════════════════════════════════════ -->
+<div id="panel-finance" class="panel">
+
+  <!-- Top Stat Cards -->
+  <div class="g4" style="margin-bottom:18px;">
+    <div class="sc sg"><div class="lbl">Monthly Sales</div><div class="val" id="fin-sales">—</div><div class="sub" id="fin-sales-sub">—</div></div>
+    <div class="sc so"><div class="lbl">Monthly Expenses</div><div class="val" id="fin-exp">—</div><div class="sub" id="fin-exp-sub">—</div></div>
+    <div class="sc sb"><div class="lbl">Monthly Profit</div><div class="val" id="fin-profit">—</div><div class="sub" id="fin-profit-sub">—</div></div>
+    <div class="sc sp"><div class="lbl">Profit Margin</div><div class="val" id="fin-margin">—</div><div class="sub" id="fin-margin-sub">—</div></div>
+  </div>
+
+  <div class="g21">
+    <div>
+      <!-- Financial Chart -->
+      <div class="card" style="margin-bottom:18px;">
+        <div class="ct">
+          Financial History
+          <div style="display:flex;gap:4px;">
+            <button class="chart-type-btn active" id="ct-bar" onclick="switchChart('bar',this)">Bar</button>
+            <button class="chart-type-btn" id="ct-line" onclick="switchChart('line',this)">Line</button>
+            <button class="chart-type-btn" id="ct-area" onclick="switchChart('area',this)">Area</button>
+          </div>
+        </div>
+        <div id="fin-legend" style="display:flex;gap:12px;margin-bottom:8px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--grey-med);font-family:var(--fh);font-weight:600;"><div style="width:10px;height:10px;border-radius:2px;background:var(--green);"></div>Sales</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--grey-med);font-family:var(--fh);font-weight:600;"><div style="width:10px;height:10px;border-radius:2px;background:var(--orange);"></div>Expenses</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--grey-med);font-family:var(--fh);font-weight:600;"><div style="width:10px;height:10px;border-radius:2px;background:var(--green-dark);"></div>Profit</div>
+        </div>
+        <div style="position:relative;height:260px;">
+          <canvas id="fin-chart"></canvas>
+        </div>
+        <div class="fin-insight" id="fin-insight">Load financial data to see insights</div>
+      </div>
+
+      <!-- Baseline vs Current Comparison -->
+      <div class="card" style="margin-bottom:18px;">
+        <div class="ct">Baseline → Current Comparison <span class="ct-tag tag-g">Progress</span></div>
+        <div id="fin-comparison"></div>
+      </div>
+    </div>
+
+    <div>
+      <!-- Livelihoods -->
+      <div class="sl">Livelihoods Created</div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="lhood">
+          <div class="lhood-card ft"><div class="lhood-num" id="fin-ft">—</div><div class="lhood-lbl">Full-Time</div></div>
+          <div class="lhood-card pt"><div class="lhood-num" id="fin-pt">—</div><div class="lhood-lbl">Part-Time</div></div>
+          <div class="lhood-card tot"><div class="lhood-num" id="fin-total-jobs">—</div><div class="lhood-lbl">Total People</div></div>
+        </div>
+      </div>
+
+      <!-- Liabilities Detail -->
+      <div class="sl">Liabilities Breakdown</div>
+      <div class="card" style="margin-bottom:14px;" id="fin-liab-card">
+        <div style="font-size:11px;color:var(--grey-dark);" id="fin-liab-detail"></div>
+      </div>
+
+      <!-- Loan Eligibility Calculator -->
+      <div class="sl">Loan Eligibility Calculator</div>
+      <div class="card">
+        <span class="calc-label">Monthly Income (Sales) ₹</span>
+        <input class="calc-input" id="c-income" type="number" placeholder="e.g. 18000" oninput="calcLoan()"/>
+        <span class="calc-label">Monthly Expenses ₹</span>
+        <input class="calc-input" id="c-expense" type="number" placeholder="e.g. 12000" oninput="calcLoan()"/>
+        <span class="calc-label">Existing EMI ₹/month</span>
+        <input class="calc-input" id="c-emi" type="number" placeholder="0" oninput="calcLoan()"/>
+        <span class="calc-label">Desired Loan Tenure (months)</span>
+        <input class="calc-input" id="c-tenure" type="number" placeholder="12" oninput="calcLoan()"/>
+        <div class="calc-result">
+          <div class="calc-result-row"><span class="calc-result-lbl">Net Monthly Surplus</span><span class="calc-result-val" id="r-net">—</span></div>
+          <div class="calc-result-row"><span class="calc-result-lbl">Max EMI Capacity (40%)</span><span class="calc-result-val" id="r-maxemi">—</span></div>
+          <div class="calc-result-row"><span class="calc-result-lbl">Available for New EMI</span><span class="calc-result-val" id="r-avail">—</span></div>
+          <div class="calc-result-row"><span class="calc-result-lbl">Estimated Eligible Loan</span><span class="calc-result-val" id="r-loan" style="color:var(--green-dark);font-size:16px;">—</span></div>
+          <div class="calc-result-row"><span class="calc-result-lbl">Debt-to-Income Ratio</span><span class="calc-result-val" id="r-dti">—</span></div>
+          <div class="dti-bar-wrap"><div class="dti-fill" id="r-dti-bar" style="width:0%;background:var(--green);"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /panel-finance -->
+
+
+<!-- ═══════════════════════════════════════════════════
+     PANEL 5 — KYC & DOCS
+══════════════════════════════════════════════════════ -->
+<div id="panel-kyc" class="panel">
+
+  <div class="g21">
+    <div>
+      <!-- KYC Progress -->
+      <div class="sl">KYC Completion Status</div>
+      <div class="card" style="margin-bottom:18px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span style="font-family:var(--fh);font-size:13px;font-weight:800;color:var(--ink);">Document Verification</span>
+          <span class="ct-tag tag-g" id="kyc-pct-badge">0% Complete</span>
+        </div>
+        <div class="kyc-bar"><div class="kyc-fill" id="kyc-bar-fill" style="width:0%;"></div></div>
+        <div style="font-size:10px;color:var(--grey-med);margin-top:6px;" id="kyc-bar-sub">—</div>
+      </div>
+
+      <!-- Personal Documents -->
+      <div class="doc-cat" style="margin-top:0;">👤 Personal Documents — व्यक्तिगत दस्तावेज़</div>
+      <div id="kyc-personal-docs"></div>
+
+      <!-- Business Documents -->
+      <div class="doc-cat">🏢 Business &amp; Registration — व्यवसाय दस्तावेज़</div>
+      <div id="kyc-business-docs"></div>
+
+      <!-- Financial Documents -->
+      <div class="doc-cat">💳 Financial &amp; Banking — वित्तीय दस्तावेज़</div>
+      <div id="kyc-finance-docs"></div>
+    </div>
+
+    <div>
+      <!-- CIBIL & Credit -->
+      <div class="sl">Credit Profile</div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="ct">CIBIL Score</div>
+        <div id="kyc-cibil-block" style="text-align:center;padding:18px;">
+          <div style="font-family:var(--fh);font-size:36px;font-weight:900;color:var(--grey-med);" id="kyc-cibil-num">—</div>
+          <div style="font-size:11px;color:var(--grey-med);margin-top:4px;" id="kyc-cibil-note">Not checked / Not available</div>
+        </div>
+      </div>
+
+      <!-- KYC Notes -->
+      <div class="sl">KYC Notes</div>
+      <div class="card" style="margin-bottom:14px;" id="kyc-notes-card">
+        <div style="font-size:12px;color:var(--grey-med);font-style:italic;">No KYC notes available.</div>
+      </div>
+
+      <!-- Stat summary -->
+      <div class="g2">
+        <div class="sc sg"><div class="lbl">Verified</div><div class="val" id="kyc-count-v">—</div><div class="sub">documents</div></div>
+        <div class="sc so"><div class="lbl">Pending</div><div class="val" id="kyc-count-p">—</div><div class="sub">to collect</div></div>
+      </div>
+      <div class="g2" style="margin-top:-8px;">
+        <div class="sc sr"><div class="lbl">Missing</div><div class="val" id="kyc-count-m">—</div><div class="sub">not available</div></div>
+        <div class="sc sb"><div class="lbl">Total Docs</div><div class="val" id="kyc-count-t">—</div><div class="sub">in checklist</div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /panel-kyc -->
+
+
+<!-- ═══════════════════════════════════════════════════
+     PANEL 6 — INTERACTIONS
+══════════════════════════════════════════════════════ -->
+<div id="panel-interactions" class="panel">
+
+  <div class="int-bar">
+    <button class="int-btn active" onclick="switchInt('visits',this)">📍 Visit Log</button>
+    <button class="int-btn" onclick="switchInt('actions',this)">✅ Action Items</button>
+    <button class="int-btn" onclick="switchInt('timeline',this)">📅 Program Timeline</button>
+    <button class="int-btn" onclick="switchInt('needs',this)">🎯 Identified Needs</button>
+  </div>
+
+  <!-- Visits -->
+  <div class="int-panel active" id="int-visits">
+    <div class="sl">Field Visit Log</div>
+    <div class="card">
+      <table class="vt">
+        <thead>
+          <tr>
+            <th>Date</th><th>Visit Type</th><th>Officer</th><th>Duration</th><th>Key Notes</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="visits-tbody">
+          <tr><td colspan="6" style="text-align:center;color:var(--grey-med);padding:24px;font-style:italic;">No visits logged yet</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="int-panel" id="int-actions">
+    <div class="sl">Open Action Items</div>
+    <div class="card" id="actions-card">
+      <div style="font-size:12px;color:var(--grey-med);font-style:italic;">No action items available.</div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="int-panel" id="int-timeline">
+    <div class="sl">Program Timeline</div>
+    <div class="card">
+      <div class="tl-wrap" id="program-timeline"></div>
+    </div>
+  </div>
+
+  <!-- Needs -->
+  <div class="int-panel" id="int-needs">
+    <div class="sl">Identified Needs &amp; Interventions</div>
+    <div class="card" id="needs-card">
+      <div style="font-size:12px;color:var(--grey-med);font-style:italic;">Load form data to see identified needs.</div>
+    </div>
+  </div>
+
+</div><!-- /panel-interactions -->
+
+</div><!-- /main -->
+
+
+<!-- ═══════════════════════════════════════ IMPORT MODAL -->
+<div class="modal-overlay" id="import-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeImportModal()">✕</button>
+    <div class="modal-title">📥 Load Form Data</div>
+    <div class="modal-sub">
+      To connect this dashboard to the field forms, click <strong>"Auto-Load"</strong> to pull data saved by the forms tool (same browser), or paste exported JSON below.
+    </div>
+    <div id="modal-auto-status" style="padding:10px 12px;background:var(--grey-xlight);border-radius:var(--rs);font-size:12px;color:var(--grey-med);margin-bottom:12px;font-family:var(--fh);font-weight:600;">
+      Checking for saved form data…
+    </div>
+    <textarea id="json-paste" placeholder="Or paste exported JSON here…"></textarea>
+    <div class="modal-btns">
+      <button class="modal-btn primary" onclick="autoLoad()">⚡ Auto-Load from Forms</button>
+      <button class="modal-btn primary" style="background:var(--blue);" onclick="loadFromPaste()">📋 Load Pasted JSON</button>
+      <button class="modal-btn secondary" onclick="loadDemo()">🎭 Use Demo Data</button>
+      <button class="modal-btn secondary" onclick="closeImportModal()">Cancel</button>
+    </div>
+    <div style="margin-top:12px;font-size:10px;color:var(--grey-med);line-height:1.6;">
+      💡 To enable auto-load: open the Field Forms file (v7), fill in data, and click <strong>"Save to Dashboard"</strong>. Both files must be open in the same browser.
+    </div>
+  </div>
+</div>
+
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   DEMO DATA — realistic sample for a dairy entrepreneur
+══════════════════════════════════════════════════════ */
+const DEMO_DATA = {
+  _version: 1,
+  _savedAt: null, // null = demo mode
+  _formType: 'fieldreport',
+
+  // Entrepreneur Profile
+  udyamiId: 'GR-MP-2024-A-004',
+  name: 'Sunita Devi',
+  nameHindi: 'सुनीता देवी',
+  mobile: '98765XXXXX',
+  gender: 'Female',
+  category: 'OBC',
+  state: 'Madhya Pradesh',
+  district: 'Jabalpur',
+  block: 'Bargi',
+  village: 'Bargi',
+  education: 'Middle (6th–8th)',
+  marital: 'Married',
+  dependents: 3,
+  groups: ['SHG'],
+  partner: 'Priya Sharma',
+  batchId: 'MP-2024-A',
+  baselineDate: '2024-03-15',
+
+  // Enterprise
+  enterpriseName: 'Sunita Dairy',
+  enterpriseType: ['Agri & Allied'],
+  nic: {'Agri & Allied': 'Dairy & Milk Products'},
+  yearsInBusiness: '2–5 years',
+  businessLocation: ['Home-based'],
+  marketReach: 'Multiple villages',
+  fixedAssets: 85000,
+  fixedAssetNotes: '2 cows · Milk pail · Storage vessel',
+  inventory: 12000,
+  inventoryNotes: 'Cattle feed · Supplements',
+
+  // Financial Baseline
+  sales: 18000,
+  expenses: 12000,
+  profit: 6000,
+  diary: 'Verbal estimate',
+  salesFreq: 'Daily',
+  customers: 28,
+  avgSale: 160,
+  liabilities: { savings: 0, shg: 5000, supplier: 3200, bank: 0 },
+  emi: 0,
+  employmentFT: 2,
+  employmentPT: 3,
+
+  // Field Report
+  fieldReportDate: '2024-04-10',
+  fieldOfficer: 'Priya Sharma',
+
+  // KYC
+  kyc: {
+    aadhaar:       '✅ Verified — copy taken',
+    pan:           '⏳ Has it — not collected',
+    panLinked:     '❌ Cannot confirm',
+    aadhaarMobile: '✅ Confirmed linked',
+    janAadhaar:    '🔘 Not applicable',
+    bankPassbook:  '✅ Verified — copy taken',
+    voterID:       '✅ Verified — copy taken',
+    udyam:         '⏳ In progress',
+    gst:           '🔘 Not applicable',
+    shgCertificate:'✅ Verified — copy taken',
+    fssai:         '🔘 Not applicable',
+    cibil:         null
+  },
+  kycNotes: 'PAN needs to be collected at next visit. CIBIL not yet checked — plan for assessment visit.',
+
+  // Shakti 8 dimensions
+  shakti: [3, 2, 3, 2, 3, 2, 2, 2],
+
+  // Swasthya 12 dimensions
+  swasthya: [2, 2, 3, 2, 3, 3, 2, 1, 2, 2, 2, 2],
+
+  // Business Tools (1-4 scale)
+  bmc: 2, ue: 2, bp: 1,
+
+  // Identified needs
+  needs: ['Credit Access', 'Digital Upskilling', 'Market Linkage'],
+  needsNotes: 'Needs working capital ₹40,000 for feed procurement ahead of seasonal peak. UPI setup required.',
+
+  // Financial history (from visits)
+  financialHistory: [
+    { month: 'Mar 24', sales: 18000, expenses: 12000 },
+    { month: 'Apr 24', sales: 19500, expenses: 12800 },
+    { month: 'May 24', sales: 21000, expenses: 13500 },
+    { month: 'Jun 24', sales: 20500, expenses: 13200 },
+    { month: 'Jul 24', sales: 24000, expenses: 15000 },
+  ],
+
+  // Visits
+  visits: [
+    { date: '2024-03-15', type: 'Baseline', officer: 'Priya Sharma', duration: 90, notes: 'Strong motivation; dairy well-established. Needs financial literacy support.', actions: ['Submit Udyam registration', 'Open separate business bank account'] },
+    { date: '2024-04-10', type: 'Field Report', officer: 'Priya Sharma', duration: 60, notes: 'Shakti & Swasthya baseline scored. KYC partially complete.', actions: ['Collect PAN copy', 'Set up UPI'] },
+    { date: '2024-04-25', type: 'Regular', officer: 'Rahul Verma', duration: 35, notes: 'Sales improving. Diary filling improved to 60%.', actions: ['Follow up on Udyam registration'] },
+    { date: '2024-05-12', type: 'Regular', officer: 'Priya Sharma', duration: 30, notes: 'Introduced BMC workshop. Good engagement.', actions: ['Complete BMC draft before next visit'] },
+    { date: '2024-06-08', type: 'Regular', officer: 'Rahul Verma', duration: 40, notes: 'UPI set up and used twice. Seasonal demand picking up.', actions: ['Plan seasonal procurement for Oct', 'Begin unit economics exercise'] },
+  ],
+
+  programStage: 'ankur'
+};
+
+/* ═══════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════ */
+let DATA = null;
+let finChartObj = null;
+let skRadarObj = null;
+let swRadarObj = null;
+let currentChartType = 'bar';
+
+/* ═══════════════════════════════════════════════════════
+   SHAKTI / SWASTHYA DIMENSION METADATA
+══════════════════════════════════════════════════════ */
+const SK_DIMS = [
+  { title: 'Goal Clarity', hindi: 'लक्ष्य स्पष्टता', cat: 'Mindset', group: 'mindset' },
+  { title: 'Growth Mindset', hindi: 'विकास मानसिकता', cat: 'Mindset', group: 'mindset' },
+  { title: 'Financial Literacy', hindi: 'वित्तीय साक्षरता', cat: 'Financial', group: 'skill' },
+  { title: 'Digital Confidence', hindi: 'डिजिटल आत्मविश्वास', cat: 'Digital', group: 'skill' },
+  { title: 'Negotiation & Comm.', hindi: 'बातचीत और संचार', cat: 'Agency', group: 'mindset' },
+  { title: 'Decision Autonomy', hindi: 'स्वायत्त निर्णय', cat: 'Agency', group: 'mindset' },
+  { title: 'Time Management', hindi: 'समय प्रबंधन', cat: 'Operations', group: 'skill' },
+  { title: 'Risk & Decision Making', hindi: 'जोखिम और निर्णय', cat: 'Operations', group: 'skill' },
+];
+
+const SW_DIMS = [
+  { title: 'Record Keeping', hindi: 'रिकॉर्ड रखना', cat: 'Financial', group: 'finance' },
+  { title: 'Cash Flow Mgmt', hindi: 'नकद प्रवाह', cat: 'Financial', group: 'finance' },
+  { title: 'Inventory Mgmt', hindi: 'स्टॉक प्रबंधन', cat: 'Operations', group: 'ops' },
+  { title: 'Production Quality', hindi: 'उत्पाद गुणवत्ता', cat: 'Operations', group: 'ops' },
+  { title: 'Supplier Management', hindi: 'आपूर्ति श्रृंखला', cat: 'Supply', group: 'ops' },
+  { title: 'Customer Relations', hindi: 'ग्राहक संबंध', cat: 'Market', group: 'market' },
+  { title: 'Sales & Market Reach', hindi: 'बिक्री और बाजार', cat: 'Market', group: 'market' },
+  { title: 'Compliance & Reg.', hindi: 'अनुपालन', cat: 'Formal', group: 'market' },
+  { title: 'SHG & Network', hindi: 'समूह और नेटवर्क', cat: 'Social', group: 'finance' },
+  { title: 'Credit & Finance Access', hindi: 'ऋण और वित्त', cat: 'Financial', group: 'finance' },
+  { title: 'Digital Tools in Biz', hindi: 'डिजिटल उपकरण', cat: 'Digital', group: 'market' },
+  { title: 'Business Planning', hindi: 'व्यवसाय योजना', cat: 'Planning', group: 'market' },
+];
+
+const BT_INFO = {
+  1: { text: 'Not Initiated', emoji: '⬜', bg: 'var(--red-light)', color: 'var(--red)' },
+  2: { text: 'Work in Progress', emoji: '🔄', bg: 'var(--orange-light)', color: 'var(--orange-dark)' },
+  3: { text: 'Needs Resolution', emoji: '⚠️', bg: 'var(--purple-light)', color: 'var(--purple)' },
+  4: { text: 'Done', emoji: '✅', bg: 'var(--green-light)', color: 'var(--green-dark)' },
+};
+
+const STAGE_MAP = {
+  'beej': 0, 'ankur': 1, 'paudha': 2, 'ped': 3
+};
+
+const NEEDS_ALERTS = {
+  'Credit Access': { cls: 'orange', icon: '🏦', msg: 'Needs working capital credit — follow up on NRLM / SHG loan application.' },
+  'Digital Upskilling': { cls: 'blue', icon: '📱', msg: 'Needs training on UPI collection, WhatsApp business, and digital records.' },
+  'Market Linkage': { cls: 'purple', icon: '🌐', msg: 'Needs second buyer channel — bulk/institutional supply can scale revenue.' },
+  'Skill Training': { cls: 'orange', icon: '📚', msg: 'Skill development needed — identify relevant workshop or SHG training.' },
+  'Compliance Help': { cls: 'green', icon: '📄', msg: 'Compliance support required — pending registration or licenses.' },
+  'Peer Support / SHG': { cls: 'green', icon: '👥', msg: 'Peer networking recommended — connect with other program Udyamis.' },
+};
+
+/* ═══════════════════════════════════════════════════════
+   HELPER FUNCTIONS
+══════════════════════════════════════════════════════ */
+function fmt(n) {
+  if (!n && n !== 0) return '—';
+  if (n >= 100000) return '₹' + (n/100000).toFixed(1) + 'L';
+  if (n >= 1000) return '₹' + (n/1000).toFixed(1) + 'K';
+  return '₹' + n.toLocaleString('en-IN');
+}
+function fmtNum(n) { return (n === undefined || n === null) ? '—' : Number(n).toLocaleString('en-IN'); }
+function pct(score, max) { return max > 0 ? Math.round(score/max*100) : 0; }
+function setEl(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+function stageLabel(score) {
+  if (!score || score === 0) return { text: '—', cls: 'ds-l1' };
+  const labels = {1: {text:'🌰 Beej', cls:'ds-l1'}, 2:{text:'🌱 Ankur', cls:'ds-l2'}, 3:{text:'🌿 Paudha', cls:'ds-l3'}, 4:{text:'🌳 Ped', cls:'ds-l4'}};
+  return labels[score] || {text:'—', cls:'ds-l1'};
+}
+function ring(pctVal, circ) {
+  return circ - (pctVal/100) * circ;
+}
+function formatDate(d) {
+  if (!d) return '—';
+  try { return new Date(d).toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'}); } catch { return d; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   RENDER FUNCTIONS
+══════════════════════════════════════════════════════ */
+function render(data) {
+  renderTopbar(data);
+  renderOverview(data);
+  renderShakti(data);
+  renderSwasthya(data);
+  renderFinance(data);
+  renderKYC(data);
+  renderInteractions(data);
+}
+
+function renderTopbar(d) {
+  const batchEl = document.getElementById('tb-batch');
+  const phaseEl = document.getElementById('tb-phase');
+  const modeEl = document.getElementById('data-mode-badge');
+  if (batchEl) batchEl.textContent = 'Batch: ' + (d.batchId || '—');
+  const stageEmoji = {beej:'🌰',ankur:'🌱',paudha:'🌿',ped:'🌳'}[d.programStage] || '🌱';
+  const stageName = {beej:'L1 Beej',ankur:'L2 Ankur',paudha:'L3 Paudha',ped:'L4 Ped'}[d.programStage] || '—';
+  if (phaseEl) phaseEl.textContent = stageEmoji + ' ' + stageName;
+  if (modeEl) {
+    if (d._savedAt) {
+      modeEl.className = 'live-badge';
+      modeEl.textContent = '🟢 Live · ' + formatDate(d._savedAt);
+    } else {
+      modeEl.className = 'demo-badge';
+      modeEl.textContent = '⚡ Demo Mode';
+    }
+  }
+}
+
+function renderOverview(d) {
+  // Profile
+  setEl('ov-name', d.name || '—');
+  const hindi = document.getElementById('ov-hindi');
+  if (hindi) hindi.textContent = d.nameHindi || '';
+
+  const meta = document.getElementById('ov-meta');
+  if (meta) {
+    const stageName = {beej:'L1 Beej',ankur:'L2 Ankur',paudha:'L3 Paudha',ped:'L4 Ped'}[d.programStage] || '—';
+    meta.innerHTML = `
+      <span class="ptag ac">Active</span>
+      <span class="ptag ph">🌱 ${stageName}</span>
+      <span class="ptag">🏭 ${(d.enterpriseType||[]).join(' · ')} · ${d.enterpriseName||'—'}</span>
+      <span class="ptag">${d.district||'—'}, ${d.state||'—'}</span>
+      <span class="ptag" style="font-family:var(--fh);font-weight:700;color:var(--blue);background:var(--blue-light);border-color:#b8d0ee;">ID: ${d.udyamiId||'—'}</span>
+    `;
+  }
+
+  const stats = document.getElementById('ov-stats');
+  if (stats) {
+    stats.innerHTML = `
+      <div class="pst"><strong>${d.partner||'—'}</strong>Implementing Partner</div>
+      <div class="pst"><strong>${formatDate(d.baselineDate)}</strong>Baseline Date</div>
+      <div class="pst"><strong>${d.education||'—'}</strong>Education</div>
+      <div class="pst"><strong>+91 ${d.mobile||'—'}</strong>Mobile</div>
+    `;
+  }
+
+  // Scores
+  const sk = (d.shakti||[]).reduce((a,b)=>a+b,0);
+  const sw = (d.swasthya||[]).reduce((a,b)=>a+b,0);
+  const total = sk + sw;
+  const skFilled = (d.shakti||[]).filter(v=>v>0).length > 0;
+  const swFilled = (d.swasthya||[]).filter(v=>v>0).length > 0;
+
+  setEl('ov-sk-score', skFilled ? sk : '—');
+  setEl('ov-sw-score', swFilled ? sw : '—');
+  setEl('ov-total-score', (skFilled || swFilled) ? total : '—');
+
+  // Score rings (double ring)
+  if (skFilled) {
+    const skRing = document.getElementById('ov-sk-ring');
+    if (skRing) skRing.setAttribute('stroke-dashoffset', ring(pct(sk,32), 326.7).toFixed(1));
+    document.getElementById('ov-ring-total').textContent = total;
+    document.getElementById('ov-ring-pct').textContent = pct(total,80)+'%';
+    setEl('ov-sk-leg', sk+'/32');
+    setEl('ov-sw-leg', sw+'/48');
+    setEl('ov-target-note', `Target 1Y: 65/80 · +${Math.max(0,65-total)} pts needed`);
+  }
+  if (swFilled) {
+    const swRing = document.getElementById('ov-sw-ring');
+    if (swRing) swRing.setAttribute('stroke-dashoffset', ring(pct(sw,48), 238.6).toFixed(1));
+  }
+
+  setEl('ov-last-updated', formatDate(d._savedAt || d.fieldReportDate || d.baselineDate));
+
+  // KPI
+  const totalLiab = Object.values(d.liabilities||{}).reduce((a,b)=>a+b,0);
+  setEl('kpi-sales', fmt(d.sales));
+  setEl('kpi-profit', fmt(d.profit || (d.sales - d.expenses)));
+  setEl('kpi-customers', fmtNum(d.customers) + (d.salesFreq ? ' / '+d.salesFreq.charAt(0).toUpperCase()+d.salesFreq.slice(1).toLowerCase() : ''));
+  setEl('kpi-score', (skFilled||swFilled) ? total+'/80' : '—');
+  const kycDone = calcKycPct(d.kyc||{});
+  setEl('kpi-kyc', kycDone+'%');
+  setEl('kpi-liab', fmt(totalLiab));
+  setEl('kpi-jobs', ((d.employmentFT||0)+(d.employmentPT||0)) || '—');
+  setEl('kpi-visits', (d.visits||[]).length || '—');
+
+  // Growth Stage
+  const stage = d.programStage || 'ankur';
+  const idx = STAGE_MAP[stage] || 1;
+  const track = document.getElementById('ov-growth-track');
+  if (track) {
+    const stages = track.querySelectorAll('.stage');
+    stages.forEach((s, i) => {
+      s.className = 'stage ' + (i < idx ? 'done' : i === idx ? 'current' : 'pending');
+      const check = s.querySelector('.stage-check');
+      if (check) check.textContent = i < idx ? '✅' : i === idx ? '📍' : '';
+    });
+  }
+
+  // Enterprise snapshot
+  setEl('ov-ent-type', (d.enterpriseType||['—'])[0].replace('Agri & Allied','Agri & Allied').split(' ').slice(0,2).join(' '));
+  const reach = (d.marketReach||'—').split(' ')[0];
+  setEl('ov-market-reach', reach);
+  setEl('ov-years-biz', (d.yearsInBusiness||'—').replace(' years','y').replace(' months','m'));
+  setEl('ov-fixed-assets', fmt(d.fixedAssets));
+  setEl('ov-fixed-notes', d.fixedAssetNotes || '—');
+  setEl('ov-inventory', fmt(d.inventory));
+  setEl('ov-inv-notes', d.inventoryNotes || '—');
+
+  // Needs alerts
+  const alertsEl = document.getElementById('ov-needs-alerts');
+  if (alertsEl) {
+    const needs = d.needs || [];
+    if (needs.length === 0) {
+      alertsEl.innerHTML = '<div class="alert green">✅ No critical needs flagged. Check back after next visit assessment.</div>';
+    } else {
+      alertsEl.innerHTML = needs.map(n => {
+        const info = NEEDS_ALERTS[n] || { cls: 'orange', icon: '⚠️', msg: n };
+        return `<div class="alert ${info.cls}">${info.icon} <strong>${n}:</strong> ${info.msg}</div>`;
+      }).join('') + (d.needsNotes ? `<div class="alert blue">📝 <strong>Officer Notes:</strong> ${d.needsNotes}</div>` : '');
+    }
+  }
+
+  // Liabilities
+  const liab = d.liabilities || {};
+  const liabNames = { savings: 'Savings / Informal', shg: 'SHG Loan', supplier: 'Supplier Credit', bank: 'Formal Bank Loan' };
+  setEl('ov-liab-total', fmt(totalLiab));
+  const liabRows = document.getElementById('ov-liab-rows');
+  if (liabRows) {
+    liabRows.innerHTML = Object.entries(liabNames).map(([k,n]) => `
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--grey-xlight);">
+        <span>${n}</span>
+        <span style="font-family:var(--fh);font-weight:700;color:${liab[k]>0?'var(--ink)':'var(--grey-med)'};">${liab[k]>0?fmt(liab[k]):'None'}</span>
+      </div>
+    `).join('');
+  }
+
+  // Customers
+  setEl('ov-cust-num', fmtNum(d.customers));
+  setEl('ov-cust-freq', 'Customers / ' + (d.salesFreq || 'Period'));
+  setEl('ov-avg-sale', d.avgSale ? '₹'+d.avgSale : '—');
+}
+
+function renderShakti(d) {
+  const scores = d.shakti || [0,0,0,0,0,0,0,0];
+  const total = scores.reduce((a,b)=>a+b,0);
+  const filled = scores.filter(v=>v>0).length;
+
+  // Score ring
+  const ringEl = document.getElementById('sk-ring');
+  if (ringEl) ringEl.setAttribute('stroke-dashoffset', ring(pct(total,32), 314.16).toFixed(1));
+  setEl('sk-ring-num', filled > 0 ? total : '—');
+  setEl('sk-ring-pct', pct(total,32)+'%');
+  setEl('sk-baseline-num', filled > 0 ? total : '—');
+  setEl('sk-current-num', filled > 0 ? total : '—');
+
+  // Radar
+  buildShaktiRadar(scores);
+
+  // Dimension cards
+  renderDimCards('sk-mindset-cards', SK_DIMS.filter(d=>d.group==='mindset'), scores, SK_DIMS);
+  renderDimCards('sk-skill-cards', SK_DIMS.filter(d=>d.group==='skill'), scores, SK_DIMS);
+
+  // Action focus
+  const actions = document.getElementById('sk-actions');
+  if (actions) {
+    const low = scores.map((s,i)=>({s,i})).filter(x=>x.s>0&&x.s<=2).sort((a,b)=>a.s-b.s).slice(0,4);
+    if (low.length === 0) {
+      actions.innerHTML = '<div class="action-focus-title">Priority Actions</div><div class="action-item">All dimensions scored ≥3 — continue reinforcing strengths!</div>';
+    } else {
+      actions.innerHTML = '<div class="action-focus-title">Priority Actions for Next Period</div>' +
+        low.map(x => `<div class="action-item">⚡ Strengthen: <strong>${SK_DIMS[x.i].title}</strong> — currently at ${x.s}/4</div>`).join('');
+    }
+  }
+}
+
+function renderDimCards(containerId, dims, allScores, allDims) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = dims.map(dim => {
+    const idx = allDims.indexOf(dim);
+    const score = allScores[idx] || 0;
+    const sl = stageLabel(score);
+    return `
+      <div class="dim-card">
+        <div class="dim-head">
+          <div>
+            <div class="dim-title">${dim.title}</div>
+            <div class="dim-hindi">${dim.hindi}</div>
+          </div>
+          <span class="dim-stage-badge ${sl.cls}">${sl.text}</span>
+        </div>
+        <div class="pm-wrap">
+          ${[1,2,3,4].map((v,j) => `
+            <div class="pm-dot ${score>=v ? 'pmd-'+v : 'pmd-none'}">${v}</div>
+            ${j<3 ? `<div class="pm-line ${score>v?'fill':''}"></div>` : ''}
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderSwasthya(d) {
+  const scores = d.swasthya || new Array(12).fill(0);
+  const total = scores.reduce((a,b)=>a+b,0);
+  const filled = scores.filter(v=>v>0).length;
+
+  // Score ring
+  const ringEl = document.getElementById('sw-ring');
+  if (ringEl) ringEl.setAttribute('stroke-dashoffset', ring(pct(total,48), 314.16).toFixed(1));
+  setEl('sw-ring-num', filled > 0 ? total : '—');
+  setEl('sw-ring-pct', pct(total,48)+'%');
+  setEl('sw-baseline-num', filled > 0 ? total : '—');
+  setEl('sw-current-num', filled > 0 ? total : '—');
+
+  // Business Tools
+  ['bmc','ue','bp'].forEach(tool => {
+    const val = d[tool] || 0;
+    const statusEl = document.getElementById('sw-'+tool+'-status');
+    if (statusEl) {
+      if (!val) {
+        statusEl.textContent = '— Not Scored';
+        statusEl.style.background = 'var(--grey-xlight)';
+        statusEl.style.color = 'var(--grey-med)';
+      } else {
+        const info = BT_INFO[val];
+        statusEl.textContent = info.emoji + ' ' + info.text;
+        statusEl.style.background = info.bg;
+        statusEl.style.color = info.color;
+      }
+    }
+  });
+
+  // Radar
+  buildSwasthyaRadar(scores);
+
+  // Dimension cards by group
+  const renderGroup = (containerId, group) => {
+    const dims = SW_DIMS.filter(dim => dim.group === group);
+    renderDimCards(containerId, dims, scores, SW_DIMS);
+  };
+  renderGroup('sw-finance-cards', 'finance');
+  renderGroup('sw-ops-cards', 'ops');
+  renderGroup('sw-market-cards', 'market');
+
+  // Action focus
+  const actions = document.getElementById('sw-actions');
+  if (actions) {
+    const low = scores.map((s,i)=>({s,i})).filter(x=>x.s>0&&x.s<=2).sort((a,b)=>a.s-b.s).slice(0,4);
+    if (low.length === 0) {
+      actions.innerHTML = '<div class="action-focus-title">Enterprise Priorities</div><div class="action-item">All dimensions scored ≥3 — maintain current practices!</div>';
+    } else {
+      actions.innerHTML = '<div class="action-focus-title">Enterprise Priority Actions</div>' +
+        low.map(x => `<div class="action-item">⚡ Improve: <strong>${SW_DIMS[x.i].title}</strong> — currently ${x.s}/4</div>`).join('');
+    }
+  }
+}
+
+function renderFinance(d) {
+  const sales = d.sales || 0;
+  const expenses = d.expenses || 0;
+  const profit = d.profit || (sales - expenses);
+  const margin = sales > 0 ? Math.round(profit/sales*100) : 0;
+
+  setEl('fin-sales', fmt(sales));
+  setEl('fin-sales-sub', 'Monthly revenue');
+  setEl('fin-exp', fmt(expenses));
+  setEl('fin-exp-sub', 'Monthly costs');
+  setEl('fin-profit', fmt(profit));
+  setEl('fin-profit-sub', profit >= 0 ? '↑ Surplus' : '↓ Loss');
+  setEl('fin-margin', margin+'%');
+  setEl('fin-margin-sub', margin >= 30 ? '✅ Healthy' : margin >= 15 ? '⚠️ Moderate' : '⬇️ Low');
+
+  // Employment
+  setEl('fin-ft', d.employmentFT || 0);
+  setEl('fin-pt', d.employmentPT || 0);
+  setEl('fin-total-jobs', (d.employmentFT||0)+(d.employmentPT||0));
+
+  // Liabilities
+  const liab = d.liabilities || {};
+  const liabNames = { savings: 'Savings / Informal', shg: 'SHG Loan', supplier: 'Supplier Credit', bank: 'Formal Bank Loan' };
+  const totalLiab = Object.values(liab).reduce((a,b)=>a+b,0);
+  const liabEl = document.getElementById('fin-liab-detail');
+  if (liabEl) {
+    liabEl.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <span style="font-family:var(--fh);font-size:13px;font-weight:800;color:var(--red);">${fmt(totalLiab)}</span>
+        <span class="ct-tag tag-r">Total Outstanding</span>
+      </div>` +
+      Object.entries(liabNames).map(([k,n]) => `
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--grey-xlight);font-size:11px;">
+          <span style="color:var(--grey-dark);">${n}</span>
+          <span style="font-family:var(--fh);font-weight:700;color:${liab[k]>0?'var(--ink)':'var(--grey-med)'};">${liab[k]>0?fmt(liab[k]):'None'}</span>
+        </div>
+      `).join('') + (d.emi > 0 ? `<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:11px;"><span style="color:var(--grey-dark);">Monthly EMI</span><span style="font-family:var(--fh);font-weight:700;">${fmt(d.emi)}/mo</span></div>` : '');
+  }
+
+  // Baseline vs Current comparison
+  const history = d.financialHistory || [];
+  const cmpEl = document.getElementById('fin-comparison');
+  if (cmpEl && history.length >= 2) {
+    const first = history[0];
+    const last = history[history.length-1];
+    const firstProfit = first.sales - first.expenses;
+    const lastProfit = last.sales - last.expenses;
+    const diff = (a,b) => {
+      const delta = b-a;
+      if (delta > 0) return `<span class="cmp-d cup">+${fmt(delta)}</span>`;
+      if (delta < 0) return `<span class="cmp-d cdn">${fmt(delta)}</span>`;
+      return `<span class="cmp-d cne">No change</span>`;
+    };
+    const pbar = (v, max) => `<div class="cmp-pbar"><div class="cmp-pbf" style="width:${Math.min(100,Math.round(v/max*100))}%;"></div></div>`;
+    cmpEl.innerHTML = `
+      <div style="display:flex;font-size:9px;font-family:var(--fh);font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--grey-med);margin-bottom:8px;padding:0 2px;">
+        <span style="flex:1;">Metric</span><span style="width:65px;">Baseline</span><span style="width:75px;">Current</span><span style="width:80px;">Change</span><span style="flex:1;">Progress</span>
+      </div>
+      <div class="cmp-row"><span class="cmp-lbl">Monthly Sales</span><span class="cmp-base">${fmt(first.sales)}</span><span class="cmp-now">${fmt(last.sales)}</span>${diff(first.sales,last.sales)}${pbar(last.sales,last.sales*1.5)}</div>
+      <div class="cmp-row"><span class="cmp-lbl">Monthly Expenses</span><span class="cmp-base">${fmt(first.expenses)}</span><span class="cmp-now">${fmt(last.expenses)}</span>${diff(first.expenses,last.expenses)}${pbar(last.expenses,last.sales)}</div>
+      <div class="cmp-row"><span class="cmp-lbl">Monthly Profit</span><span class="cmp-base">${fmt(firstProfit)}</span><span class="cmp-now">${fmt(lastProfit)}</span>${diff(firstProfit,lastProfit)}${pbar(lastProfit,last.sales)}</div>
+    `;
+  }
+
+  // Pre-fill calculator
+  const cIncome = document.getElementById('c-income');
+  const cExpense = document.getElementById('c-expense');
+  const cEmi = document.getElementById('c-emi');
+  if (cIncome && !cIncome.value) cIncome.value = sales || '';
+  if (cExpense && !cExpense.value) cExpense.value = expenses || '';
+  if (cEmi && !cEmi.value) cEmi.value = d.emi || 0;
+  calcLoan();
+
+  // Financial chart
+  buildFinChart(d.financialHistory || [{ month: 'Baseline', sales: sales, expenses: expenses }]);
+}
+
+function renderKYC(d) {
+  const kyc = d.kyc || {};
+  const allDocs = Object.values(kyc);
+  const verified = allDocs.filter(v => v && v.includes('✅')).length;
+  const pending = allDocs.filter(v => v && (v.includes('⏳') || v.includes('In progress'))).length;
+  const missing = allDocs.filter(v => v && v.includes('❌')).length;
+  const total = allDocs.filter(v => v && v !== '🔘 Not applicable').length;
+  const kycPct = total > 0 ? Math.round(verified/total*100) : 0;
+
+  setEl('kyc-pct-badge', kycPct+'% Complete');
+  const bar = document.getElementById('kyc-bar-fill');
+  if (bar) bar.style.width = kycPct+'%';
+  setEl('kyc-bar-sub', `${verified} verified · ${pending} pending · ${missing} missing · ${total} total documents`);
+  setEl('kyc-count-v', verified);
+  setEl('kyc-count-p', pending);
+  setEl('kyc-count-m', missing);
+  setEl('kyc-count-t', allDocs.length);
+
+  // CIBIL
+  if (d.kyc && d.kyc.cibil) {
+    setEl('kyc-cibil-num', d.kyc.cibil);
+    const score = parseInt(d.kyc.cibil);
+    const cibilNote = score >= 750 ? '✅ Excellent — loan-eligible' : score >= 700 ? '⚠️ Good' : score >= 650 ? '⬇️ Fair — may need support' : '⬇️ Poor — needs attention';
+    setEl('kyc-cibil-note', cibilNote);
+  }
+
+  // KYC notes
+  const notesCard = document.getElementById('kyc-notes-card');
+  if (notesCard && d.kycNotes) {
+    notesCard.innerHTML = `<div style="font-size:12px;color:var(--ink);line-height:1.6;">${d.kycNotes}</div>`;
+  }
+
+  // Render doc lists
+  const personal = {
+    aadhaar: 'Aadhaar Card',
+    pan: 'PAN Card',
+    panLinked: 'PAN linked with Aadhaar',
+    aadhaarMobile: 'Aadhaar linked with Mobile',
+    janAadhaar: 'Jan Aadhaar',
+    voterID: 'Voter ID',
+    bankPassbook: 'Bank Passbook',
+  };
+  const business = {
+    udyam: 'Udyam Registration',
+    gst: 'GST Registration',
+    shgCertificate: 'SHG Certificate',
+    fssai: 'FSSAI License',
+  };
+  renderDocList('kyc-personal-docs', personal, kyc);
+  renderDocList('kyc-business-docs', business, kyc);
+  // finance docs (just cibil in this demo)
+  const finDocs = { cibil: 'CIBIL Score Check' };
+  renderDocList('kyc-finance-docs', finDocs, kyc);
+}
+
+function renderDocList(containerId, docsMap, kyc) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = Object.entries(docsMap).map(([key, name]) => {
+    const status = kyc[key] || '—';
+    let badgeClass = 'sb-na';
+    let icon = '📄';
+    if (status.includes('✅') || status.includes('Confirmed')) { badgeClass = 'sb-done'; icon = '✅'; }
+    else if (status.includes('⏳') || status.includes('progress')) { badgeClass = 'sb-pend'; icon = '⏳'; }
+    else if (status.includes('❌')) { badgeClass = 'sb-miss'; icon = '❌'; }
+    else if (status.includes('🔘')) { badgeClass = 'sb-na'; icon = '🔘'; }
+    const cleanStatus = status.replace(/[✅⏳❌🔘]/g,'').trim() || 'Not applicable';
+    return `
+      <div class="doc-item">
+        <span class="di-icon">${icon}</span>
+        <span class="di-name">${name}</span>
+        <span class="${badgeClass}">${cleanStatus}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function calcKycPct(kyc) {
+  const vals = Object.values(kyc).filter(v => v && v !== '🔘 Not applicable' && v !== null);
+  if (vals.length === 0) return 0;
+  const verified = vals.filter(v => v.includes('✅') || v.includes('Confirmed')).length;
+  return Math.round(verified/vals.length*100);
+}
+
+function renderInteractions(d) {
+  // Visit table
+  const tbody = document.getElementById('visits-tbody');
+  const visits = d.visits || [];
+  if (tbody) {
+    if (visits.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--grey-med);padding:24px;font-style:italic;">No visits logged yet</td></tr>';
+    } else {
+      tbody.innerHTML = visits.map(v => `
+        <tr>
+          <td style="font-family:var(--fh);font-weight:700;white-space:nowrap;">${formatDate(v.date)}</td>
+          <td><span class="sb-done" style="font-size:9px;">${v.type||'—'}</span></td>
+          <td>${v.officer||'—'}</td>
+          <td>${v.duration ? v.duration+' min' : '—'}</td>
+          <td style="color:var(--grey-dark);font-size:11px;">${v.notes||'—'}</td>
+          <td style="font-size:11px;">${(v.actions||[]).map(a=>`<div style="color:var(--green-dark);margin-bottom:2px;">• ${a}</div>`).join('')||'—'}</td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  // Action items (all from all visits, de-duped)
+  const allActions = [...new Set(visits.flatMap(v => v.actions||[]))];
+  const actionsCard = document.getElementById('actions-card');
+  if (actionsCard) {
+    if (allActions.length === 0) {
+      actionsCard.innerHTML = '<div style="font-size:12px;color:var(--grey-med);font-style:italic;">No action items available.</div>';
+    } else {
+      actionsCard.innerHTML = allActions.map((a,i) => `
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--grey-xlight);">
+          <input type="checkbox" style="width:18px;height:18px;cursor:pointer;accent-color:var(--green-dark);margin-top:1px;flex-shrink:0;"/>
+          <span style="flex:1;font-size:12px;color:var(--ink);">${a}</span>
+        </div>
+      `).join('');
+    }
+  }
+
+  // Timeline
+  const tlEl = document.getElementById('program-timeline');
+  if (tlEl) {
+    const events = [
+      { date: d.baselineDate, title: 'Baseline Enrollment', note: 'Profile created · Enterprise &amp; financial baseline captured', done: true },
+      { date: d.fieldReportDate, title: 'Field Report', note: 'KYC · Shakti &amp; Swasthya baseline scores', done: !!d.fieldReportDate },
+      { date: null, title: '4-Month Assessment', note: 'Full reassessment · Progress review', done: false, upcoming: true },
+      { date: null, title: '1-Year Assessment', note: 'Annual review · Graduation checkpoint', done: false },
+      { date: null, title: '2-Year Assessment', note: 'Enterprise sustainability check', done: false },
+      { date: null, title: '3-Year Assessment', note: 'Program graduation', done: false },
+    ];
+    tlEl.innerHTML = events.map(e => `
+      <div class="tli">
+        <div class="tld ${e.done ? 'done' : e.upcoming ? 'upcoming' : ''}"></div>
+        <div class="tldate">${e.date ? formatDate(e.date) : 'Scheduled'}</div>
+        <div class="tltitle">${e.title}</div>
+        <div class="tlnote">${e.note}</div>
+      </div>
+    `).join('');
+  }
+
+  // Needs
+  const needsCard = document.getElementById('needs-card');
+  const needs = d.needs || [];
+  if (needsCard) {
+    if (needs.length === 0) {
+      needsCard.innerHTML = '<div style="font-size:12px;color:var(--grey-med);font-style:italic;">No needs identified yet.</div>';
+    } else {
+      needsCard.innerHTML = `
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+          ${needs.map(n => {
+            const info = NEEDS_ALERTS[n] || {};
+            const colors = {orange:'var(--orange-light)',blue:'var(--blue-light)',purple:'var(--purple-light)',green:'var(--green-light)'};
+            const borders = {orange:'var(--orange-mid)',blue:'#b8d0ee',purple:'#d0c4f0',green:'var(--green-mid)'};
+            const textCol = {orange:'var(--orange-dark)',blue:'var(--blue)',purple:'var(--purple)',green:'var(--green-dark)'};
+            const c = info.cls || 'orange';
+            return `<span style="padding:6px 14px;border-radius:16px;border:1.5px solid ${borders[c]||'var(--border)'};background:${colors[c]||'var(--grey-xlight)'};color:${textCol[c]||'var(--grey-dark)'};font-family:var(--fh);font-size:11px;font-weight:700;">${info.icon||'⚠️'} ${n}</span>`;
+          }).join('')}
+        </div>
+        ${d.needsNotes ? `<div style="font-size:12px;color:var(--ink);padding:10px 12px;background:var(--grey-xlight);border-radius:var(--rs);line-height:1.6;border-left:3px solid var(--green);">${d.needsNotes}</div>` : ''}
+      `;
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   CHART FUNCTIONS
+══════════════════════════════════════════════════════ */
+function buildShaktiRadar(scores) {
+  const ctx = document.getElementById('sk-radar');
+  if (!ctx) return;
+  if (skRadarObj) { skRadarObj.destroy(); skRadarObj = null; }
+
+  const labels = SK_DIMS.map(d => d.title.replace(' & ', ' &\n'));
+  const baseline = scores.map(() => 1); // placeholder baseline
+
+  skRadarObj = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Current',
+          data: scores,
+          borderColor: '#5e8332',
+          backgroundColor: 'rgba(139,178,90,0.2)',
+          borderWidth: 2.5,
+          pointBackgroundColor: '#5e8332',
+          pointRadius: 4,
+        },
+        {
+          label: 'Baseline',
+          data: baseline,
+          borderColor: '#aaa',
+          backgroundColor: 'rgba(170,170,170,0.07)',
+          borderWidth: 1,
+          pointBackgroundColor: '#aaa',
+          pointRadius: 2,
+          borderDash: [4,3],
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${c.raw}/4` } } },
+      scales: {
+        r: {
+          min: 0, max: 4,
+          ticks: { stepSize: 1, font: { size: 9 }, color: '#7a8a6a' },
+          grid: { color: 'rgba(0,0,0,.08)' },
+          pointLabels: { font: { size: 10, family: 'Montserrat', weight: '700' }, color: '#555f4a' },
+          angleLines: { color: 'rgba(0,0,0,.06)' },
+        }
+      }
+    }
+  });
+}
+
+function buildSwasthyaRadar(scores) {
+  const ctx = document.getElementById('sw-radar');
+  if (!ctx) return;
+  if (swRadarObj) { swRadarObj.destroy(); swRadarObj = null; }
+
+  const labels = SW_DIMS.map(d => d.title);
+  const baseline = scores.map(() => 1);
+
+  swRadarObj = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Current',
+          data: scores,
+          borderColor: '#d9760f',
+          backgroundColor: 'rgba(249,165,86,0.18)',
+          borderWidth: 2.5,
+          pointBackgroundColor: '#d9760f',
+          pointRadius: 4,
+        },
+        {
+          label: 'Baseline',
+          data: baseline,
+          borderColor: '#aaa',
+          backgroundColor: 'rgba(170,170,170,0.06)',
+          borderWidth: 1,
+          pointBackgroundColor: '#aaa',
+          pointRadius: 2,
+          borderDash: [4,3],
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${c.raw}/4` } } },
+      scales: {
+        r: {
+          min: 0, max: 4,
+          ticks: { stepSize: 1, font: { size: 9 }, color: '#7a8a6a' },
+          grid: { color: 'rgba(0,0,0,.08)' },
+          pointLabels: { font: { size: 9, family: 'Montserrat', weight: '700' }, color: '#555f4a' },
+          angleLines: { color: 'rgba(0,0,0,.06)' },
+        }
+      }
+    }
+  });
+}
+
+function buildFinChart(history) {
+  const ctx = document.getElementById('fin-chart');
+  if (!ctx) return;
+  if (finChartObj) { finChartObj.destroy(); finChartObj = null; }
+
+  const labels = history.map(h => h.month);
+  const salesData = history.map(h => h.sales);
+  const expData = history.map(h => h.expenses);
+  const profitData = history.map(h => h.sales - h.expenses);
+
+  let cfg;
+  if (currentChartType === 'bar') {
+    cfg = {
+      type: 'bar',
+      data: { labels, datasets: [
+        { label: 'Sales', data: salesData, backgroundColor: 'rgba(139,178,90,0.75)', borderColor: '#5e8332', borderWidth: 1.5, borderRadius: 4 },
+        { label: 'Expenses', data: expData, backgroundColor: 'rgba(249,165,86,0.75)', borderColor: '#d9760f', borderWidth: 1.5, borderRadius: 4 },
+        { label: 'Profit', data: profitData, backgroundColor: 'rgba(61,92,31,0.8)', borderColor: '#3d5c1f', borderWidth: 1.5, borderRadius: 4 },
+      ]},
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => `${c.dataset.label}: ₹${c.raw.toLocaleString()}` } } },
+        scales: { x: { grid: { display: false }, ticks: { font: { size: 10, family: 'Montserrat', weight: '600' }, color: '#7a8a6a' } },
+          y: { grid: { color: 'rgba(0,0,0,.05)' }, ticks: { font: { size: 9 }, color: '#7a8a6a', callback: v => '₹'+(v>=1000?(v/1000).toFixed(0)+'K':v) }, beginAtZero: true } },
+        animation: { duration: 400 }
+      }
+    };
+  } else if (currentChartType === 'line') {
+    cfg = {
+      type: 'line',
+      data: { labels, datasets: [
+        { label: 'Sales', data: salesData, borderColor: '#5e8332', backgroundColor: 'rgba(139,178,90,0.1)', borderWidth: 2.5, tension: 0.35, pointBackgroundColor: '#5e8332', pointRadius: 4 },
+        { label: 'Expenses', data: expData, borderColor: '#d9760f', backgroundColor: 'rgba(249,165,86,0.1)', borderWidth: 2, tension: 0.35, pointBackgroundColor: '#d9760f', pointRadius: 4 },
+        { label: 'Profit', data: profitData, borderColor: '#3d5c1f', backgroundColor: 'transparent', borderWidth: 2, tension: 0.35, pointBackgroundColor: '#3d5c1f', pointRadius: 4, borderDash: [5,3] },
+      ]},
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false, callbacks: { label: c => `${c.dataset.label}: ₹${c.raw.toLocaleString()}` } } },
+        scales: { x: { grid: { display: false }, ticks: { font: { size: 10, family: 'Montserrat', weight: '600' }, color: '#7a8a6a' } },
+          y: { grid: { color: 'rgba(0,0,0,.05)' }, ticks: { font: { size: 9 }, color: '#7a8a6a', callback: v => '₹'+(v>=1000?(v/1000).toFixed(0)+'K':v) }, beginAtZero: true } },
+        animation: { duration: 400 }
+      }
+    };
+  } else { // area
+    cfg = {
+      type: 'line',
+      data: { labels, datasets: [
+        { label: 'Profit', data: profitData, borderColor: '#5e8332', backgroundColor: 'rgba(139,178,90,0.5)', borderWidth: 2, tension: 0.35, pointBackgroundColor: '#5e8332', pointRadius: 4, fill: true },
+        { label: 'Expenses', data: expData, borderColor: '#d9760f', backgroundColor: 'rgba(249,165,86,0.45)', borderWidth: 2, tension: 0.35, pointBackgroundColor: '#d9760f', pointRadius: 4, fill: true },
+      ]},
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false, callbacks: { label: c => `${c.dataset.label}: ₹${c.raw.toLocaleString()}` } } },
+        scales: {
+          x: { stacked: true, grid: { display: false }, ticks: { font: { size: 10, family: 'Montserrat', weight: '600' }, color: '#7a8a6a' } },
+          y: { stacked: true, grid: { color: 'rgba(0,0,0,.05)' }, ticks: { font: { size: 9 }, color: '#7a8a6a', callback: v => '₹'+(v>=1000?(v/1000).toFixed(0)+'K':v) }, beginAtZero: true }
+        },
+        animation: { duration: 400 }
+      }
+    };
+  }
+  finChartObj = new Chart(ctx, cfg);
+
+  // Insight strip
+  const ins = document.getElementById('fin-insight');
+  if (ins && history.length > 0) {
+    const last = history[history.length-1];
+    const lastProfit = last.sales - last.expenses;
+    const lastMargin = Math.round(lastProfit/last.sales*100);
+    if (history.length > 1) {
+      const growth = Math.round((last.sales - history[0].sales)/history[0].sales*100);
+      ins.textContent = `📈 Sales grew ${growth}% over this period · Latest profit: ₹${lastProfit.toLocaleString('en-IN')} · Margin: ${lastMargin}%`;
+    } else {
+      ins.textContent = `💡 Profit margin: ${lastMargin}% · Profit ₹${lastProfit.toLocaleString('en-IN')} · Expenses are ${Math.round(last.expenses/last.sales*100)}% of revenue`;
+    }
+  }
+}
+
+function switchChart(type, btn) {
+  document.querySelectorAll('.chart-type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentChartType = type;
+  if (DATA) buildFinChart(DATA.financialHistory || [{ month: 'Baseline', sales: DATA.sales||0, expenses: DATA.expenses||0 }]);
+}
+
+function calcLoan() {
+  const inc = parseFloat(document.getElementById('c-income').value) || 0;
+  const exp = parseFloat(document.getElementById('c-expense').value) || 0;
+  const emi = parseFloat(document.getElementById('c-emi').value) || 0;
+  const ten = parseFloat(document.getElementById('c-tenure').value) || 12;
+  const net = Math.max(0, inc - exp);
+  const maxEmi = Math.round(inc * 0.4);
+  const avail = Math.max(0, maxEmi - emi);
+  const loanAmt = Math.round(avail * ten * 0.85);
+  const dtiAfter = inc > 0 ? Math.round(((emi + avail) / inc) * 100 * 10) / 10 : 0;
+  setEl('r-net', '₹' + net.toLocaleString('en-IN'));
+  setEl('r-maxemi', '₹' + maxEmi.toLocaleString('en-IN'));
+  setEl('r-avail', '₹' + avail.toLocaleString('en-IN'));
+  setEl('r-loan', '₹' + loanAmt.toLocaleString('en-IN'));
+  setEl('r-dti', dtiAfter + '%');
+  const bar = document.getElementById('r-dti-bar');
+  if (bar) {
+    bar.style.width = Math.min(100, dtiAfter / 40 * 100) + '%';
+    bar.style.background = dtiAfter < 25 ? 'var(--green)' : dtiAfter < 40 ? 'var(--orange)' : 'var(--red)';
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   TAB / SUBTAB SWITCHING
+══════════════════════════════════════════════════════ */
+function switchTab(name, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  el.classList.add('active');
+}
+
+function switchInt(name, btn) {
+  document.querySelectorAll('.int-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.int-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('int-' + name).classList.add('active');
+}
+
+/* ═══════════════════════════════════════════════════════
+   DATA LOADING
+══════════════════════════════════════════════════════ */
+function openImportModal() {
+  document.getElementById('import-modal').classList.add('open');
+  // Check localStorage
+  const stored = localStorage.getItem('udyami_vikas_data');
+  const statusEl = document.getElementById('modal-auto-status');
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      const savedAt = parsed._savedAt ? formatDate(parsed._savedAt) : 'unknown date';
+      statusEl.style.background = 'var(--green-light)';
+      statusEl.style.color = 'var(--green-dark)';
+      statusEl.textContent = `✅ Form data found! Saved on ${savedAt} — click "Auto-Load" to display.`;
+    } catch (e) {
+      statusEl.style.background = 'var(--red-light)';
+      statusEl.style.color = 'var(--red)';
+      statusEl.textContent = '⚠️ Data found but appears corrupted. Try pasting JSON manually.';
+    }
+  } else {
+    statusEl.style.background = 'var(--grey-xlight)';
+    statusEl.style.color = 'var(--grey-med)';
+    statusEl.textContent = '⚠️ No saved form data found in this browser. Fill out the field forms first and click "Save to Dashboard".';
+  }
+}
+
+function closeImportModal() {
+  document.getElementById('import-modal').classList.remove('open');
+}
+
+function autoLoad() {
+  const stored = localStorage.getItem('udyami_vikas_data');
+  if (!stored) {
+    alert('No saved form data found. Please open the field forms file and click "Save to Dashboard" first.');
+    return;
+  }
+  try {
+    const parsed = JSON.parse(stored);
+    DATA = parsed;
+    render(DATA);
+    closeImportModal();
+  } catch (e) {
+    alert('Error parsing saved data: ' + e.message);
+  }
+}
+
+function loadFromPaste() {
+  const text = document.getElementById('json-paste').value.trim();
+  if (!text) { alert('Please paste JSON data first.'); return; }
+  try {
+    const parsed = JSON.parse(text);
+    DATA = parsed;
+    render(DATA);
+    closeImportModal();
+  } catch (e) {
+    alert('Invalid JSON: ' + e.message);
+  }
+}
+
+function loadDemo() {
+  DATA = Object.assign({}, DEMO_DATA, { _savedAt: null });
+  render(DATA);
+  closeImportModal();
+}
+
+/* ═══════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════ */
+window.addEventListener('load', function() {
+  // Try to load from localStorage first
+  const stored = localStorage.getItem('udyami_vikas_data');
+  if (stored) {
+    try {
+      DATA = JSON.parse(stored);
+    } catch (e) {
+      DATA = DEMO_DATA;
+    }
+  } else {
+    DATA = DEMO_DATA;
+  }
+  render(DATA);
+});
+
+// Close modal on overlay click
+document.getElementById('import-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeImportModal();
+});
+</script>
+</body>
+</html>

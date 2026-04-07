@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Udyami Vikas — IO Dashboard v7</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css"/>
+<style>
+:root{
+  --green:#8bb25a;--green-dark:#5e8332;--green-deep:#3d5c1f;--green-light:#eef4e5;--green-mid:#c8e0a0;
+  --orange:#f9a556;--orange-dark:#d9760f;--orange-light:#fff5ea;--orange-mid:#fdd9ad;
+  --charcoal:#1e2a16;--ink:#2e3d20;--grey-dark:#555f4a;--grey-med:#7a8a6a;--grey-light:#e2e9d8;--grey-xlight:#f4f7ef;
+  --white:#fff;--red:#c94444;--red-light:#fdf0f0;--blue:#4a7fc1;--blue-light:#eef4fc;--purple:#7c5cbf;--purple-light:#f0ecf9;
+  --border:#d6e2c4;--border-strong:#b8d08a;
+  --fh:'Montserrat',sans-serif;--fb:'Open Sans',sans-serif;--r:10px;--rs:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--grey-xlight);color:var(--ink);font-family:var(--fb);font-size:13px;min-height:100vh;}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:58px;background:var(--charcoal);position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.25);gap:8px;}
+.tl{display:flex;align-items:center;gap:12px;}
+.logo-mark{width:36px;height:36px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.brand-name{font-family:var(--fh);font-size:15px;font-weight:800;color:#fff;letter-spacing:.5px;line-height:1.1;}
+.brand-name span{color:var(--green);}
+.brand-sub{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:1.5px;text-transform:uppercase;font-family:var(--fh);font-weight:500;}
+.io-chip{background:rgba(139,178,90,.15);border:1px solid rgba(139,178,90,.3);border-radius:20px;padding:5px 14px;display:flex;align-items:center;gap:8px;}
+.io-avatar{width:26px;height:26px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:10px;font-weight:800;color:#fff;}
+.io-name{font-family:var(--fh);font-size:11px;font-weight:700;color:rgba(255,255,255,.85);}
+.io-role{font-size:9px;color:rgba(255,255,255,.4);font-family:var(--fh);}
+
+/* BATCH STRIP */
+.batch-strip{background:var(--ink);padding:10px 28px;display:flex;align-items:center;gap:0;overflow-x:auto;border-bottom:2px solid var(--green-deep);}
+.batch-tab{padding:7px 20px;border-radius:var(--rs);cursor:pointer;font-family:var(--fh);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.4);transition:all .18s;white-space:nowrap;border:1px solid transparent;}
+.batch-tab.active{background:var(--green-dark);color:#fff;border-color:var(--green);}
+.batch-tab:hover:not(.active){background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);}
+.batch-meta{margin-left:auto;display:flex;gap:22px;align-items:center;flex-shrink:0;}
+.bm-val{font-family:var(--fh);font-size:13px;font-weight:800;color:var(--green);}
+.bm-lbl{font-size:9px;color:rgba(255,255,255,.35);font-family:var(--fh);text-transform:uppercase;letter-spacing:.8px;}
+
+/* FILTER BAR */
+.filter-bar{background:var(--white);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.fb-label{font-family:var(--fh);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--grey-med);}
+.fb-select{border:1.5px solid var(--border);border-radius:var(--rs);padding:6px 28px 6px 10px;font-family:var(--fh);font-size:10px;font-weight:700;color:var(--ink);background:var(--grey-xlight);cursor:pointer;outline:none;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a8a6a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;}
+.fb-select:focus{border-color:var(--green);}
+.fb-divider{width:1px;height:20px;background:var(--border);}
+.fb-active-chip{background:var(--green-light);border:1px solid var(--border-strong);border-radius:14px;padding:4px 12px;font-family:var(--fh);font-size:10px;font-weight:700;color:var(--green-dark);display:flex;align-items:center;gap:6px;}
+
+/* MONTH CALENDAR STRIP */
+.month-cal{background:var(--white);border-bottom:2px solid var(--border);padding:12px 28px;}
+.mc-header{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.mc-title{font-family:var(--fh);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--ink);}
+.mc-stat{font-family:var(--fh);font-size:10px;font-weight:700;padding:3px 11px;border-radius:10px;}
+.mc-months{display:flex;gap:5px;flex-wrap:nowrap;}
+.mc-box{flex:1;min-width:44px;border-radius:var(--rs);padding:6px 4px;text-align:center;border:2px solid transparent;transition:all .15s;}
+.mc-month-name{font-family:var(--fh);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:2px;}
+.mc-month-num{font-family:var(--fh);font-size:11px;font-weight:900;display:block;}
+.mc-box.start{border-color:var(--green-dark);background:var(--green-light);}
+.mc-box.start .mc-month-name{color:var(--green-dark);}
+.mc-box.start .mc-month-num{color:var(--green-deep);}
+.mc-box.past{background:#f0f5e8;border-color:var(--grey-light);}
+.mc-box.past .mc-month-name{color:var(--grey-med);}
+.mc-box.past .mc-month-num{color:var(--grey-dark);}
+.mc-box.current{border-color:var(--orange);background:var(--orange-light);}
+.mc-box.current .mc-month-name{color:var(--orange-dark);}
+.mc-box.current .mc-month-num{color:var(--orange-dark);}
+.mc-box.future{background:var(--grey-xlight);border-color:var(--grey-light);}
+.mc-box.future .mc-month-name{color:var(--grey-light);}
+.mc-box.future .mc-month-num{color:var(--grey-light);}
+.mc-pip{width:5px;height:5px;border-radius:50%;margin:3px auto 0;display:block;}
+
+/* MAIN */
+.content{padding:20px 28px 48px;}
+.sl{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--grey-med);margin-bottom:12px;margin-top:4px;display:flex;align-items:center;gap:8px;}
+.sl::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--green);flex-shrink:0;}
+.sl::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* SUMMARY STRIP */
+.summary-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+.sum-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:0 1px 3px rgba(30,42,22,.07);}
+.sum-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
+.sum-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.sum-delta{font-family:var(--fh);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
+.delta-up{background:#e8f5e0;color:var(--green-dark);}
+.delta-warn{background:var(--orange-light);color:var(--orange-dark);}
+.delta-red{background:var(--red-light);color:var(--red);}
+.sum-num{font-family:var(--fh);font-size:22px;font-weight:900;color:var(--ink);line-height:1;margin-bottom:2px;}
+.sum-lbl{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--grey-med);}
+.sum-sub{font-size:10px;color:var(--grey-dark);margin-top:4px;}
+.baseline-row{display:flex;align-items:center;gap:6px;margin-top:6px;padding-top:6px;border-top:1px solid var(--grey-light);}
+.bl-lbl{font-size:9px;color:var(--grey-med);font-family:var(--fh);}
+.bl-val{font-size:9px;font-family:var(--fh);font-weight:700;color:var(--grey-dark);}
+.bl-change{font-size:9px;font-family:var(--fh);font-weight:800;}
+
+/* INDICATOR CARDS */
+.indicator-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+.ind-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px;box-shadow:0 1px 3px rgba(30,42,22,.07);}
+.ind-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.ind-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.ind-title{font-family:var(--fh);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--ink);}
+.ind-pct{font-family:var(--fh);font-size:28px;font-weight:900;color:var(--ink);line-height:1;margin-bottom:6px;}
+.ind-pct span{font-size:14px;font-weight:600;color:var(--grey-med);}
+.prog-bar{height:6px;background:var(--grey-light);border-radius:3px;overflow:hidden;margin-bottom:8px;}
+.prog-fill{height:100%;border-radius:3px;}
+.ind-breakdown{display:flex;gap:5px;flex-wrap:wrap;}
+.ib-chip{font-size:10px;font-family:var(--fh);font-weight:600;padding:2px 7px;border-radius:8px;}
+.ib-done{background:var(--green-light);color:var(--green-dark);}
+.ib-pend{background:var(--orange-light);color:var(--orange-dark);}
+.ib-miss{background:var(--red-light);color:var(--red);}
+
+/* LAYOUTS */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:14px;margin-bottom:20px;}
+.panel-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:0 1px 3px rgba(30,42,22,.07);}
+.pc-title{font-family:var(--fh);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.pc-title-tag{font-size:9px;padding:2px 8px;border-radius:8px;text-transform:none;letter-spacing:0;font-weight:700;flex-shrink:0;}
+
+/* LEVEL BARS */
+.level-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.lv-badge{font-family:var(--fh);font-size:10px;font-weight:800;width:30px;text-align:center;padding:3px 0;border-radius:6px;flex-shrink:0;}
+.lv-1{background:#fff3e0;color:#c07000;}
+.lv-2{background:var(--blue-light);color:var(--blue);}
+.lv-3{background:var(--green-light);color:var(--green-dark);}
+.lv-drop{background:var(--red-light);color:var(--red);}
+.lv-bar-wrap{flex:1;height:10px;background:var(--grey-light);border-radius:5px;overflow:hidden;}
+.lv-bar-fill{height:100%;border-radius:5px;}
+.lv-count{font-family:var(--fh);font-size:13px;font-weight:800;color:var(--ink);min-width:22px;text-align:right;}
+.lv-pct{font-size:10px;color:var(--grey-med);min-width:28px;text-align:right;}
+
+/* HEALTH TABS */
+.htab-bar{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:14px;}
+.htab{font-family:var(--fh);font-size:10px;font-weight:800;padding:7px 14px;cursor:pointer;color:var(--grey-med);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;}
+.htab.active{color:var(--green-dark);border-bottom-color:var(--green-dark);}
+.htab:hover:not(.active){color:var(--ink);}
+.htab-panel{display:none;}
+.htab-panel.active{display:block;}
+.health-combined{background:var(--charcoal);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+.hc-score{font-family:var(--fh);font-size:36px;font-weight:900;color:var(--green);line-height:1;}
+.hc-denom{font-size:14px;color:rgba(255,255,255,.35);font-weight:600;}
+.hc-label{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.4);margin-bottom:3px;}
+.hc-trend{font-family:var(--fh);font-size:12px;font-weight:800;color:var(--orange);}
+.dim-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.dim-label{font-size:10px;color:var(--grey-dark);flex:1;}
+.dim-bar-wrap{width:80px;height:7px;background:var(--grey-light);border-radius:4px;overflow:hidden;flex-shrink:0;}
+.dim-bar-fill{height:100%;border-radius:4px;}
+.dim-score{font-family:var(--fh);font-size:10px;font-weight:800;color:var(--ink);min-width:32px;text-align:right;}
+
+/* CREDIT */
+.credit-track{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
+.ct-box{border-radius:var(--rs);padding:11px;text-align:center;}
+.ct-need{background:var(--grey-xlight);border:1px solid var(--border);}
+.ct-pipeline{background:var(--orange-light);border:1px solid var(--orange-mid);}
+.ct-sanctioned{background:var(--green-light);border:1px solid var(--border-strong);}
+.ct-num{font-family:var(--fh);font-size:17px;font-weight:900;line-height:1;margin-bottom:2px;}
+.ct-lbl{font-family:var(--fh);font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;}
+.ct-sub{font-size:9px;margin-top:2px;}
+.ct-bar-wrap{height:4px;background:rgba(0,0,0,.08);border-radius:2px;overflow:hidden;margin-top:7px;}
+.ct-bar-fill{height:100%;border-radius:2px;}
+
+/* STAKEHOLDER */
+.stake-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px;}
+.stake-stat{background:var(--grey-xlight);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;display:flex;align-items:center;gap:10px;}
+.stake-icon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.stake-num{font-family:var(--fh);font-size:17px;font-weight:900;color:var(--ink);line-height:1;}
+.stake-lbl{font-size:9px;color:var(--grey-med);font-family:var(--fh);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+.stake-sub{font-size:9px;color:var(--grey-dark);margin-top:1px;}
+
+.connection-list{display:flex;flex-direction:column;gap:6px;}
+.conn-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--rs);border:1px solid var(--border);background:var(--white);}
+.conn-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.conn-name{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--ink);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.conn-type{font-size:9px;padding:2px 7px;border-radius:8px;font-family:var(--fh);font-weight:700;white-space:nowrap;flex-shrink:0;}
+.ct-credit{background:var(--green-light);color:var(--green-dark);}
+.ct-training{background:var(--blue-light);color:var(--blue);}
+.ct-market{background:var(--orange-light);color:var(--orange-dark);}
+.ct-govt{background:var(--purple-light);color:var(--purple);}
+.conn-date{font-size:10px;font-family:var(--fh);font-weight:700;color:var(--orange-dark);background:var(--orange-light);padding:2px 7px;border-radius:6px;white-space:nowrap;flex-shrink:0;}
+.conn-status{font-size:10px;color:var(--grey-med);white-space:nowrap;flex-shrink:0;}
+
+/* VISIT STATUS */
+.visit-two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.visit-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:var(--rs);border:1px solid;margin-bottom:7px;}
+.vi-red{background:var(--red-light);border-color:#f5c0c0;}
+.vi-orange{background:var(--orange-light);border-color:var(--orange-mid);}
+.vi-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:10px;font-weight:800;color:#fff;flex-shrink:0;}
+.vi-name{font-family:var(--fh);font-size:11px;font-weight:800;color:var(--ink);margin-bottom:2px;}
+.vi-detail{font-size:10px;color:var(--grey-dark);line-height:1.4;}
+.vi-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
+.vi-tag{font-size:9px;font-family:var(--fh);font-weight:700;padding:2px 7px;border-radius:6px;}
+
+/* TO-DO */
+.todo-list{display:flex;flex-direction:column;gap:7px;}
+.todo-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:var(--rs);border:1px solid var(--border);background:var(--white);}
+.todo-item.urgent{background:var(--red-light);border-color:#f5c0c0;}
+.todo-item.soon{background:var(--orange-light);border-color:var(--orange-mid);}
+.todo-item.normal{background:var(--grey-xlight);border-color:var(--border);}
+.todo-cb{width:16px;height:16px;border:2px solid var(--border-strong);border-radius:4px;cursor:pointer;flex-shrink:0;margin-top:1px;accent-color:var(--green-dark);}
+.todo-text{flex:1;font-size:12px;color:var(--ink);line-height:1.4;}
+.todo-due{font-size:9px;font-family:var(--fh);font-weight:700;padding:2px 7px;border-radius:6px;white-space:nowrap;flex-shrink:0;}
+.due-urgent{background:var(--red-light);color:var(--red);}
+.due-soon{background:var(--orange-light);color:var(--orange-dark);}
+.due-normal{background:var(--green-light);color:var(--green-dark);}
+.todo-tag{font-size:9px;font-family:var(--fh);font-weight:700;padding:2px 7px;border-radius:6px;margin-right:4px;}
+
+/* MAP */
+#leaflet-map{width:100%;height:300px;border-radius:var(--rs);overflow:hidden;}
+
+/* ENTREPRENEUR TABLE */
+.ent-table-wrap{overflow-x:auto;}
+table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
+.ent-table thead tr{background:var(--charcoal);}
+.ent-table th{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.6);padding:9px 9px;text-align:left;white-space:nowrap;}
+.ent-table tbody tr{border-bottom:1px solid var(--grey-light);transition:background .12s;}
+.ent-table tbody tr:hover{background:var(--green-light);}
+.ent-table td{padding:7px 9px;color:var(--ink);vertical-align:middle;white-space:nowrap;}
+.ent-name{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--ink);}
+.ent-id{font-size:9px;color:var(--grey-med);margin-top:1px;}
+.status-dot{display:inline-block;width:10px;height:10px;border-radius:50%;}
+.sd-done{background:#63b54a;}.sd-pend{background:#f9a556;}.sd-miss{background:#c94444;}
+.lv-pill{display:inline-block;font-family:var(--fh);font-size:9px;font-weight:800;padding:2px 8px;border-radius:6px;}
+.score-pill{display:inline-block;font-family:var(--fh);font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px;min-width:34px;text-align:center;}
+.sp-green{background:var(--green-light);color:var(--green-dark);}
+.sp-orange{background:var(--orange-light);color:var(--orange-dark);}
+.sp-red{background:var(--red-light);color:var(--red);}
+.flag-alert{background:var(--red);color:#fff;font-family:var(--fh);font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;}
+.delta-cell{font-family:var(--fh);font-size:10px;font-weight:800;}
+.dc-up{color:var(--green-dark);}.dc-down{color:var(--red);}.dc-flat{color:var(--grey-med);}
+
+@media(max-width:960px){
+  .summary-strip,.indicator-grid{grid-template-columns:1fr 1fr;}
+  .three-col,.two-col,.visit-two-col{grid-template-columns:1fr;}
+  .stake-grid{grid-template-columns:1fr 1fr;}
+  .content,.filter-bar,.month-cal,.batch-strip{padding-left:14px;padding-right:14px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tl">
+    <div class="logo-mark">
+      <svg viewBox="0 0 40 40" fill="none" width="20" height="20">
+        <circle cx="20" cy="14" r="7" fill="white" opacity=".9"/>
+        <path d="M8 32 Q20 18 32 32" stroke="white" stroke-width="2.5" fill="none" opacity=".8"/>
+        <path d="M20 21 L20 30" stroke="white" stroke-width="2" opacity=".7"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">Udyami <span>Vikas</span></div>
+      <div class="brand-sub">Incubation Officer Dashboard · Grassroutes</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button onclick="window.open('io_form_v12.html')" style="background:var(--green-dark);color:#fff;border:none;border-radius:var(--rs);padding:7px 14px;font-family:var(--fh);font-size:10px;font-weight:700;cursor:pointer;letter-spacing:.3px;">📋 Add Form Entry</button>
+    <button onclick="location.reload()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.75);border-radius:var(--rs);padding:7px 14px;font-family:var(--fh);font-size:10px;font-weight:700;cursor:pointer;letter-spacing:.3px;">🔄 Refresh</button>
+    <div class="io-chip">
+      <div class="io-avatar">PR</div>
+      <div>
+        <div class="io-name">Priya Rawat</div>
+        <div class="io-role">Incubation Officer · MP Region</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BATCH STRIP -->
+<div class="batch-strip">
+  <div class="batch-tab active" onclick="switchBatch(this,'a')">Batch MP-2024-A</div>
+  <div class="batch-tab" onclick="switchBatch(this,'b')">Batch MP-2024-B</div>
+  <div class="batch-tab" onclick="switchBatch(this,'c')">Batch MP-2025-A</div>
+  <div class="batch-meta">
+    <div><div class="bm-val">35</div><div class="bm-lbl">Enrolled</div></div>
+    <div><div class="bm-val">33</div><div class="bm-lbl">Active</div></div>
+    <div><div class="bm-val" style="color:var(--orange);">11 Apr</div><div class="bm-lbl">Next Visit</div></div>
+  </div>
+</div>
+
+<!-- LOCALSTORAGE BANNER (shown when records exist) -->
+<div id="ls-banner" style="display:none;background:var(--green-light);border-bottom:2px solid var(--green-mid);padding:8px 28px;display:flex;align-items:center;gap:12px;">
+  <span style="font-size:16px;">📥</span>
+  <span id="ls-banner-text" style="font-family:var(--fh);font-size:11px;font-weight:700;color:var(--green-dark);"></span>
+  <button onclick="clearLSData()" style="margin-left:auto;background:transparent;border:1px solid var(--green-mid);color:var(--green-dark);border-radius:var(--rs);padding:3px 10px;font-family:var(--fh);font-size:9px;font-weight:700;cursor:pointer;">Clear Form Data</button>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <span class="fb-label">Filter by</span>
+  <select class="fb-select" onchange="applyFilter('batch',this.value)">
+    <option value="all">All Batches</option>
+    <option value="a" selected>MP-2024-A (Jan–Dec)</option>
+    <option value="b">MP-2024-B (May–Dec)</option>
+    <option value="c">MP-2025-A (Jan–Ongoing)</option>
+  </select>
+  <div class="fb-divider"></div>
+  <select class="fb-select" onchange="applyFilter('village',this.value)">
+    <option value="all">All Villages</option>
+    <option>Baghli GP</option>
+    <option>Chitoda GP</option>
+    <option>Dingawada GP</option>
+    <option>Pathri GP</option>
+    <option>Sujakpur GP</option>
+    <option>Thandla GP</option>
+  </select>
+  <div class="fb-divider"></div>
+  <select class="fb-select" onchange="applyFilter('industry',this.value)">
+    <option value="all">All Industries</option>
+    <option>Agri / Agri-Allied</option>
+    <option>Manufacturing</option>
+    <option>Service</option>
+    <option>Trading</option>
+  </select>
+  <div class="fb-divider"></div>
+  <label style="font-size:10px;color:var(--grey-dark);white-space:nowrap;">Survey from</label>
+  <input type="date" id="filter-date-from" class="fb-select" style="max-width:130px;" onchange="applyFilter('date-from',this.value)"/>
+  <label style="font-size:10px;color:var(--grey-dark);white-space:nowrap;">to</label>
+  <input type="date" id="filter-date-to" class="fb-select" style="max-width:130px;" onchange="applyFilter('date-to',this.value)"/>
+  <div id="active-filters" style="display:flex;gap:6px;margin-left:4px;flex-wrap:wrap;"></div>
+</div>
+
+<!-- MONTH CALENDAR STRIP -->
+<div class="month-cal">
+  <div class="mc-header">
+    <span class="mc-title">Batch MP-2024-A</span>
+    <span class="mc-stat" style="background:var(--green-light);color:var(--green-dark);">Started Jan 2024</span>
+    <span class="mc-stat" style="background:var(--orange-light);color:var(--orange-dark);">Month 9 of 12 &nbsp;·&nbsp; Sep 2024</span>
+    
+  </div>
+  <div class="mc-months" id="calMonths"></div>
+</div>
+
+<div class="content">
+
+<!-- SUMMARY STRIP -->
+<div class="sl">Batch Snapshot — MP-2024-A · Month 9 of 12</div>
+<div class="summary-strip">
+  <div class="sum-card">
+    <div class="sum-top"><div class="sum-icon" style="background:var(--green-light);">💰</div><div class="sum-delta delta-up">▲ +45%</div></div>
+    <div class="sum-num">₹2.84L</div>
+    <div class="sum-lbl">Batch GMV / Month</div>
+    <div class="sum-sub">Combined · 33 active udyamis</div>
+    <div class="baseline-row"><span class="bl-lbl">Baseline:</span><span class="bl-val">₹1.96L</span><span class="bl-change" style="color:var(--green-dark);">↑ ₹88K</span></div>
+  </div>
+  <div class="sum-card">
+    <div class="sum-top"><div class="sum-icon" style="background:#e8f5e0;">📈</div><div class="sum-delta delta-up">▲ +65%</div></div>
+    <div class="sum-num">₹96.4K</div>
+    <div class="sum-lbl">Total Net Profit / Month</div>
+    <div class="sum-sub">Avg ₹2,920 per udyami</div>
+    <div class="baseline-row"><span class="bl-lbl">Baseline:</span><span class="bl-val">₹58.2K</span><span class="bl-change" style="color:var(--green-dark);">↑ ₹38.2K</span></div>
+  </div>
+  <div class="sum-card">
+    <div class="sum-top"><div class="sum-icon" style="background:var(--blue-light);">👥</div><div class="sum-delta delta-up">▲ +32%</div></div>
+    <div class="sum-num">62</div>
+    <div class="sum-lbl">Employment Generated</div>
+    <div class="sum-sub">Direct + part-time across batch</div>
+    <div class="baseline-row"><span class="bl-lbl">Baseline:</span><span class="bl-val">47 jobs</span><span class="bl-change" style="color:var(--green-dark);">↑ 15 new</span></div>
+  </div>
+  <div class="sum-card">
+    <div class="sum-top"><div class="sum-icon" style="background:var(--orange-light);">🌱</div><div class="sum-delta delta-red">2 dropout</div></div>
+    <div class="sum-num">33 <span style="font-size:14px;color:var(--grey-med);">/ 35</span></div>
+    <div class="sum-lbl">Active Udyamis</div>
+    <div class="sum-sub" style="color:var(--red);">6 flagged · 5 visit-overdue</div>
+    <div class="baseline-row"><span class="bl-lbl">Enrolled:</span><span class="bl-val">35</span><span class="bl-change" style="color:var(--red);">↓ 5.7% dropout</span></div>
+  </div>
+  <div class="sum-card">
+    <div class="sum-top"><div class="sum-icon" style="background:var(--purple-light);">🔗</div><div class="sum-delta delta-up">+2 this month</div></div>
+    <div class="sum-num">11</div>
+    <div class="sum-lbl">Ecosystem Connections</div>
+    <div class="sum-sub">3 loans · 5 trainings · 3 govt</div>
+    <div class="baseline-row"><span class="bl-lbl">At baseline:</span><span class="bl-val">0</span><span class="bl-change" style="color:var(--green-dark);">↑ All new</span></div>
+  </div>
+</div>
+
+<!-- TRANSACTION INDICATORS -->
+<div class="sl">Transaction Indicators — Completion Status</div>
+<div class="indicator-grid">
+  <div class="ind-card">
+    <div class="ind-header"><div class="ind-dot" style="background:var(--orange);"></div><div class="ind-title">Financial Diary</div></div>
+    <div class="ind-pct">63<span>%</span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:63%;background:var(--green);"></div></div>
+    <div class="ind-breakdown"><span class="ib-chip ib-done">22 Daily</span><span class="ib-chip ib-pend">8 Irregular</span><span class="ib-chip ib-miss">5 Not Filling</span></div>
+  </div>
+  <div class="ind-card">
+    <div class="ind-header"><div class="ind-dot" style="background:var(--purple);"></div><div class="ind-title">KYC</div></div>
+    <div class="ind-pct">80<span>%</span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:80%;background:var(--green-dark);"></div></div>
+    <div class="ind-breakdown"><span class="ib-chip ib-done">28 Complete</span><span class="ib-chip ib-pend">5 Pending</span><span class="ib-chip ib-miss">2 Incomplete</span></div>
+  </div>
+  <div class="ind-card">
+    <div class="ind-header"><div class="ind-dot" style="background:var(--blue);"></div><div class="ind-title">Biz. Mgmt Canvas</div></div>
+    <div class="ind-pct">57<span>%</span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:57%;background:var(--blue);"></div></div>
+    <div class="ind-breakdown"><span class="ib-chip ib-done">20 Done</span><span class="ib-chip ib-pend">13 Pending</span></div>
+  </div>
+  <div class="ind-card">
+    <div class="ind-header"><div class="ind-dot" style="background:var(--orange);"></div><div class="ind-title">Unit Economics</div></div>
+    <div class="ind-pct">51<span>%</span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:51%;background:var(--orange);"></div></div>
+    <div class="ind-breakdown"><span class="ib-chip ib-done">18 Done</span><span class="ib-chip ib-pend">17 Pending</span></div>
+  </div>
+  <div class="ind-card">
+    <div class="ind-header"><div class="ind-dot" style="background:var(--green-dark);"></div><div class="ind-title">Business Plan</div></div>
+    <div class="ind-pct">34<span>%</span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:34%;background:var(--orange-dark);"></div></div>
+    <div class="ind-breakdown"><span class="ib-chip ib-done">12 Done</span><span class="ib-chip ib-pend">21 Pending</span></div>
+  </div>
+</div>
+
+<!-- BATCH HEALTH + GEO MAP -->
+<div class="sl">Batch Health &amp; Geographic Spread</div>
+<div class="three-col">
+
+  <!-- Level Distribution -->
+  <div class="panel-card">
+    <div class="pc-title">Level Distribution <span class="pc-title-tag" style="background:var(--blue-light);color:var(--blue);">Current AP scores</span></div>
+    <div class="level-row">
+      <div class="lv-badge lv-3">L3</div>
+      <div class="lv-bar-wrap"><div class="lv-bar-fill" style="width:12%;background:var(--green);"></div></div>
+      <div class="lv-count">4</div><div class="lv-pct" style="color:var(--green-dark);">12%</div>
+    </div>
+    <div class="level-row">
+      <div class="lv-badge lv-2">L2</div>
+      <div class="lv-bar-wrap"><div class="lv-bar-fill" style="width:45%;background:var(--blue);"></div></div>
+      <div class="lv-count">15</div><div class="lv-pct" style="color:var(--blue);">45%</div>
+    </div>
+    <div class="level-row">
+      <div class="lv-badge lv-1">L1</div>
+      <div class="lv-bar-wrap"><div class="lv-bar-fill" style="width:42%;background:var(--orange);"></div></div>
+      <div class="lv-count">14</div><div class="lv-pct" style="color:var(--orange-dark);">42%</div>
+    </div>
+    <div class="level-row">
+      <div class="lv-badge lv-drop">Out</div>
+      <div class="lv-bar-wrap"><div class="lv-bar-fill" style="width:6%;background:var(--red);"></div></div>
+      <div class="lv-count">2</div><div class="lv-pct" style="color:var(--red);">6%</div>
+    </div>
+    <div style="position:relative;width:100%;height:150px;margin-top:12px;"><canvas id="levelChart"></canvas></div>
+  </div>
+
+  <!-- Batch Health — 3 tabs -->
+  <div class="panel-card">
+    <div class="pc-title" style="margin-bottom:0;">Batch Health Score</div>
+    <div class="htab-bar">
+      <div class="htab active" onclick="switchHTab(this,'overall')">Overall</div>
+      <div class="htab" onclick="switchHTab(this,'shakti')">Udyami Shakti</div>
+      <div class="htab" onclick="switchHTab(this,'udyam')">Udyam</div>
+    </div>
+
+    <!-- OVERALL TAB -->
+    <div id="ht-overall" class="htab-panel active">
+      <div class="health-combined">
+        <div>
+          <div class="hc-label">Avg Combined Score</div>
+          <div class="hc-score">48 <span class="hc-denom">/ 80</span></div>
+        </div>
+        <div style="border-left:1px solid rgba(255,255,255,.1);padding-left:14px;flex:1;">
+          <div class="hc-label">vs Baseline (36/80)</div>
+          <div class="hc-trend">▲ +12 pts in 9 months</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.35);font-family:var(--fh);margin-top:2px;">+33% improvement</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:7px;margin-bottom:12px;">
+        <div style="flex:1;text-align:center;background:var(--red-light);border:1px solid #f5c0c0;border-radius:var(--rs);padding:8px;">
+          <div style="font-family:var(--fh);font-size:18px;font-weight:900;color:var(--red);">3</div>
+          <div style="font-family:var(--fh);font-size:9px;font-weight:700;color:var(--red);text-transform:uppercase;">At Risk</div>
+          <div style="font-size:9px;color:var(--grey-dark);">Score &lt; 30</div>
+        </div>
+        <div style="flex:1;text-align:center;background:var(--orange-light);border:1px solid var(--orange-mid);border-radius:var(--rs);padding:8px;">
+          <div style="font-family:var(--fh);font-size:18px;font-weight:900;color:var(--orange-dark);">12</div>
+          <div style="font-family:var(--fh);font-size:9px;font-weight:700;color:var(--orange-dark);text-transform:uppercase;">Moderate</div>
+          <div style="font-size:9px;color:var(--grey-dark);">Score 30–60</div>
+        </div>
+        <div style="flex:1;text-align:center;background:var(--green-light);border:1px solid var(--border-strong);border-radius:var(--rs);padding:8px;">
+          <div style="font-family:var(--fh);font-size:18px;font-weight:900;color:var(--green-dark);">18</div>
+          <div style="font-family:var(--fh);font-size:9px;font-weight:700;color:var(--green-dark);text-transform:uppercase;">Strong</div>
+          <div style="font-size:9px;color:var(--grey-dark);">Score &gt; 60</div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--grey-dark);line-height:1.5;">Combined avg of Udyami Shakti (20/32) and Udyam (28/48). View tabs for dimension breakdown.</div>
+    </div>
+
+    <!-- UDYAMI SHAKTI TAB -->
+    <div id="ht-shakti" class="htab-panel">
+      <div class="health-combined" style="margin-bottom:12px;">
+        <div>
+          <div class="hc-label">Udyami Shakti — Avg Score</div>
+          <div class="hc-score" style="color:var(--orange);">20 <span class="hc-denom">/ 32</span></div>
+        </div>
+        <div style="border-left:1px solid rgba(255,255,255,.1);padding-left:14px;">
+          <div class="hc-label">Baseline was 15/32</div>
+          <div class="hc-trend">▲ +5 pts (+31%)</div>
+        </div>
+      </div>
+      <div class="dim-row"><div class="dim-label">Mindset &amp; Confidence</div><div class="dim-bar-wrap"><div class="dim-bar-fill" style="width:75%;background:var(--green);"></div></div><div class="dim-score">6 / 8</div></div>
+      <div class="dim-row"><div class="dim-label">Skills &amp; Capability</div><div class="dim-bar-wrap"><div class="dim-bar-fill" style="width:63%;background:var(--blue);"></div></div><div class="dim-score">5 / 8</div></div>
+      <div class="dim-row"><div class="dim-label">Health &amp; Wellbeing</div><div class="dim-bar-wrap"><div class="dim-bar-fill" style="width:50%;background:var(--orange);"></div></div><div class="dim-score">4 / 8</div></div>
+      <div class="dim-row"><div class="dim-label">Leadership &amp; Participation</div><div class="dim-bar-wrap"><div class="dim-bar-fill" style="width:63%;background:var(--purple);"></div></div><div class="dim-score">5 / 8</div></div>
+      <div style="margin-top:10px;font-size:9px;color:var(--grey-med);">Scores are batch averages across 33 active udyamis from latest AP forms.</div>
+    </div>
+
+    <!-- UDYAM TAB -->
+    <div id="ht-udyam" class="htab-panel">
+      <div class="health-combined" style="margin-bottom:12px;">
+        <div>
+          <div class="hc-label">Udyam — Avg Score</div>
+          <div class="hc-score" style="color:var(--blue);">28 <span class="hc-denom">/ 48</span></div>
+        </div>
+        <div style="border-left:1px solid rgba(255,255,255,.1);padding-left:14px;">
+          <div class="hc-label">Baseline was 21/48</div>
+          <div class="hc-trend">▲ +7 pts (+33%)</div>
+        </div>
+      </div>
+      <div class="dim-row"><div class="dim-label">Financial Practices</div><div class="dim-bar-wrap"><div class="dim-bar-fill" style="width:67%;background:var(--green);"></div></div><div class="dim-score">8 / 12</div></div>
+      <div class="dim-row"><div class="dim-label">Market &amp; Sales</div><div class="dim-bar-wrap"><div class="dim-bar-fill" style="width:58%;background:var(--orange);"></div></div><div class="dim-score">7 / 12</div></div>
+      <div class="dim-row"><div class="dim-label">Operations &amp; Supply</div><div class="dim-bar-wrap"><div class="dim-bar-fill" style="width:50%;background:var(--blue);"></div></div><div class="dim-score">6 / 12</div></div>
+      <div class="dim-row"><div class="dim-label">Business Formality</div><div class="dim-bar-wrap"><div class="dim-bar-fill" style="width:58%;background:var(--purple);"></div></div><div class="dim-score">7 / 12</div></div>
+      <div style="margin-top:10px;font-size:9px;color:var(--grey-med);">Scores are batch averages across 33 active udyamis from latest AP forms.</div>
+    </div>
+  </div>
+
+  <!-- Leaflet Map — Baghli Block, Dewas -->
+  <div class="panel-card" style="padding:14px;">
+    <div class="pc-title" style="margin-bottom:8px;">Entrepreneur Locations
+      <span class="pc-title-tag" style="background:var(--blue-light);color:var(--blue);">Baghli Block · Dewas, MP</span>
+    </div>
+    <div id="leaflet-map"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+      <div style="display:flex;align-items:center;gap:4px;font-size:9px;font-family:var(--fh);font-weight:700;color:var(--green-dark);"><div style="width:10px;height:10px;border-radius:50%;background:var(--green);"></div>L3</div>
+      <div style="display:flex;align-items:center;gap:4px;font-size:9px;font-family:var(--fh);font-weight:700;color:var(--blue);"><div style="width:10px;height:10px;border-radius:50%;background:var(--blue);"></div>L2</div>
+      <div style="display:flex;align-items:center;gap:4px;font-size:9px;font-family:var(--fh);font-weight:700;color:var(--orange-dark);"><div style="width:10px;height:10px;border-radius:50%;background:var(--orange);"></div>L1</div>
+      <div style="display:flex;align-items:center;gap:4px;font-size:9px;font-family:var(--fh);font-weight:700;color:var(--red);"><div style="width:10px;height:10px;border-radius:50%;background:var(--red);"></div>Flagged</div>
+      <div style="display:flex;align-items:center;gap:4px;font-size:9px;font-family:var(--fh);font-weight:700;color:var(--grey-med);"><div style="width:10px;height:10px;border-radius:50%;background:#ccc;"></div>Dropout</div>
+    </div>
+  </div>
+</div>
+
+<!-- STAKEHOLDER ECOSYSTEM -->
+<div class="sl">Stakeholder Ecosystem — Pipeline &amp; Impact</div>
+
+<!-- Pipeline CSS additions (inline for targeted change) -->
+<style>
+.pipeline-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;}
+.pipeline-table thead tr{background:var(--charcoal);}
+.pipeline-table th{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.55);padding:9px 10px;text-align:center;white-space:nowrap;}
+.pipeline-table th:first-child{text-align:left;padding-left:14px;}
+.pipeline-table tbody tr{border-bottom:1px solid var(--grey-light);}
+.pipeline-table tbody tr:hover{background:var(--green-light);}
+.pipeline-table td{padding:9px 10px;text-align:center;vertical-align:middle;}
+.pipeline-table td:first-child{text-align:left;padding-left:14px;}
+.stk-cat{font-family:var(--fh);font-size:11px;font-weight:800;color:var(--ink);}
+.stk-cat-sub{font-size:9px;color:var(--grey-med);font-family:var(--fh);margin-top:1px;}
+.stage-chip{display:inline-block;font-family:var(--fh);font-size:11px;font-weight:800;padding:3px 10px;border-radius:10px;min-width:32px;text-align:center;}
+.sc-target{background:var(--grey-xlight);color:var(--ink);border:1px solid var(--border);}
+.sc-contact{background:var(--blue-light);color:var(--blue);border:1px solid #b8d0ee;}
+.sc-process{background:var(--orange-light);color:var(--orange-dark);border:1px solid var(--orange-mid);}
+.sc-done{background:var(--green-light);color:var(--green-dark);border:1px solid var(--border-strong);}
+.sc-blocked{background:var(--red-light);color:var(--red);border:1px solid #f5c0c0;}
+.sc-na{background:var(--grey-xlight);color:var(--grey-med);border:1px solid var(--border);font-style:italic;font-size:10px;}
+.conv-bar{height:4px;background:var(--grey-light);border-radius:2px;overflow:hidden;margin-top:4px;}
+.conv-fill{height:100%;border-radius:2px;background:var(--green);}
+</style>
+
+<div class="two-col">
+  <!-- LEFT: Pipeline View -->
+  <div class="panel-card" style="padding:14px;">
+    <div class="pc-title" style="margin-bottom:10px;">Stakeholder Pipeline
+      <span class="pc-title-tag" style="background:var(--blue-light);color:var(--blue);">Across 33 Active Udyamis</span>
+    </div>
+    <!-- Stage Legend -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+      <span style="display:flex;align-items:center;gap:4px;font-size:9px;font-family:var(--fh);font-weight:700;color:var(--grey-dark);"><span class="stage-chip sc-target" style="font-size:9px;padding:1px 6px;">N</span>Targeted</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:9px;font-family:var(--fh);font-weight:700;color:var(--blue);"><span class="stage-chip sc-contact" style="font-size:9px;padding:1px 6px;">N</span>1st Contact</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:9px;font-family:var(--fh);font-weight:700;color:var(--orange-dark);"><span class="stage-chip sc-process" style="font-size:9px;padding:1px 6px;">N</span>In Process</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:9px;font-family:var(--fh);font-weight:700;color:var(--green-dark);"><span class="stage-chip sc-done" style="font-size:9px;padding:1px 6px;">N</span>Outcome ✅</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:9px;font-family:var(--fh);font-weight:700;color:var(--red);"><span class="stage-chip sc-blocked" style="font-size:9px;padding:1px 6px;">N</span>Blocked ⛔</span>
+    </div>
+    <table class="pipeline-table">
+      <thead>
+        <tr>
+          <th style="text-align:left;">Category</th>
+          <th>Targeted</th>
+          <th>1st Contact</th>
+          <th>In Process</th>
+          <th>Done ✅</th>
+          <th>Blocked</th>
+          <th style="min-width:60px;">Conv. Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="stk-cat">🏦 Bank / Financial</div><div class="stk-cat-sub">Loans · Credit · MFI</div></td>
+          <td><span class="stage-chip sc-target">18</span></td>
+          <td><span class="stage-chip sc-contact">8</span></td>
+          <td><span class="stage-chip sc-process">6</span></td>
+          <td><span class="stage-chip sc-done">3</span></td>
+          <td><span class="stage-chip sc-blocked">1</span></td>
+          <td><div style="font-family:var(--fh);font-size:10px;font-weight:800;color:var(--green-dark);">17%</div><div class="conv-bar"><div class="conv-fill" style="width:17%;"></div></div></td>
+        </tr>
+        <tr>
+          <td><div class="stk-cat">🏛 Govt Department</div><div class="stk-cat-sub">Schemes · PMFME · Block</div></td>
+          <td><span class="stage-chip sc-target">12</span></td>
+          <td><span class="stage-chip sc-contact">5</span></td>
+          <td><span class="stage-chip sc-process">4</span></td>
+          <td><span class="stage-chip sc-done">3</span></td>
+          <td><span class="stage-chip sc-blocked" style="background:var(--grey-xlight);color:var(--grey-med);border-color:var(--border);">—</span></td>
+          <td><div style="font-family:var(--fh);font-size:10px;font-weight:800;color:var(--green-dark);">25%</div><div class="conv-bar"><div class="conv-fill" style="width:25%;"></div></div></td>
+        </tr>
+        <tr>
+          <td><div class="stk-cat">📦 Supplier / Agency</div><div class="stk-cat-sub">Inputs · Raw material · Trade</div></td>
+          <td><span class="stage-chip sc-target">15</span></td>
+          <td><span class="stage-chip sc-contact">9</span></td>
+          <td><span class="stage-chip sc-process">5</span></td>
+          <td><span class="stage-chip sc-done">4</span></td>
+          <td><span class="stage-chip sc-blocked">2</span></td>
+          <td><div style="font-family:var(--fh);font-size:10px;font-weight:800;color:var(--green-dark);">27%</div><div class="conv-bar"><div class="conv-fill" style="width:27%;"></div></div></td>
+        </tr>
+        <tr>
+          <td><div class="stk-cat">🤝 Peer Udyami / SHG</div><div class="stk-cat-sub">REN · Peer learning · SHG</div></td>
+          <td><span class="stage-chip sc-target">28</span></td>
+          <td><span class="stage-chip sc-contact">24</span></td>
+          <td><span class="stage-chip sc-process">18</span></td>
+          <td><span class="stage-chip sc-done" style="background:#e8f0fa;color:#2e5f9a;border-color:#b8d0ee;">Ongoing</span></td>
+          <td><span class="stage-chip sc-blocked" style="background:var(--grey-xlight);color:var(--grey-med);border-color:var(--border);">—</span></td>
+          <td><div style="font-family:var(--fh);font-size:10px;font-weight:800;color:var(--blue);">86%</div><div class="conv-bar"><div class="conv-fill" style="width:86%;background:var(--blue);"></div></div></td>
+        </tr>
+        <tr>
+          <td><div class="stk-cat">🎓 Training Body</div><div class="stk-cat-sub">RSETI · KVIC · NGO · Skills</div></td>
+          <td><span class="stage-chip sc-target">22</span></td>
+          <td><span class="stage-chip sc-contact">18</span></td>
+          <td><span class="stage-chip sc-process">12</span></td>
+          <td><span class="stage-chip sc-done">8</span></td>
+          <td><span class="stage-chip sc-blocked">2</span></td>
+          <td><div style="font-family:var(--fh);font-size:10px;font-weight:800;color:var(--green-dark);">36%</div><div class="conv-bar"><div class="conv-fill" style="width:36%;"></div></div></td>
+        </tr>
+        <tr>
+          <td><div class="stk-cat">🛒 Market / Buyer</div><div class="stk-cat-sub">Mandi · Buyers · Retail outlets</div></td>
+          <td><span class="stage-chip sc-target">10</span></td>
+          <td><span class="stage-chip sc-contact">6</span></td>
+          <td><span class="stage-chip sc-process">3</span></td>
+          <td><span class="stage-chip sc-done">2</span></td>
+          <td><span class="stage-chip sc-blocked">1</span></td>
+          <td><div style="font-family:var(--fh);font-size:10px;font-weight:800;color:var(--green-dark);">20%</div><div class="conv-bar"><div class="conv-fill" style="width:20%;"></div></div></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr style="background:var(--grey-xlight);border-top:2px solid var(--border);">
+          <td style="padding-left:14px;"><div style="font-family:var(--fh);font-size:10px;font-weight:800;color:var(--ink);">TOTAL</div></td>
+          <td><span style="font-family:var(--fh);font-size:12px;font-weight:900;color:var(--ink);">105</span></td>
+          <td><span style="font-family:var(--fh);font-size:12px;font-weight:900;color:var(--blue);">70</span></td>
+          <td><span style="font-family:var(--fh);font-size:12px;font-weight:900;color:var(--orange-dark);">48</span></td>
+          <td><span style="font-family:var(--fh);font-size:12px;font-weight:900;color:var(--green-dark);">20</span></td>
+          <td><span style="font-family:var(--fh);font-size:12px;font-weight:900;color:var(--red);">6</span></td>
+          <td><div style="font-family:var(--fh);font-size:10px;font-weight:800;color:var(--grey-dark);">19% avg</div></td>
+        </tr>
+      </tfoot>
+    </table>
+    <div style="font-size:10px;color:var(--grey-med);line-height:1.5;">Pipeline feeds from Stakeholder Connections log (v10 Visit Form). Conv. rate = Successful outcomes ÷ Targeted. Peer/SHG relationships are inherently ongoing.</div>
+  </div>
+
+  <!-- RIGHT: Impact Summary + Active Follow-ups -->
+  <div style="display:flex;flex-direction:column;gap:14px;">
+    <div class="panel-card">
+      <div class="pc-title">Impact Summary</div>
+      <div style="font-family:var(--fh);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--grey-med);margin-bottom:8px;">Credit &amp; Loan Pipeline</div>
+      <div class="credit-track">
+        <div class="ct-box ct-need">
+          <div class="ct-num" style="color:var(--grey-dark);">₹12.6L</div>
+          <div class="ct-lbl" style="color:var(--grey-dark);">Total Need</div>
+          <div class="ct-sub" style="color:var(--grey-med);">Identified across batch</div>
+          <div class="ct-bar-wrap"><div class="ct-bar-fill" style="width:100%;background:var(--grey-light);"></div></div>
+        </div>
+        <div class="ct-box ct-pipeline">
+          <div class="ct-num" style="color:var(--orange-dark);">₹4.2L</div>
+          <div class="ct-lbl" style="color:var(--orange-dark);">In Pipeline</div>
+          <div class="ct-sub" style="color:var(--orange-dark);">Applied / In process</div>
+          <div class="ct-bar-wrap"><div class="ct-bar-fill" style="width:33%;background:var(--orange);"></div></div>
+        </div>
+        <div class="ct-box ct-sanctioned">
+          <div class="ct-num" style="color:var(--green-dark);">₹3.6L</div>
+          <div class="ct-lbl" style="color:var(--green-dark);">Sanctioned</div>
+          <div class="ct-sub" style="color:var(--green-dark);">Disbursed · 3 udyamis</div>
+          <div class="ct-bar-wrap"><div class="ct-bar-fill" style="width:29%;background:var(--green);"></div></div>
+        </div>
+      </div>
+      <div style="font-family:var(--fh);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--grey-med);margin-bottom:8px;margin-top:10px;">Visits &amp; Impact</div>
+      <div class="stake-grid" style="grid-template-columns:1fr 1fr;">
+        <div class="stake-stat"><div class="stake-icon" style="background:var(--orange-light);">📋</div><div><div class="stake-num">186</div><div class="stake-lbl">Entrepreneur Visits</div><div class="stake-sub">Total done till date</div></div></div>
+        <div class="stake-stat"><div class="stake-icon" style="background:var(--blue-light);">📅</div><div><div class="stake-num">4.2</div><div class="stake-lbl">Visits / Week</div><div class="stake-sub">Batch average</div></div></div>
+        <div class="stake-stat"><div class="stake-icon" style="background:var(--blue-light);">👥</div><div><div class="stake-num">62</div><div class="stake-lbl">Employment</div><div class="stake-sub">↑ 15 vs baseline</div></div></div>
+        <div class="stake-stat"><div class="stake-icon" style="background:var(--green-light);">🎓</div><div><div class="stake-num">8</div><div class="stake-lbl">Trainings Completed</div><div class="stake-sub">Across batch</div></div></div>
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <div class="pc-title">Active Follow-ups <span class="pc-title-tag" style="background:var(--orange-light);color:var(--orange-dark);">2 pending action</span></div>
+      <div class="connection-list">
+        <div class="conn-item"><div class="conn-dot" style="background:var(--orange-dark);"></div><div class="conn-name">NABARD — Bargi Branch</div><span class="conn-type ct-credit">Bank / FI</span><span class="conn-date">Follow-up: 8 Apr</span></div>
+        <div class="conn-item"><div class="conn-dot" style="background:var(--blue);"></div><div class="conn-name">RSETI Jabalpur</div><span class="conn-type ct-training">Training Body</span><span class="conn-date">Follow-up: 15 Apr</span></div>
+        <div class="conn-item"><div class="conn-dot" style="background:var(--green-dark);"></div><div class="conn-name">SBI — Women Loan Cell</div><span class="conn-type ct-credit">Bank / FI ✓</span><span class="conn-status" style="font-family:var(--fh);font-weight:700;color:var(--green-dark);">₹1.5L Sanctioned</span></div>
+        <div class="conn-item"><div class="conn-dot" style="background:var(--purple);"></div><div class="conn-name">District Collector Office</div><span class="conn-type ct-govt">Govt ✓</span><span class="conn-status">PM-FMEB · 8 linked</span></div>
+        <div class="conn-item"><div class="conn-dot" style="background:var(--orange);"></div><div class="conn-name">Agri-Market Baghli Mandi</div><span class="conn-type ct-market">Market ✓</span><span class="conn-status">4 udyamis selling</span></div>
+        <div class="conn-item"><div class="conn-dot" style="background:#ccc;"></div><div class="conn-name">UDAAN — Packaging &amp; Branding</div><span class="conn-type" style="background:var(--grey-light);color:var(--grey-dark);">Planned</span><span class="conn-date">Target: May 2025</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- VISIT STATUS -->
+<div class="sl">Visit Status — Overdue Entrepreneur Visits</div>
+<div class="visit-two-col">
+  <div class="panel-card">
+    <div class="pc-title">Not Visited in 2+ Months <span class="pc-title-tag" style="background:var(--red-light);color:var(--red);">2 Udyamis — Urgent</span></div>
+    <div class="visit-item vi-red">
+      <div class="vi-avatar" style="background:var(--red);">RB</div>
+      <div style="flex:1;">
+        <div class="vi-name">Radha Bai</div>
+        <div class="vi-detail">Sujakpur GP · Dairy · Last visited: Jan 15, 2024</div>
+        <div class="vi-tags">
+          <span class="vi-tag" style="background:var(--red-light);color:var(--red);">⚑ Dropout Risk</span>
+          <span class="vi-tag" style="background:var(--orange-light);color:var(--orange-dark);">KYC Pending</span>
+          <span class="vi-tag" style="background:var(--red-light);color:var(--red);">Diary — Not Filling</span>
+        </div>
+      </div>
+    </div>
+    <div class="visit-item vi-red">
+      <div class="vi-avatar" style="background:#c94444;">MM</div>
+      <div style="flex:1;">
+        <div class="vi-name">Meera Meena</div>
+        <div class="vi-detail">Dingawada GP · Dairy · Last visited: Jan 22, 2024</div>
+        <div class="vi-tags">
+          <span class="vi-tag" style="background:var(--red-light);color:var(--red);">⚑ Dropout Risk</span>
+          <span class="vi-tag" style="background:var(--orange-light);color:var(--orange-dark);">KYC Incomplete</span>
+          <span class="vi-tag" style="background:var(--red-light);color:var(--red);">Sales Declining</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-card">
+    <div class="pc-title">Not Visited in 1–2 Months <span class="pc-title-tag" style="background:var(--orange-light);color:var(--orange-dark);">4 Udyamis — Schedule Soon</span></div>
+    <div class="visit-item vi-orange">
+      <div class="vi-avatar" style="background:var(--orange-dark);">SK</div>
+      <div style="flex:1;">
+        <div class="vi-name">Sunita Kumari</div>
+        <div class="vi-detail">Thandla GP · Dairy · Last visited: Feb 14, 2024</div>
+        <div class="vi-tags"><span class="vi-tag" style="background:var(--orange-light);color:var(--orange-dark);">Diary Irregular</span><span class="vi-tag" style="background:var(--red-light);color:var(--red);">⚑ Flagged</span></div>
+      </div>
+    </div>
+    <div class="visit-item vi-orange">
+      <div class="vi-avatar" style="background:var(--orange-dark);">JK</div>
+      <div style="flex:1;">
+        <div class="vi-name">Jyoti Kurmi</div>
+        <div class="vi-detail">Pathri GP · Food &amp; Pickle · Last visited: Mar 7, 2024</div>
+        <div class="vi-tags"><span class="vi-tag" style="background:var(--orange-light);color:var(--orange-dark);">KYC Pending</span><span class="vi-tag" style="background:var(--orange-light);color:var(--orange-dark);">BMC Pending</span></div>
+      </div>
+    </div>
+    <div class="visit-item vi-orange">
+      <div class="vi-avatar" style="background:var(--orange-dark);">SP</div>
+      <div style="flex:1;">
+        <div class="vi-name">Shobha Patel</div>
+        <div class="vi-detail">Dingawada GP · Trading · Last visited: Mar 7, 2024</div>
+        <div class="vi-tags"><span class="vi-tag" style="background:var(--orange-light);color:var(--orange-dark);">BMC Pending</span><span class="vi-tag" style="background:var(--orange-light);color:var(--orange-dark);">UE Pending</span></div>
+      </div>
+    </div>
+    <div class="visit-item vi-orange">
+      <div class="vi-avatar" style="background:var(--orange-dark);">GT</div>
+      <div style="flex:1;">
+        <div class="vi-name">Geeta Tiwari</div>
+        <div class="vi-detail">Chitoda GP · Agri / Agri-Allied · Last visited: Mar 14, 2024</div>
+        <div class="vi-tags"><span class="vi-tag" style="background:var(--orange-light);color:var(--orange-dark);">BMC Pending</span><span class="vi-tag" style="background:var(--orange-light);color:var(--orange-dark);">Biz Plan Pending</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ENTREPRENEUR TABLE -->
+<div class="sl">Udyami Status — All Members · Batch MP-2024-A</div>
+<div class="panel-card" style="padding:0;overflow:hidden;">
+  <div class="ent-table-wrap">
+    <table class="ent-table">
+      <thead>
+        <tr>
+          <th style="padding-left:14px;">Udyami</th>
+          <th>GP / Village</th>
+          <th>Industry</th>
+          <th>Level</th>
+          <th>Diary</th>
+          <th>KYC</th>
+          <th>BMC</th>
+          <th>Unit Econ.</th>
+          <th>Biz Plan</th>
+          <th>Sales ₹/mo</th>
+          <th>Profit ₹/mo</th>
+          <th>Δ Baseline</th>
+          <th>Health</th>
+          <th>Last Visit</th>
+          <th>Flag</th>
+        </tr>
+      </thead>
+      <tbody id="udyamiTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
+<script>
+
+/* ── BATCH SWITCH ── */
+function switchBatch(el,key){document.querySelectorAll('.batch-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
+
+/* ── FILTER ── */
+let _activeFilters = {};
+function applyFilter(type,val){
+  _activeFilters[type] = (val && val !== 'all') ? val : null;
+  const c=document.getElementById('active-filters');
+  const ex=c.querySelector('[data-type="'+type+'"]');if(ex)ex.remove();
+  if(val && val !== 'all' && !val.startsWith('date-')){
+    const chip=document.createElement('div');chip.className='fb-active-chip';chip.dataset.type=type;
+    chip.innerHTML=val+' <span style="cursor:pointer;opacity:.6;" onclick="this.parentElement.remove();_activeFilters[\''+type+'\']=null;refilterTable()">✕</span>';
+    c.appendChild(chip);
+  }
+  refilterTable();
+}
+function refilterTable(){
+  const df = _activeFilters['date-from'] || '';
+  const dt = _activeFilters['date-to'] || '';
+  document.querySelectorAll('#udyamiTableBody tr').forEach((tr,i)=>{
+    const u = udyamis[i];
+    if (!u) return;
+    let show = true;
+    if (_activeFilters['industry'] && _activeFilters['industry'] !== 'all') {
+      if (u.ind !== _activeFilters['industry']) show = false;
+    }
+    if (df || dt) {
+      const sd = u.surveyDate || u.baselineDate || '';
+      if (df && sd && sd < df) show = false;
+      if (dt && sd && sd > dt) show = false;
+    }
+    tr.style.display = show ? '' : 'none';
+  });
+}
+
+/* ── HEALTH TABS ── */
+function switchHTab(el,id){
+  document.querySelectorAll('.htab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.htab-panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('ht-'+id).classList.add('active');
+}
+
+/* ── CALENDAR MONTHS ── */
+(function(){
+  const months=[['Jan',1],['Feb',2],['Mar',3],['Apr',4],['May',5],['Jun',6],['Jul',7],['Aug',8],['Sep',9],['Oct',10],['Nov',11],['Dec',12]];
+  const start=1,current=9;
+  const row=document.getElementById('calMonths');
+  months.forEach(([m,n])=>{
+    const cls=n===start?'start':n===current?'current':n<current?'past':'future';
+    const div=document.createElement('div');div.className='mc-box '+cls;
+    div.innerHTML=`<span class="mc-month-name">${m}</span><span class="mc-month-num">${n}</span>`;
+    if(n===start){const pip=document.createElement('span');pip.className='mc-pip';pip.style.background='var(--green-dark)';div.appendChild(pip);}
+    if(n===current){const pip=document.createElement('span');pip.className='mc-pip';pip.style.background='var(--orange-dark)';div.appendChild(pip);}
+    row.appendChild(div);
+  });
+})();
+
+/* ── LEVEL CHART ── */
+new Chart(document.getElementById('levelChart'),{
+  type:'bar',
+  data:{labels:['L1','L2','L3','Out'],datasets:[{data:[14,15,4,2],backgroundColor:['#f9a556','#4a7fc1','#8bb25a','#c94444'],borderRadius:5,borderSkipped:false}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{family:'Montserrat',weight:'700',size:10}}},y:{grid:{color:'rgba(0,0,0,.06)'},ticks:{stepSize:5,font:{size:10}},beginAtZero:true,max:20}}}
+});
+
+/* ── LEAFLET MAP ── */
+const map=L.map('leaflet-map').setView([22.836,76.340],12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:17}).addTo(map);
+
+const gpData=[
+  {name:'Baghli GP',    lat:22.836,lng:76.344,list:[{n:'Anita Patel',lv:3,flag:false},{n:'Champa Rawat',lv:3,flag:false},{n:'Lalita Bai',lv:2,flag:false},{n:'Hemlata Singh',lv:1,flag:false},{n:'Tulsi Bai',lv:2,flag:false},{n:'Yamuna Bai',lv:1,flag:false}]},
+  {name:'Chitoda GP',   lat:22.808,lng:76.318,list:[{n:'Geeta Tiwari',lv:2,flag:false},{n:'Kamla Sharma',lv:1,flag:true},{n:'Uma Pal',lv:3,flag:false},{n:'Savita Kashyap',lv:1,flag:false,drop:true},{n:'Ruma Dhurve',lv:1,flag:false,drop:true}]},
+  {name:'Dingawada GP', lat:22.864,lng:76.374,list:[{n:'Meera Meena',lv:1,flag:true},{n:'Manjula Prajapati',lv:2,flag:false},{n:'Indira Meena',lv:2,flag:false},{n:'Urmila Gond',lv:2,flag:false},{n:'Shobha Patel',lv:1,flag:false},{n:'Basanti Soni',lv:1,flag:false}]},
+  {name:'Pathri GP',    lat:22.789,lng:76.353,list:[{n:'Parvati Thakur',lv:3,flag:false},{n:'Pushpa Devi',lv:1,flag:true},{n:'Vandana Kurre',lv:1,flag:false},{n:'Jyoti Kurmi',lv:1,flag:false},{n:'Kaushalya Sen',lv:1,flag:false}]},
+  {name:'Sujakpur GP',  lat:22.854,lng:76.310,list:[{n:'Radha Bai',lv:1,flag:true},{n:'Rekha Sahu',lv:2,flag:false},{n:'Durga Vishwakarma',lv:2,flag:false},{n:'Nirmala Jatav',lv:2,flag:false},{n:'Vidya Dhurve',lv:2,flag:false},{n:'Zeenat Bi',lv:2,flag:false}]},
+  {name:'Thandla GP',   lat:22.820,lng:76.398,list:[{n:'Shanti Devi',lv:2,flag:false},{n:'Sita Devi',lv:2,flag:false},{n:'Sunita Kumari',lv:1,flag:true},{n:'Bimla Yadav',lv:2,flag:false},{n:'Saroj Mandal',lv:2,flag:false},{n:'Phulo Bai',lv:2,flag:false},{n:'Leela Banjare',lv:1,flag:true}]},
+  {name:'Matroda GP',   lat:22.798,lng:76.370,list:[{n:'Rekha Verma',lv:1,flag:false},{n:'Suman Bai',lv:2,flag:false},{n:'Prabha Joshi',lv:1,flag:false}]},
+  {name:'Bilawali GP',  lat:22.870,lng:76.330,list:[{n:'Lata Devi',lv:2,flag:false},{n:'Savitri Patel',lv:1,flag:false},{n:'Kiran Bai',lv:2,flag:false},{n:'Sushma Yadav',lv:1,flag:false}]},
+];
+
+const lvColor={1:'#f9a556',2:'#4a7fc1',3:'#8bb25a'};
+gpData.forEach(gp=>{
+  const flags=gp.list.filter(e=>e.flag).length;
+  const drops=gp.list.filter(e=>e.drop).length;
+  const active=gp.list.filter(e=>!e.drop);
+  const avgLv=Math.round(active.reduce((s,e)=>s+e.lv,0)/Math.max(active.length,1));
+  const fillColor=flags>0?'#c94444':lvColor[avgLv]||'#8bb25a';
+  const r=6+gp.list.length*1.2;
+  const m=L.circleMarker([gp.lat,gp.lng],{radius:r,color:flags>0?'#8b0000':lvColor[avgLv]||'#3d6b2a',fillColor,fillOpacity:.8,weight:2}).addTo(map);
+  const rows=gp.list.map(e=>`<div style="font-size:10px;padding:1px 0;color:${e.flag?'#c94444':e.drop?'#aaa':'#2e3d20'};">${e.flag?'⚑ ':e.drop?'✗ ':''}${e.n} — ${e.drop?'Dropout':'L'+e.lv}</div>`).join('');
+  m.bindPopup(`<div style="font-family:Montserrat,sans-serif;min-width:170px;"><div style="font-size:12px;font-weight:800;color:#2e3d20;margin-bottom:5px;">${gp.name}</div><div style="font-size:10px;color:#7a8a6a;margin-bottom:5px;">${gp.list.length} entrepreneurs${flags?' · ⚑ '+flags+' flagged':''}${drops?' · '+drops+' dropout':''}</div><hr style="border-color:#e2e9d8;margin:5px 0;"/>${rows}</div>`);
+  m.bindTooltip(`<b style="font-family:Montserrat,sans-serif;font-size:9px;">${gp.name} (${gp.list.length})</b>`,{permanent:true,direction:'top',offset:[0,-r]});
+});
+
+/* ── ENTREPRENEUR TABLE ── */
+const udyamis=[
+  {id:'001',name:'Anita Patel',      gp:'Baghli GP',    ind:'Agri / Agri-Allied',level:3,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'done',  sales:14200,profit:5800, salesBL:9800, health:80,lastVisit:'28 Mar',flag:false},
+  {id:'002',name:'Bimla Yadav',      gp:'Thandla GP',   ind:'Manufacturing',     level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'pend',  sales:7400, profit:2600, salesBL:5200, health:74,lastVisit:'28 Mar',flag:false},
+  {id:'003',name:'Champa Rawat',     gp:'Baghli GP',    ind:'Manufacturing',     level:3,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'done',  sales:18600,profit:7200, salesBL:12400,health:80,lastVisit:'28 Mar',flag:false},
+  {id:'004',name:'Durga Vishwakarma',gp:'Sujakpur GP',  ind:'Service',           level:2,diary:'daily',kyc:'done',bmc:'done',ue:'pend',bp:'pend',  sales:6200, profit:2100, salesBL:5800, health:66,lastVisit:'21 Mar',flag:false},
+  {id:'005',name:'Geeta Tiwari',     gp:'Chitoda GP',   ind:'Agri / Agri-Allied',level:2,diary:'some', kyc:'done',bmc:'pend',ue:'done',bp:'pend',  sales:5400, profit:1800, salesBL:5600, health:60,lastVisit:'14 Mar',flag:false},
+  {id:'006',name:'Hemlata Singh',    gp:'Baghli GP',    ind:'Trading',           level:1,diary:'daily',kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:3800, profit:900,  salesBL:3200, health:52,lastVisit:'28 Mar',flag:false},
+  {id:'007',name:'Indira Meena',     gp:'Dingawada GP', ind:'Agri / Agri-Allied',level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'done',  sales:9200, profit:3400, salesBL:6600, health:80,lastVisit:'21 Mar',flag:false},
+  {id:'008',name:'Jyoti Kurmi',      gp:'Pathri GP',    ind:'Agri / Agri-Allied',level:1,diary:'some', kyc:'pend',bmc:'pend',ue:'pend',bp:'pend',  sales:2100, profit:400,  salesBL:2400, health:34,lastVisit:'7 Mar', flag:false},
+  {id:'009',name:'Kamla Sharma',     gp:'Chitoda GP',   ind:'Service',           level:1,diary:'some', kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:3100, profit:600,  salesBL:5200, health:38,lastVisit:'21 Mar',flag:true},
+  {id:'010',name:'Lalita Bai',       gp:'Baghli GP',    ind:'Agri / Agri-Allied',level:2,diary:'daily',kyc:'done',bmc:'done',ue:'pend',bp:'pend',  sales:6800, profit:2200, salesBL:5400, health:63,lastVisit:'28 Mar',flag:false},
+  {id:'011',name:'Leela Banjare',    gp:'Thandla GP',   ind:'Manufacturing',     level:1,diary:'miss', kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:1800, profit:200,  salesBL:2200, health:29,lastVisit:'14 Mar',flag:true},
+  {id:'012',name:'Manjula Prajapati',gp:'Dingawada GP', ind:'Trading',           level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'pend',  sales:8400, profit:3100, salesBL:6200, health:71,lastVisit:'28 Mar',flag:false},
+  {id:'013',name:'Meera Meena',      gp:'Dingawada GP', ind:'Agri / Agri-Allied',level:1,diary:'miss', kyc:'pend',bmc:'pend',ue:'pend',bp:'pend',  sales:1200, profit:-200, salesBL:2800, health:21,lastVisit:'22 Jan',flag:true},
+  {id:'014',name:'Nirmala Jatav',    gp:'Sujakpur GP',  ind:'Service',           level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'pend',  sales:7600, profit:2800, salesBL:5600, health:69,lastVisit:'21 Mar',flag:false},
+  {id:'015',name:'Parvati Thakur',   gp:'Pathri GP',    ind:'Agri / Agri-Allied',level:3,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'done',  sales:16400,profit:6400, salesBL:10200,health:80,lastVisit:'28 Mar',flag:false},
+  {id:'016',name:'Pushpa Devi',      gp:'Pathri GP',    ind:'Agri / Agri-Allied',level:1,diary:'some', kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:3600, profit:800,  salesBL:3400, health:43,lastVisit:'28 Mar',flag:true},
+  {id:'017',name:'Radha Bai',        gp:'Sujakpur GP',  ind:'Agri / Agri-Allied',level:1,diary:'miss', kyc:'pend',bmc:'pend',ue:'pend',bp:'pend',  sales:0,    profit:0,    salesBL:1800, health:18,lastVisit:'15 Jan',flag:true},
+  {id:'018',name:'Rekha Sahu',       gp:'Sujakpur GP',  ind:'Manufacturing',     level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'pend',  sales:7200, profit:2500, salesBL:5200, health:67,lastVisit:'28 Mar',flag:false},
+  {id:'019',name:'Saroj Mandal',     gp:'Thandla GP',   ind:'Trading',           level:2,diary:'daily',kyc:'done',bmc:'pend',ue:'done',bp:'pend',  sales:6400, profit:2000, salesBL:5000, health:61,lastVisit:'21 Mar',flag:false},
+  {id:'020',name:'Savita Kashyap',   gp:'Chitoda GP',   ind:'Service',           level:1,diary:'miss', kyc:'pend',bmc:'pend',ue:'pend',bp:'pend',  sales:0,    profit:0,    salesBL:1600, health:0, lastVisit:'—',     flag:false,dropout:true},
+  {id:'021',name:'Shanti Devi',      gp:'Thandla GP',   ind:'Agri / Agri-Allied',level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'done',  sales:10400,profit:4200, salesBL:7200, health:80,lastVisit:'28 Mar',flag:false},
+  {id:'022',name:'Shobha Patel',     gp:'Dingawada GP', ind:'Trading',           level:1,diary:'some', kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:3200, profit:700,  salesBL:3000, health:45,lastVisit:'7 Mar', flag:false},
+  {id:'023',name:'Sita Devi',        gp:'Thandla GP',   ind:'Manufacturing',     level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'pend',  sales:8800, profit:3300, salesBL:6400, health:72,lastVisit:'28 Mar',flag:false},
+  {id:'024',name:'Sunita Kumari',    gp:'Thandla GP',   ind:'Agri / Agri-Allied',level:1,diary:'miss', kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:1400, profit:100,  salesBL:2400, health:24,lastVisit:'14 Feb',flag:true},
+  {id:'025',name:'Tulsi Bai',        gp:'Baghli GP',    ind:'Agri / Agri-Allied',level:2,diary:'daily',kyc:'done',bmc:'done',ue:'pend',bp:'pend',  sales:6000, profit:1900, salesBL:4800, health:60,lastVisit:'21 Mar',flag:false},
+  {id:'026',name:'Uma Pal',          gp:'Chitoda GP',   ind:'Agri / Agri-Allied',level:3,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'done',  sales:19200,profit:7800, salesBL:12800,health:80,lastVisit:'28 Mar',flag:false},
+  {id:'027',name:'Urmila Gond',      gp:'Dingawada GP', ind:'Manufacturing',     level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'pend',  sales:7800, profit:2900, salesBL:5600, health:68,lastVisit:'28 Mar',flag:false},
+  {id:'028',name:'Vandana Kurre',    gp:'Pathri GP',    ind:'Service',           level:1,diary:'some', kyc:'pend',bmc:'pend',ue:'pend',bp:'pend',  sales:2400, profit:500,  salesBL:2600, health:36,lastVisit:'14 Mar',flag:false},
+  {id:'029',name:'Vidya Dhurve',     gp:'Sujakpur GP',  ind:'Agri / Agri-Allied',level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'done',  sales:9600, profit:3800, salesBL:7000, health:79,lastVisit:'28 Mar',flag:false},
+  {id:'030',name:'Yamuna Bai',       gp:'Baghli GP',    ind:'Trading',           level:1,diary:'daily',kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:4200, profit:1100, salesBL:3600, health:50,lastVisit:'21 Mar',flag:false},
+  {id:'031',name:'Zeenat Bi',        gp:'Sujakpur GP',  ind:'Agri / Agri-Allied',level:2,diary:'daily',kyc:'done',bmc:'done',ue:'done',bp:'pend',  sales:8200, profit:3000, salesBL:6200, health:70,lastVisit:'21 Mar',flag:false},
+  {id:'032',name:'Phulo Bai',        gp:'Thandla GP',   ind:'Manufacturing',     level:2,diary:'some', kyc:'done',bmc:'done',ue:'pend',bp:'pend',  sales:5600, profit:1700, salesBL:4800, health:58,lastVisit:'14 Mar',flag:false},
+  {id:'033',name:'Basanti Soni',     gp:'Dingawada GP', ind:'Trading',           level:1,diary:'daily',kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:3800, profit:900,  salesBL:3200, health:48,lastVisit:'28 Mar',flag:false},
+  {id:'034',name:'Ruma Dhurve',      gp:'Chitoda GP',   ind:'Service',           level:1,diary:'miss', kyc:'pend',bmc:'pend',ue:'pend',bp:'pend',  sales:0,    profit:0,    salesBL:1400, health:0, lastVisit:'—',     flag:false,dropout:true},
+  {id:'035',name:'Kaushalya Sen',    gp:'Pathri GP',    ind:'Agri / Agri-Allied',level:1,diary:'some', kyc:'done',bmc:'pend',ue:'pend',bp:'pend',  sales:3400, profit:800,  salesBL:3000, health:42,lastVisit:'21 Mar',flag:false},
+];
+
+/* ═══════════════════════════════════════════════════
+   LOCALSTORAGE MERGE — io_dashboard_v7
+═══════════════════════════════════════════════════ */
+(function mergeLocalStorage() {
+  const STORAGE_KEY = 'gr_udyami_records';
+  let stored = [];
+  try { stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { stored = []; }
+
+  if (stored.length > 0) {
+    // Show the banner
+    const banner = document.getElementById('ls-banner');
+    const bannerText = document.getElementById('ls-banner-text');
+    if (banner) banner.style.display = 'flex';
+    if (bannerText) bannerText.textContent = stored.length + ' form submission' + (stored.length !== 1 ? 's' : '') + ' loaded from localStorage — merged with batch data below.';
+  }
+
+  stored.forEach(r => {
+    const match = udyamis.find(u => u.name === r.name || u.id === r.udyamiId);
+    if (match) {
+      if (r.sales !== undefined) match.sales = r.sales;
+      if (r.profit !== undefined) match.profit = r.profit;
+      if (r.health !== undefined) match.health = r.health;
+      if (r.level !== undefined) match.level = r.level;
+      if (r.diary !== undefined) match.diary = r.diary;
+      if (r.kyc !== undefined) match.kyc = r.kyc;
+      if (r.lastVisit !== undefined) match.lastVisit = r.lastVisit;
+      if (r.flag !== undefined) match.flag = r.flag;
+      if (r.dropout !== undefined) match.dropout = r.dropout;
+    } else {
+      // New record from form — append to udyamis
+      udyamis.push({
+        id: r.udyamiId || ('NEW-' + (udyamis.length + 1)),
+        name: r.name || 'Unknown',
+        gp: r.gp || ((r.village || '') + ' GP') || '—',
+        ind: r.ind || '—',
+        level: r.level || 1,
+        diary: r.diary || 'miss',
+        kyc: r.kyc || 'pend',
+        bmc: r.bmc || 'pend',
+        ue: r.ue || 'pend',
+        bp: r.bp || 'pend',
+        sales: r.sales || r.salesBL || 0,
+        profit: r.profit || r.profitBL || 0,
+        salesBL: r.salesBL || 0,
+        health: r.health || 0,
+        lastVisit: r.lastVisit || '—',
+        flag: r.flag || false,
+        dropout: r.dropout || false
+      });
+    }
+  });
+})();
+
+/* Clear LS helper exposed to banner button */
+function clearLSData() {
+  if (confirm('Remove all form submissions from localStorage? This will reload the page with hardcoded data only.')) {
+    localStorage.removeItem('gr_udyami_records');
+    location.reload();
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   DYNAMIC SUMMARY STRIP — computed from merged udyamis
+═══════════════════════════════════════════════════ */
+(function updateSummaryStrip() {
+  const active = udyamis.filter(u => !u.dropout);
+  const total = udyamis.length;
+  const totalGMV = active.reduce((s, u) => s + (u.sales || 0), 0);
+  const totalProfit = active.reduce((s, u) => s + (u.profit || 0), 0);
+  const flagged = active.filter(u => u.flag).length;
+  const dropouts = udyamis.filter(u => u.dropout).length;
+
+  function fmtLakh(v) {
+    if (v >= 100000) return '₹' + (v/100000).toFixed(2) + 'L';
+    if (v >= 1000) return '₹' + Math.round(v/1000) + 'K';
+    return '₹' + v;
+  }
+
+  // Update GMV card
+  const gmvEl = document.querySelector('.sum-card:nth-child(1) .sum-num');
+  if (gmvEl) gmvEl.textContent = fmtLakh(totalGMV);
+
+  // Update Profit card
+  const profitEl = document.querySelector('.sum-card:nth-child(2) .sum-num');
+  if (profitEl) profitEl.textContent = fmtLakh(totalProfit);
+
+  // Update Active udyamis card
+  const activeEl = document.querySelector('.sum-card:nth-child(4) .sum-num');
+  if (activeEl) activeEl.innerHTML = active.length + ' <span style="font-size:14px;color:var(--grey-med);">/ ' + total + '</span>';
+  const activeSubEl = document.querySelector('.sum-card:nth-child(4) .sum-sub');
+  if (activeSubEl && flagged > 0) activeSubEl.style.color = 'var(--red)', activeSubEl.textContent = flagged + ' flagged · ' + dropouts + ' dropout';
+})();
+
+function fmtInr(v){if(v===0)return '—';if(v<0)return '<span style="color:var(--red);">−₹'+Math.abs(v).toLocaleString('en-IN')+'</span>';return '₹'+v.toLocaleString('en-IN');}
+function dCell(s,bl){if(bl===0||s===0)return '<span class="delta-cell dc-flat">—</span>';const p=Math.round((s-bl)/bl*100);return p>0?`<span class="delta-cell dc-up">▲ ${p}%</span>`:p<0?`<span class="delta-cell dc-down">▼ ${Math.abs(p)}%</span>`:'<span class="delta-cell dc-flat">—</span>';}
+function dd(v){const t={daily:'sd-done',some:'sd-pend',miss:'sd-miss'};return `<span class="status-dot ${t[v]||'sd-miss'}"></span>`;}
+function sd(v){return `<span class="status-dot ${v==='done'?'sd-done':v==='pend'?'sd-pend':'sd-miss'}"></span>`;}
+function lp(lv,d){if(d)return '<span class="lv-pill" style="background:#fde;color:var(--red);">Out</span>';const s={1:'background:#fff3e0;color:#c07000;',2:'background:var(--blue-light);color:var(--blue);',3:'background:var(--green-light);color:var(--green-dark);'};return `<span class="lv-pill" style="${s[lv]}">L${lv}</span>`;}
+function hp(sc,d){if(d)return '<span class="score-pill" style="background:#f0f0f0;color:#aaa;">—</span>';const cls=sc>=70?'sp-green':sc>=45?'sp-orange':'sp-red';return `<span class="score-pill ${cls}">${sc}</span>`;}
+
+/* ── Bridge entrepreneur record to udyami_vikas_data and open individual dashboard ── */
+function openEntDashboard(u) {
+  const bridged = {
+    _version:1, _savedAt:new Date().toISOString(), _formType:'visit',
+    udyamiId:'GR-MP-2024-A-'+u.id, name:u.name, mobile:'', gender:'Female',
+    category:'—', state:'Madhya Pradesh', district:u.gp.replace(' GP',''),
+    block:'—', village:u.gp.replace(' GP',''), batchId:'MP-2024-A',
+    surveyDate:'2024-01-15', baselineDate:'2024-01-15',
+    enterpriseName:u.name.split(' ')[0]+' Enterprise', enterpriseType:[u.ind], nic:{},
+    yearsInBusiness:'1–2 years', marketReach:'Multiple villages',
+    fixedAssets:0, inventory:0,
+    sales:u.salesBL||u.sales, expenses:(u.salesBL||u.sales)-(u.profitBL||u.profit),
+    profit:u.profitBL||u.profit,
+    diary:u.diary==='daily'?'Daily':u.diary==='some'?'Sometimes':'Not filling',
+    salesFreq:'Daily', customers:20, avgSale:Math.round((u.salesBL||u.sales)/20)||0,
+    liabilities:{savings:0,shg:0,supplier:0,bank:0}, emi:0, employmentFT:1, employmentPT:0,
+    fieldReportDate:new Date().toISOString().slice(0,10), fieldOfficer:'Field Officer',
+    kyc:{aadhaar:u.kyc==='done'},
+    shakti: Array.isArray(u.shaktiScores) ? u.shaktiScores : Array(8).fill(Math.round((u.health||40)/80*4)||2),
+    swasthya: Array.isArray(u.swasthyaScores) ? u.swasthyaScores : Array(12).fill(Math.round((u.health||40)/80*4)||2),
+    bmc:u.bmc==='done'?4:u.bmc==='in-progress'?2:1,
+    ue:u.ue==='done'?4:u.ue==='in-progress'?2:1,
+    bp:u.bp==='done'?4:u.bp==='in-progress'?2:1,
+    needs:[], financialHistory:[
+      {month:'Survey',  sales:u.salesBL||0, expenses:(u.salesBL||0)-(u.profitBL||0)},
+      {month:'Current', sales:u.sales||0,   expenses:(u.sales||0)-(u.profit||0)},
+    ],
+    visits:[{date:'2024-01-15',type:'Survey',officer:'Field Officer',duration:90,notes:'Auto from IO Dashboard',actions:[]}],
+    flag:!!u.flag, dropout:!!u.dropout,
+  };
+  localStorage.setItem('udyami_vikas_data', JSON.stringify(bridged));
+  window.open('udyami_vikas_dashboard (3).html','_blank');
+}
+
+document.getElementById('udyamiTableBody').innerHTML=udyamis.map(u=>{
+  const rs=u.dropout?'opacity:.5;':u.flag?'background:#fffaf4;':'';
+  return `<tr style="${rs}">
+    <td style="padding-left:14px;min-width:140px;cursor:pointer;" onclick="openEntDashboard(udyamis.find(x=>x.id===${u.id}))"><div class="ent-name" style="color:var(--green-dark);text-decoration:underline;">${u.name}</div><div class="ent-id">GR-MP-24A-${u.id}${u.dropout?' · DROPOUT':''}</div></td>
+    <td style="font-size:10px;color:var(--grey-dark);">${u.gp}</td>
+    <td style="font-size:10px;color:var(--grey-dark);">${u.ind}</td>
+    <td>${lp(u.level,u.dropout)}</td>
+    <td style="text-align:center;">${dd(u.diary)}</td>
+    <td style="text-align:center;">${sd(u.kyc)}</td>
+    <td style="text-align:center;">${sd(u.bmc)}</td>
+    <td style="text-align:center;">${sd(u.ue)}</td>
+    <td style="text-align:center;">${sd(u.bp)}</td>
+    <td style="font-family:var(--fh);font-size:10px;font-weight:700;color:var(--green-dark);">${fmtInr(u.sales)}</td>
+    <td style="font-family:var(--fh);font-size:10px;font-weight:700;${u.profit<0?'color:var(--red);':'color:var(--blue);'}">${fmtInr(u.profit)}</td>
+    <td>${dCell(u.sales,u.salesBL)}</td>
+    <td>${hp(u.health,u.dropout)}</td>
+    <td style="font-size:10px;color:var(--grey-dark);">${u.lastVisit}</td>
+    <td>${u.flag?'<span class="flag-alert">⚑ Flag</span>':''}</td>
+  </tr>`;
+}).join('');
+</script>
+</body>
+</html>

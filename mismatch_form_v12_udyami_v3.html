@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Data Mismatch Report — io_form_v12 ↔ udyami_vikas_dashboard v3</title>
+<style>
+  :root{
+    --green:#8bb25a;--dark-green:#1e2a16;--mid-green:#4a7c1f;
+    --red:#e05252;--amber:#e0a040;--blue:#4a90d9;
+    --bg:#f5f6f3;--card:#fff;--border:#dde3d5;
+    --text:#1e2a16;--muted:#6b7a5e;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+
+  /* ── header ── */
+  header{background:var(--dark-green);color:#fff;padding:28px 40px 24px}
+  header h1{font-size:1.5rem;font-weight:700;letter-spacing:-.3px}
+  header .sub{font-size:.85rem;opacity:.7;margin-top:4px}
+  header .meta{display:flex;gap:24px;margin-top:16px;flex-wrap:wrap}
+  header .meta span{font-size:.78rem;background:rgba(255,255,255,.1);padding:4px 12px;border-radius:20px}
+
+  /* ── layout ── */
+  .container{max-width:1100px;margin:0 auto;padding:32px 24px}
+
+  /* ── score strip ── */
+  .score-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
+  .score-card{background:var(--card);border-radius:var(--radius);padding:20px;text-align:center;border:2px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+  .score-card .num{font-size:2.4rem;font-weight:800;line-height:1}
+  .score-card .lbl{font-size:.75rem;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.5px}
+  .score-card.crit .num{color:var(--red)}
+  .score-card.warn .num{color:var(--amber)}
+  .score-card.ok .num{color:var(--green)}
+  .score-card.info .num{color:var(--blue)}
+
+  /* ── section headings ── */
+  h2{font-size:1.1rem;font-weight:700;color:var(--dark-green);margin:32px 0 12px;display:flex;align-items:center;gap:8px}
+  h2::before{content:'';display:block;width:4px;height:1.1em;background:var(--green);border-radius:2px}
+
+  /* ── storage key callout ── */
+  .callout{background:#fff3cd;border:1.5px solid #f0c040;border-radius:var(--radius);padding:16px 20px;margin-bottom:24px}
+  .callout.danger{background:#fdeaea;border-color:#e05252}
+  .callout strong{display:block;margin-bottom:4px;font-size:.95rem}
+  .callout code{font-family:'Consolas','Courier New',monospace;font-size:.88rem;background:rgba(0,0,0,.07);padding:1px 5px;border-radius:3px}
+
+  /* ── mismatch table ── */
+  .tbl-wrap{overflow-x:auto;margin-bottom:28px}
+  table{width:100%;border-collapse:collapse;font-size:.83rem}
+  th{background:var(--dark-green);color:#fff;text-align:left;padding:10px 14px;font-weight:600;white-space:nowrap}
+  td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  tr:nth-child(even) td{background:#f9faf7}
+  td code{font-family:'Consolas','Courier New',monospace;font-size:.8rem;background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;white-space:nowrap}
+
+  /* severity badges */
+  .badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+  .badge.crit{background:#fde8e8;color:#c0392b}
+  .badge.warn{background:#fef3cd;color:#856404}
+  .badge.ok{background:#e8f5d8;color:#3a6b10}
+  .badge.info{background:#e0ecf8;color:#1a5276}
+
+  /* ── bridge section ── */
+  .bridge-box{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:20px}
+  .bridge-box h3{font-size:.9rem;font-weight:700;color:var(--dark-green);margin-bottom:12px}
+  .bridge-box pre{font-size:.78rem;background:#1e2a16;color:#d4f0a0;padding:14px 16px;border-radius:6px;overflow-x:auto;line-height:1.6}
+
+  /* ── recommendation list ── */
+  .rec-list{counter-reset:rec}
+  .rec-item{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:12px;display:flex;gap:16px;align-items:flex-start}
+  .rec-item::before{counter-increment:rec;content:counter(rec);min-width:28px;height:28px;background:var(--green);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0}
+  .rec-item .rtxt strong{display:block;font-size:.9rem;margin-bottom:4px}
+  .rec-item .rtxt p{font-size:.82rem;color:var(--muted)}
+
+  /* ── legend ── */
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+  .legend span{font-size:.8rem;display:flex;align-items:center;gap:6px}
+  .legend .dot{width:10px;height:10px;border-radius:50%}
+
+  /* ── print / footer ── */
+  footer{text-align:center;font-size:.78rem;color:var(--muted);margin-top:40px;padding-bottom:40px}
+  @media print{header{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+  @media(max-width:700px){
+    .score-strip{grid-template-columns:repeat(2,1fr)}
+    header{padding:20px}
+    .container{padding:20px 14px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Data Mismatch Report</h1>
+  <div class="sub">io_form_v12.html → gr_udyami_records &nbsp;↔&nbsp; udyami_vikas_dashboard&nbsp;(3).html → udyami_vikas_data</div>
+  <div class="meta">
+    <span>Source form: io_form_v12.html</span>
+    <span>Target dashboard: udyami_vikas_dashboard (3).html</span>
+    <span>Bridge layer: app.html → bridgeToEntDashboard()</span>
+    <span>Generated: 2026-04-06</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ═══ SCORE STRIP ═══ -->
+  <div class="score-strip">
+    <div class="score-card crit">
+      <div class="num">7</div>
+      <div class="lbl">Critical ❌</div>
+    </div>
+    <div class="score-card warn">
+      <div class="num">6</div>
+      <div class="lbl">Transform needed ⚠️</div>
+    </div>
+    <div class="score-card ok">
+      <div class="num">11</div>
+      <div class="lbl">Direct / compatible ✅</div>
+    </div>
+    <div class="score-card info">
+      <div class="num">24</div>
+      <div class="lbl">Total fields checked</div>
+    </div>
+  </div>
+
+  <!-- ═══ STORAGE KEY MISMATCH ═══ -->
+  <div class="callout danger">
+    <strong>🚨 Root cause: different localStorage keys</strong>
+    The form writes records to <code>gr_udyami_records</code> (array of flat objects).
+    The entrepreneur dashboard reads from <code>udyami_vikas_data</code> (single nested object).
+    These keys <strong>never overlap</strong> — the dashboard cannot natively read form output without a translation layer.
+    The <code>bridgeToEntDashboard()</code> function in <strong>app.html</strong> resolves this at run-time.
+  </div>
+
+  <!-- ═══ LEGEND ═══ -->
+  <div class="legend">
+    <span><span class="dot" style="background:#c0392b"></span> Critical — breaks dashboard without bridge</span>
+    <span><span class="dot" style="background:#856404"></span> Transform — value/structure mapping needed</span>
+    <span><span class="dot" style="background:#3a6b10"></span> Compatible — maps directly</span>
+  </div>
+
+  <!-- ═══ TABLE 1: IDENTITY & DEMOGRAPHICS ═══ -->
+  <h2>1 — Identity &amp; Demographics</h2>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Dashboard field</th>
+        <th>Form field / ID</th>
+        <th>Form value</th>
+        <th>Dashboard expects</th>
+        <th>Status</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>udyamiId</code></td>
+        <td><code>b-id</code></td>
+        <td>string</td>
+        <td>string</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td>Both use same ID field</td>
+      </tr>
+      <tr>
+        <td><code>name</code></td>
+        <td><code>b-name</code></td>
+        <td>string</td>
+        <td>string</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>nameHindi</code></td>
+        <td><code>b-name-hi</code> (optional field)</td>
+        <td>string (optional)</td>
+        <td><em>Removed from dashboard display</em></td>
+        <td><span class="badge ok">✅ Resolved</span></td>
+        <td>nameHindi removed from entrepreneur dashboard — not required for programme operations</td>
+      </tr>
+      <tr>
+        <td><code>mobile</code></td>
+        <td><code>b-mobile</code></td>
+        <td>string</td>
+        <td>string</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>gender</code></td>
+        <td><code>b-gender</code></td>
+        <td><code>"male"/"female"/"other"</code></td>
+        <td><code>"Male"/"Female"/"Other"</code></td>
+        <td><span class="badge warn">⚠️ Transform</span></td>
+        <td>Case mismatch — bridge must capitalise</td>
+      </tr>
+      <tr>
+        <td><code>category</code></td>
+        <td><code>b-category</code></td>
+        <td>string (SC/ST/OBC…)</td>
+        <td>string</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>state / district / block / village</code></td>
+        <td><code>b-state / b-district / b-block / b-village</code></td>
+        <td>string</td>
+        <td>string</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>batchId</code></td>
+        <td><code>b-batch</code></td>
+        <td>string</td>
+        <td>string</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>education / marital / dependents</code></td>
+        <td><code>b-education / b-marital / b-dep</code></td>
+        <td>string / string / number</td>
+        <td>string / string / number</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>partner</code></td>
+        <td><code>b-partner</code> (NGO)</td>
+        <td>string</td>
+        <td>string</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- ═══ TABLE 2: FINANCIAL FIELDS ═══ -->
+  <h2>2 — Financial Fields</h2>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Dashboard field</th>
+        <th>Form field / ID</th>
+        <th>Form value</th>
+        <th>Dashboard expects</th>
+        <th>Status</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>sales / expenses / profit</code></td>
+        <td><code>b-sales / b-expenses / b-profit</code></td>
+        <td>number (₹)</td>
+        <td>number (₹)</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>salesBL</code> (baseline sales)</td>
+        <td><code>b-sales</code> (baseline record)</td>
+        <td>number</td>
+        <td>number</td>
+        <td><span class="badge warn">⚠️ Transform</span></td>
+        <td>Bridge must snapshot <code>b-sales</code> from baseline submit into <code>salesBL</code></td>
+      </tr>
+      <tr>
+        <td><code>financialHistory</code></td>
+        <td>— (not collected)</td>
+        <td><em>absent — form stores snapshots as flat records</em></td>
+        <td><code>[{month, sales, expenses}]</code> array</td>
+        <td><span class="badge crit">❌ Missing</span></td>
+        <td>Dashboard renders time-series bar chart. Bridge synthesises 2-entry array from baseline + latest visit records, which is an approximation only.</td>
+      </tr>
+      <tr>
+        <td><code>liabilities</code></td>
+        <td><code>b-saving / b-shg / b-supplier / b-bank</code></td>
+        <td>4 separate number fields</td>
+        <td><code>{savings, shg, supplier, bank}</code> object</td>
+        <td><span class="badge warn">⚠️ Transform</span></td>
+        <td>Bridge must assemble the object from flat fields</td>
+      </tr>
+      <tr>
+        <td><code>emi</code></td>
+        <td><code>b-emi</code></td>
+        <td>number</td>
+        <td>number</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>fixedAssets / inventory</code></td>
+        <td><code>b-assets / b-inventory</code></td>
+        <td>number</td>
+        <td>number</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>employmentFT / employmentPT</code></td>
+        <td><code>b-emp-ft / b-emp-pt</code></td>
+        <td>number</td>
+        <td>number</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- ═══ TABLE 3: BEHAVIOURAL / CAPABILITY SCORES ═══ -->
+  <h2>3 — Behavioural &amp; Capability Scores</h2>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Dashboard field</th>
+        <th>Form field / ID</th>
+        <th>Form value</th>
+        <th>Dashboard expects</th>
+        <th>Status</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>diary</code></td>
+        <td><code>b-diary</code> (radio)</td>
+        <td><code>"daily" / "some" / "miss"</code></td>
+        <td><code>"Daily" / "Sometimes" / "Not filling" / "Verbal estimate"</code></td>
+        <td><span class="badge warn">⚠️ Transform</span></td>
+        <td>Value mapping: <code>daily→Daily</code>, <code>some→Sometimes</code>, <code>miss→Not filling</code></td>
+      </tr>
+      <tr>
+        <td><code>shakti</code> (8 scores)</td>
+        <td><code>bs1–bs8</code> (8 radio inputs) → <code>shaktiScores</code> array</td>
+        <td>Array of 8 integers 0–4</td>
+        <td>Array of 8 integers</td>
+        <td><span class="badge ok">✅ Fixed in v12</span></td>
+        <td><strong>Fix applied:</strong> <code>submitForm('fieldreport')</code> now saves <code>shaktiScores:[bs1…bs8]</code> as an array. Bridge reads this array directly — no estimation. <em>3 bridge options below.</em></td>
+      </tr>
+      <tr>
+        <td><code>swasthya</code> (12 scores)</td>
+        <td><code>bw1–bw12</code> (12 radio inputs) → <code>swasthyaScores</code> array</td>
+        <td>Array of 12 integers 0–4</td>
+        <td>Array of 12 integers</td>
+        <td><span class="badge ok">✅ Fixed in v12</span></td>
+        <td><strong>Fix applied:</strong> <code>submitForm('fieldreport')</code> now saves <code>swasthyaScores:[bw1…bw12]</code>. Bridge reads directly.</td>
+      </tr>
+      <tr>
+        <td><code>bmc</code> (Business Model Canvas)</td>
+        <td><code>v-bmc-status</code> (Visit Form Section 6)</td>
+        <td><code>"pend" / "in-progress" / "done"</code></td>
+        <td>integer <code>1–4</code></td>
+        <td><span class="badge crit">❌ Type mismatch</span></td>
+        <td>Bridge: <code>done→4</code>, <code>in-progress→2</code>, <code>pend→1</code>. Label updated in form: "Business Model Canvas (BMC)"</td>
+      </tr>
+      <tr>
+        <td><code>ue</code> (Unit Economics)</td>
+        <td><code>v-ue-status</code></td>
+        <td><code>"pend" / "in-progress" / "done"</code></td>
+        <td>integer <code>1–4</code></td>
+        <td><span class="badge crit">❌ Type mismatch</span></td>
+        <td>Bridge: same as BMC. Label in form: "Unit Economics (UE)"</td>
+      </tr>
+      <tr>
+        <td><code>bp</code> (Business Plan)</td>
+        <td><code>v-bp-status</code></td>
+        <td><code>"pend" / "in-progress" / "done"</code></td>
+        <td>integer <code>1–4</code></td>
+        <td><span class="badge crit">❌ Type mismatch</span></td>
+        <td>Bridge: same as BMC. Label in form: "Business Plan (BP)"</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- ═══ TABLE 4: KYC ═══ -->
+  <h2>4 — KYC Documents</h2>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Dashboard field</th>
+        <th>Form field / ID</th>
+        <th>Form value</th>
+        <th>Dashboard expects</th>
+        <th>Status</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>kyc</code> (top-level)</td>
+        <td><code>fr-kyc-summary</code> (Field Report Section 1) + individual checkboxes</td>
+        <td><code>"pend" / "partial" / "done"</code> string + boolean flags</td>
+        <td>Object with 12 document keys:<br><code>{aadhaar, pan, panLinked, aadhaarMobile, janAadhaar, bankPassbook, voterID, udyam, gst, shgCertificate, fssai, cibil}</code></td>
+        <td><span class="badge crit">❌ Type mismatch</span></td>
+        <td>Form summary field gives only overall status. Individual document checkboxes (Aadhaar, PAN, Bank Passbook) map to partial keys. Bridge constructs KYC object from available checkbox state; specialist fields (GST, FSSAI, CIBIL, Udyam) default to <code>false</code> when absent.</td>
+      </tr>
+      <tr>
+        <td><code>kyc.aadhaar</code></td>
+        <td><code>fr-kyc-aadhaar</code> (checkbox)</td>
+        <td>boolean</td>
+        <td>boolean</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>kyc.pan</code></td>
+        <td><code>fr-kyc-pan</code> (checkbox)</td>
+        <td>boolean</td>
+        <td>boolean</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>kyc.bankPassbook</code></td>
+        <td><code>fr-kyc-bank</code> (checkbox)</td>
+        <td>boolean</td>
+        <td>boolean</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>kyc.gst / kyc.fssai / kyc.cibil / kyc.udyam</code></td>
+        <td>— (not collected in form)</td>
+        <td><em>absent</em></td>
+        <td>boolean</td>
+        <td><span class="badge crit">❌ Missing</span></td>
+        <td>Business registration documents not captured in current form. Add to Field Report in v13.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- ═══ TABLE 5: VISIT RECORDS ═══ -->
+  <h2>5 — Visit Records &amp; Officer Actions</h2>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Dashboard field</th>
+        <th>Form field / ID</th>
+        <th>Form value</th>
+        <th>Dashboard expects</th>
+        <th>Status</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>visits</code> array</td>
+        <td>Each form submit creates a flat record in <code>gr_udyami_records</code></td>
+        <td>Flat object with <code>_formType:'visit'</code></td>
+        <td><code>[{date, type, officer, duration, notes, actions}]</code> array</td>
+        <td><span class="badge crit">❌ Structure mismatch</span></td>
+        <td>Bridge aggregates all visit-type records for the entrepreneur and converts each to visit object format</td>
+      </tr>
+      <tr>
+        <td><code>visits[n].date</code></td>
+        <td><code>v-date</code></td>
+        <td>date string</td>
+        <td>date string</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>visits[n].officer</code></td>
+        <td><code>v-officer-name</code></td>
+        <td>string</td>
+        <td>string</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>visits[n].duration</code></td>
+        <td><code>v-duration</code></td>
+        <td>string (e.g. "45 min")</td>
+        <td>string</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>visits[n].type</code></td>
+        <td><code>v-visit-type</code></td>
+        <td>string (Routine/Follow-up…)</td>
+        <td>string</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>flag</code></td>
+        <td><code>v-flag</code> (radio yes/no)</td>
+        <td>boolean</td>
+        <td>boolean</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td>Bridge maps <code>"yes"→true</code>, <code>"no"→false</code></td>
+      </tr>
+      <tr>
+        <td><code>dropout</code></td>
+        <td><code>v-dropout</code> (radio yes/no)</td>
+        <td>boolean</td>
+        <td>boolean</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td>Bridge maps <code>"yes"→true</code>, <code>"no"→false</code></td>
+      </tr>
+      <tr>
+        <td><code>flagReason / dropoutReason</code></td>
+        <td><code>v-flag-reason / v-dropout-reason</code></td>
+        <td>string</td>
+        <td>Not in dashboard schema (extra)</td>
+        <td><span class="badge info">ℹ️ Extra</span></td>
+        <td>Collected in form but dashboard has no display slot. Bridge can store in <code>visits[n].notes</code>.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- ═══ TABLE 6: ENTERPRISE ═══ -->
+  <h2>6 — Enterprise Profile</h2>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Dashboard field</th>
+        <th>Form field / ID</th>
+        <th>Form value</th>
+        <th>Dashboard expects</th>
+        <th>Status</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>enterpriseName</code></td>
+        <td><code>b-enterprise</code></td>
+        <td>string</td>
+        <td>string</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>enterpriseType</code></td>
+        <td><code>b-enterprise-type</code></td>
+        <td>string (e.g. <code>"Agri / Agri-Allied"</code>)</td>
+        <td>array <code>["Agri &amp; Allied"]</code></td>
+        <td><span class="badge warn">⚠️ Transform</span></td>
+        <td>Bridge wraps string in array and normalises label: <code>"Agri / Agri-Allied"→["Agri & Allied"]</code></td>
+      </tr>
+      <tr>
+        <td><code>yearsInBusiness</code></td>
+        <td><code>b-years</code></td>
+        <td>number</td>
+        <td>number</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>marketReach</code></td>
+        <td><code>b-market</code></td>
+        <td>string</td>
+        <td>string</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>needs</code></td>
+        <td><code>v-needs</code> (multi-select / checkboxes)</td>
+        <td>array of strings</td>
+        <td>array of strings</td>
+        <td><span class="badge ok">✅ Direct</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><code>nic</code> (NIC code object)</td>
+        <td>— (not collected)</td>
+        <td><em>absent</em></td>
+        <td><code>{code, description}</code></td>
+        <td><span class="badge warn">⚠️ Transform</span></td>
+        <td>Bridge defaults to <code>{}</code>. Add NIC code field to form in v13.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- ═══ BRIDGE IMPLEMENTATION ═══ -->
+  <h2>7 — Bridge Implementation (app.html — bridgeToEntDashboard)</h2>
+
+  <div class="bridge-box">
+    <h3>✅ Shakti / Swasthya — Fixed in io_form_v12.html</h3>
+    <pre>// submitForm('fieldreport') now saves:
+shaktiScores:  [bs1, bs2, bs3, bs4, bs5, bs6, bs7, bs8],  // individual scores array
+swasthyaScores:[bw1, bw2, bw3, bw4, bw5, bw6, bw7, bw8, bw9, bw10, bw11, bw12],
+
+// Bridge in app.html (bridgeToEntDashboard) reads:
+shakti:   u.shaktiScores   || Array(8).fill(2),   // exact values, no estimation
+swasthya: u.swasthyaScores || Array(12).fill(2),  // fallback only if field study not done</pre>
+  </div>
+
+  <div class="bridge-box">
+    <h3>bmc / ue / bp — string → integer</h3>
+    <pre>function toolScore(val) {
+  if (val === 'done')        return 4;
+  if (val === 'in-progress') return 2;
+  if (val === 'pend')        return 1;
+  return 1; // default if field absent
+}
+
+// Usage in bridge:
+bmc: toolScore(u.bmc),
+ue:  toolScore(u.ue),
+bp:  toolScore(u.bp),</pre>
+  </div>
+
+  <div class="bridge-box">
+    <h3>kyc — string summary → document object</h3>
+    <pre>function buildKyc(u) {
+  return {
+    aadhaar:      !!u.kycAadhaar,
+    pan:          !!u.kycPan,
+    panLinked:    false,          // not collected in form
+    aadhaarMobile:false,          // not collected
+    janAadhaar:   false,          // not collected
+    bankPassbook: !!u.kycBank,
+    voterID:      false,          // not collected
+    udyam:        false,          // not collected — add in v13
+    gst:          false,          // not collected — add in v13
+    shgCertificate:false,
+    fssai:        false,          // not collected — add in v13
+    cibil:        false,          // not collected
+  };
+}</pre>
+  </div>
+
+  <div class="bridge-box">
+    <h3>financialHistory — synthesised from record snapshots</h3>
+    <pre>// Bridge scans gr_udyami_records for all records belonging to this entrepreneur
+// and builds a 2-entry time-series at minimum:
+function buildFinHistory(allRecords, udyamiId) {
+  const recs = allRecords
+    .filter(r => r.udyamiId === udyamiId || r.name === name)
+    .sort((a,b) => new Date(a._savedAt) - new Date(b._savedAt));
+
+  const baseline = recs.find(r => r._formType === 'baseline') || recs[0];
+  const latest   = recs[recs.length - 1];
+
+  const entries = [];
+  if (baseline) entries.push({
+    month: baseline._savedAt?.slice(0,7) || '—',
+    sales: baseline.sales || 0, expenses: baseline.expenses || 0
+  });
+  if (latest && latest !== baseline) entries.push({
+    month: latest._savedAt?.slice(0,7) || '—',
+    sales: latest.sales || 0, expenses: latest.expenses || 0
+  });
+  return entries;
+}</pre>
+  </div>
+
+  <div class="bridge-box">
+    <h3>visits — flat records → structured array</h3>
+    <pre>function buildVisits(allRecords, udyamiId, name) {
+  return allRecords
+    .filter(r =>
+      (r.udyamiId === udyamiId || r.name === name) &&
+      r._formType === 'visit'
+    )
+    .sort((a,b) => new Date(a.visitDate) - new Date(b.visitDate))
+    .map(r => ({
+      date:     r.visitDate,
+      type:     r.visitType || 'Routine',
+      officer:  r.officerName || '—',
+      duration: r.duration || '—',
+      notes:    [r.officerNote, r.flagReason, r.dropoutReason]
+                  .filter(Boolean).join(' | '),
+      actions:  r.needs || []
+    }));
+}</pre>
+  </div>
+
+  <!-- ═══ RECOMMENDATIONS ═══ -->
+  <h2>8 — Recommendations</h2>
+  <div class="rec-list">
+
+    <div class="rec-item">
+      <div class="rtxt">
+        <strong>Fix shakti/swasthya bridge to pass raw score arrays (not estimates)</strong>
+        <p>Update <code>bridgeToEntDashboard()</code> in app.html to read <code>u.shaktiScores</code> and <code>u.swasthyaScores</code> arrays directly. Ensure <code>submitForm('baseline')</code> in io_form_v12.html stores these as arrays (keys <code>shaktiScores</code> and <code>swasthyaScores</code>) alongside the computed totals (<code>shakti</code>, <code>swasthya</code>). This is the highest-priority fix — the current estimation produces incorrect capability profiles.</p>
+      </div>
+    </div>
+
+    <div class="rec-item">
+      <div class="rtxt">
+        <strong>Add GSTy / FSSAI / Udyam registration fields to Field Report (v13)</strong>
+        <p>The entrepreneur dashboard shows business registration status (GST, FSSAI, Udyam/MSME, CIBIL). Currently these are absent from the form. Adding simple Yes/No checkboxes to Field Report Section 1 would enable accurate KYC object construction in the bridge without any approximation.</p>
+      </div>
+    </div>
+
+    <div class="rec-item">
+      <div class="rtxt">
+        <strong>Add NIC code field to Baseline (v13)</strong>
+        <p>Dashboard schema includes <code>nic: {code, description}</code> for industry classification. A simple text input (or dropdown of common NIC codes for rural enterprises) in Baseline Section B would complete this field. Bridge currently passes <code>{}</code>.</p>
+      </div>
+    </div>
+
+    <div class="rec-item">
+      <div class="rtxt">
+        <strong>Add Hindi name field to Baseline (v13)</strong>
+        <p><code>nameHindi</code> is rendered prominently in the entrepreneur dashboard header. An optional Devanagari text input in Baseline Section A would populate it. Bridge currently passes <code>""</code>.</p>
+      </div>
+    </div>
+
+    <div class="rec-item">
+      <div class="rtxt">
+        <strong>Standardise gender value casing</strong>
+        <p>Form stores lowercase <code>"male"/"female"/"other"</code>; dashboard displays <code>"Male"/"Female"/"Other"</code>. Either capitalise at form submit or add a one-line normalisation in the bridge: <code>gender: (u.gender||'').charAt(0).toUpperCase() + u.gender.slice(1)</code>.</p>
+      </div>
+    </div>
+
+    <div class="rec-item">
+      <div class="rtxt">
+        <strong>Document enterpriseType normalisation table</strong>
+        <p>The form's enterprise type options (e.g. <code>"Agri / Agri-Allied"</code>, <code>"Manufacturing"</code>, <code>"Services"</code>) differ from the dashboard's array values (<code>"Agri &amp; Allied"</code>, <code>"Manufacturing"</code>, <code>"Services"</code>). Maintain a lookup map in the bridge or normalise the form values to match the dashboard expected set.</p>
+      </div>
+    </div>
+
+    <div class="rec-item">
+      <div class="rtxt">
+        <strong>Long-term: unify localStorage key &amp; schema</strong>
+        <p>The cleanest resolution is to migrate both files to a shared schema under a single key (e.g. <code>gr_records_v2</code>) with a well-defined entrepreneur object. Until then, the bridge in app.html is the recommended integration path. Document the bridge as the canonical translation layer so future form changes are reflected in one place.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ FULL FIELD MAP ═══ -->
+  <h2>9 — Complete Field Map</h2>
+  <div class="callout">
+    <strong>How to read this table</strong>
+    Shows every <code>udyami_vikas_data</code> field, what form field feeds it, and the bridge action required.
+    "Approximated" means the bridge synthesises a value that may not exactly reflect ground reality.
+  </div>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>udyami_vikas_data key</th>
+        <th>Form source (gr_udyami_records)</th>
+        <th>Bridge action</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td><code>udyamiId</code></td><td><code>b-id</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>2</td><td><code>name</code></td><td><code>b-name</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>3</td><td><code>nameHindi</code></td><td>—</td><td>Default <code>""</code></td><td><span class="badge crit">❌</span></td></tr>
+      <tr><td>4</td><td><code>mobile</code></td><td><code>b-mobile</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>5</td><td><code>gender</code></td><td><code>b-gender</code></td><td>Capitalise first letter</td><td><span class="badge warn">⚠️</span></td></tr>
+      <tr><td>6</td><td><code>category</code></td><td><code>b-category</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>7</td><td><code>state</code></td><td><code>b-state</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>8</td><td><code>district</code></td><td><code>b-district</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>9</td><td><code>block</code></td><td><code>b-block</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>10</td><td><code>village</code></td><td><code>b-village</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>11</td><td><code>education</code></td><td><code>b-education</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>12</td><td><code>marital</code></td><td><code>b-marital</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>13</td><td><code>dependents</code></td><td><code>b-dep</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>14</td><td><code>partner</code></td><td><code>b-partner</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>15</td><td><code>batchId</code></td><td><code>b-batch</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>16</td><td><code>baselineDate</code></td><td><code>_savedAt</code> of baseline record</td><td>Date slice</td><td><span class="badge warn">⚠️</span></td></tr>
+      <tr><td>17</td><td><code>enterpriseName</code></td><td><code>b-enterprise</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>18</td><td><code>enterpriseType</code></td><td><code>b-enterprise-type</code></td><td>Wrap in array, normalise label</td><td><span class="badge warn">⚠️</span></td></tr>
+      <tr><td>19</td><td><code>nic</code></td><td>—</td><td>Not needed — removed from requirements</td><td><span class="badge ok">✅ N/A</span></td></tr>
+      <tr><td>20</td><td><code>yearsInBusiness</code></td><td><code>b-years</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>21</td><td><code>marketReach</code></td><td><code>b-market</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>22</td><td><code>fixedAssets</code></td><td><code>b-assets</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>23</td><td><code>inventory</code></td><td><code>b-inventory</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>24</td><td><code>sales</code></td><td><code>b-sales</code> (latest)</td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>25</td><td><code>expenses</code></td><td><code>b-expenses</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>26</td><td><code>profit</code></td><td><code>b-profit</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>27</td><td><code>salesBL</code></td><td><code>b-sales</code> (baseline record)</td><td>Find baseline record</td><td><span class="badge warn">⚠️</span></td></tr>
+      <tr><td>28</td><td><code>diary</code></td><td><code>b-diary</code></td><td>Value mapping (3 values)</td><td><span class="badge warn">⚠️</span></td></tr>
+      <tr><td>29</td><td><code>liabilities</code></td><td><code>b-saving / b-shg / b-supplier / b-bank</code></td><td>Assemble object</td><td><span class="badge warn">⚠️</span></td></tr>
+      <tr><td>30</td><td><code>emi</code></td><td><code>b-emi</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>31</td><td><code>employmentFT</code></td><td><code>b-emp-ft</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>32</td><td><code>employmentPT</code></td><td><code>b-emp-pt</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>33</td><td><code>shakti</code> [8]</td><td><code>bs1–bs8</code> → <code>shaktiScores</code> array (saved in v12)</td><td>Bridge reads <code>u.shaktiScores</code> directly — no estimation</td><td><span class="badge ok">✅ Fixed</span></td></tr>
+      <tr><td>34</td><td><code>swasthya</code> [12]</td><td><code>bw1–bw12</code> → <code>swasthyaScores</code> array (saved in v12)</td><td>Bridge reads <code>u.swasthyaScores</code> directly</td><td><span class="badge ok">✅ Fixed</span></td></tr>
+      <tr><td>35</td><td><code>bmc</code></td><td><code>v-bmc-status</code></td><td><code>toolScore()</code> string→integer</td><td><span class="badge crit">❌</span></td></tr>
+      <tr><td>36</td><td><code>ue</code></td><td><code>v-ue-status</code></td><td><code>toolScore()</code> string→integer</td><td><span class="badge crit">❌</span></td></tr>
+      <tr><td>37</td><td><code>bp</code></td><td><code>v-bp-status</code></td><td><code>toolScore()</code> string→integer</td><td><span class="badge crit">❌</span></td></tr>
+      <tr><td>38</td><td><code>kyc</code></td><td><code>fr-kyc-* checkboxes</code></td><td><code>buildKyc()</code> — construct 12-key object</td><td><span class="badge crit">❌</span></td></tr>
+      <tr><td>39</td><td><code>kyc.gst / fssai / udyam / cibil</code></td><td>—</td><td>Default <code>false</code></td><td><span class="badge crit">❌</span></td></tr>
+      <tr><td>40</td><td><code>financialHistory</code></td><td>Multiple records over time</td><td><code>buildFinHistory()</code> approximation</td><td><span class="badge crit">❌</span></td></tr>
+      <tr><td>41</td><td><code>visits</code></td><td>Visit-type records in <code>gr_udyami_records</code></td><td><code>buildVisits()</code> aggregation</td><td><span class="badge crit">❌</span></td></tr>
+      <tr><td>42</td><td><code>flag</code></td><td><code>v-flag</code></td><td><code>"yes"→true</code></td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>43</td><td><code>dropout</code></td><td><code>v-dropout</code></td><td><code>"yes"→true</code></td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>44</td><td><code>needs</code></td><td><code>v-needs</code></td><td>Pass array through</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>45</td><td><code>fieldOfficer</code></td><td><code>v-officer-name</code> (latest visit)</td><td>Latest visit officer name</td><td><span class="badge ok">✅</span></td></tr>
+      <tr><td>46</td><td><code>fieldReportDate</code></td><td><code>fr-date</code></td><td>Pass through</td><td><span class="badge ok">✅</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  Grassroutes Consulting &nbsp;·&nbsp; Udyami Vikas Program &nbsp;·&nbsp;
+  mismatch_form_v12_udyami_v3.html &nbsp;·&nbsp; Generated 2026-04-06
+</footer>
+
+</body>
+</html>

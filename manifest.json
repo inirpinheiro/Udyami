@@ -1,0 +1,21 @@
+{
+  "name": "Udyami Vikas — Grassroutes",
+  "short_name": "Udyami Vikas",
+  "description": "Field-first rural entrepreneur data platform by Grassroutes",
+  "start_url": "./app.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1e2a16",
+  "theme_color": "#1e2a16",
+  "lang": "en",
+  "categories": ["business", "productivity"],
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Dashboard", "url": "./app.html#dashboard", "description": "View batch dashboard" },
+    { "name": "Add Visit", "url": "./io_form_v12.html", "description": "Record a field visit" }
+  ]
+}
