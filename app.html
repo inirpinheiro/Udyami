@@ -296,6 +296,30 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
 .logout-btn{width:100%;background:var(--red-light);border:1.5px solid #f5c0c0;border-radius:var(--rs);padding:13px;font-family:var(--fh);font-size:12px;font-weight:800;color:var(--red);cursor:pointer;transition:all .15s;}
 .logout-btn:hover{background:#f9d0d0;}
 
+/* ═══════════════════════ SURVEY SUB-MENU ════════════ */
+.sb-sub-item{display:flex;align-items:center;gap:11px;padding:9px 12px 9px 36px;border-radius:var(--rs);cursor:pointer;transition:all .15s;border:1px solid transparent;}
+.sb-sub-item:hover{background:rgba(255,255,255,.06);}
+.sb-sub-item.active{background:rgba(139,178,90,.14);border-color:rgba(139,178,90,.25);}
+.sb-sub-item .sb-label{color:rgba(255,255,255,.45);}
+.sb-sub-item:hover .sb-label{color:rgba(255,255,255,.75);}
+.sb-sub-item.active .sb-label{color:var(--green);}
+.survey-arrow{margin-left:auto;color:rgba(255,255,255,.35);font-size:14px;transition:transform .2s;flex-shrink:0;}
+.survey-arrow.open{transform:rotate(90deg);}
+
+/* ═══════════════════════ INCUBATION SCREEN ══════════ */
+.inc-stat-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
+.inc-ent-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow-sm);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:12px;}
+.inc-ent-card:hover{border-color:var(--green);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.inc-id-badge{display:inline-block;background:var(--green-light);border:1px solid var(--green-mid);border-radius:8px;padding:3px 9px;font-family:var(--fh);font-size:9px;font-weight:800;color:var(--green-dark);letter-spacing:.5px;margin-top:3px;}
+.inc-tab-bar{background:var(--charcoal);padding:0 20px;display:flex;gap:0;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;}
+.inc-tab{padding:12px 16px;font-family:var(--fh);font-size:10px;font-weight:700;color:rgba(255,255,255,.45);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .15s;white-space:nowrap;}
+.inc-tab:hover{color:rgba(255,255,255,.75);}
+.inc-tab.active{color:var(--green);border-bottom-color:var(--green);}
+.sc-btn-select{background:var(--green-light);color:var(--green-dark);border:1.5px solid var(--green-mid);}
+.sc-btn-select:hover{background:var(--green-dark);color:#fff;}
+.sc-btn-select.done{background:var(--green-dark);color:#fff;}
+.sc-selected-label{position:absolute;top:10px;right:10px;background:var(--green);color:#fff;font-family:var(--fh);font-size:8px;font-weight:800;padding:3px 8px;border-radius:10px;letter-spacing:.5px;}
+
 /* ═══════════════════════ RESPONSIVE ══════════════════ */
 @media(max-width:900px){
   .sidebar{display:none;}
@@ -306,6 +330,7 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
   .ind-grid{grid-template-columns:1fr 1fr;}
   .dash-two-col,.dash-three-col{grid-template-columns:1fr;}
   .chart-grid{grid-template-columns:1fr;}
+  .inc-stat-strip{grid-template-columns:1fr 1fr;}
 }
 @media(max-width:520px){
   .stat-strip{grid-template-columns:1fr 1fr;}
@@ -313,6 +338,7 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
   .ent-list{grid-template-columns:1fr;}
   .forms-grid{grid-template-columns:1fr;}
   .dp-field-grid{grid-template-columns:1fr;}
+  .inc-stat-strip{grid-template-columns:1fr;}
 }
 @media(min-width:901px){
   .detail-panel{width:500px;}
@@ -386,25 +412,28 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
       <div class="sb-name">Udyami Vikas<small>Grassroutes Platform</small></div>
     </div>
     <div class="sb-nav">
-      <div class="sb-item active" onclick="navigate('dashboard')">
+      <div class="sb-item active" id="sb-dashboard" onclick="navigate('dashboard')">
         <span class="sb-icon">🏠</span><span class="sb-label">Dashboard</span>
       </div>
-      <div class="sb-item" onclick="navigate('survey')">
-        <span class="sb-icon">🌱</span><span class="sb-label">Survey Pipeline</span>
+      <div class="sb-item" id="sb-survey-parent" onclick="toggleSurveyMenu()">
+        <span class="sb-icon">🌱</span><span class="sb-label">Survey</span>
         <span class="sb-badge" id="sb-survey-count" style="display:none">0</span>
+        <span class="survey-arrow" id="survey-arrow">›</span>
       </div>
-      <div class="sb-item" onclick="navigate('entrepreneurs')">
-        <span class="sb-icon">👥</span><span class="sb-label">Entrepreneurs</span>
-        <span class="sb-badge" id="sb-flag-count">6</span>
+      <div id="survey-sub-items" style="display:none;">
+        <div class="sb-sub-item" id="sb-survey-form" onclick="openSurveyForm()">
+          <span class="sb-icon" style="font-size:13px;">📝</span><span class="sb-label">Survey Form</span>
+        </div>
+        <div class="sb-sub-item" id="sb-survey-pipeline" onclick="navigate('survey')">
+          <span class="sb-icon" style="font-size:13px;">📋</span><span class="sb-label">Survey Pipeline</span>
+        </div>
       </div>
-      <div class="sb-item" onclick="navigate('forms')">
-        <span class="sb-icon">📋</span><span class="sb-label">Field Forms</span>
+      <div class="sb-item" id="sb-incubation" onclick="navigate('incubation')">
+        <span class="sb-icon">📂</span><span class="sb-label">Incubation Diary</span>
+        <span class="sb-badge" id="sb-inc-count" style="display:none">0</span>
       </div>
-      <div class="sb-item" onclick="navigate('analytics')">
-        <span class="sb-icon">📊</span><span class="sb-label">Analytics</span>
-      </div>
-      <div class="sb-item" onclick="navigate('profile')">
-        <span class="sb-icon">⚙️</span><span class="sb-label">Profile</span>
+      <div class="sb-item" id="sb-profile" onclick="navigate('profile')">
+        <span class="sb-icon">⚙️</span><span class="sb-label">Settings</span>
       </div>
     </div>
     <div class="sb-footer">
@@ -635,7 +664,8 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
       <!-- ══ SURVEY PIPELINE SCREEN ══ -->
       <div id="screen-survey" class="screen">
         <style>
-          .sp-stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+          .sp-stat-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px;}
+          @media(max-width:900px){.sp-stat-strip{grid-template-columns:repeat(3,1fr);}}
           .sp-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px;}
           .sp-tab{padding:10px 20px;font-family:var(--fh);font-size:11px;font-weight:700;cursor:pointer;color:var(--grey-med);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;}
           .sp-tab.active{color:var(--green-dark);border-bottom-color:var(--green-dark);}
@@ -700,11 +730,20 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
           <div class="sp-tab active" id="sp-tab-all"        onclick="setSurveyTab('all')">All</div>
           <div class="sp-tab"       id="sp-tab-pending"     onclick="setSurveyTab('pending')">Pending</div>
           <div class="sp-tab"       id="sp-tab-shortlisted" onclick="setSurveyTab('shortlisted')">Shortlisted</div>
+          <div class="sp-tab"       id="sp-tab-selected"    onclick="setSurveyTab('selected')" style="color:var(--green-dark);">✓ Selected</div>
           <div class="sp-tab"       id="sp-tab-rejected"    onclick="setSurveyTab('rejected')">Rejected</div>
         </div>
 
         <!-- Card grid -->
         <div id="survey-card-list" class="ent-list"></div>
+      </div>
+
+      <!-- ══ INCUBATION DIARY SCREEN ══ -->
+      <div id="screen-incubation" class="screen">
+        <div class="sl">Active Incubation</div>
+        <div class="inc-stat-strip" id="inc-stat-strip"></div>
+        <div class="sl">Incubated Entrepreneurs</div>
+        <div id="inc-entrepreneur-list" class="ent-list"></div>
       </div>
 
     </div><!-- /screens -->
@@ -716,23 +755,39 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
       <div class="bn-item active" id="bn-dashboard" onclick="navigate('dashboard')">
         <div class="bn-icon">🏠</div><div class="bn-label">Dashboard</div>
       </div>
-      <div class="bn-item" id="bn-entrepreneurs" onclick="navigate('entrepreneurs')">
-        <div class="bn-icon">👥</div><div class="bn-label">Udyamis</div>
-        <span class="bn-badge" id="bn-flag-count">6</span>
+      <div class="bn-item" id="bn-survey" onclick="openSurveySubMenu()">
+        <div class="bn-icon">🌱</div><div class="bn-label">Survey</div>
+        <span class="bn-badge" id="bn-survey-count" style="display:none;">0</span>
       </div>
-      <div class="bn-item" id="bn-forms" onclick="navigate('forms')">
-        <div class="bn-icon">📋</div><div class="bn-label">Forms</div>
-      </div>
-      <div class="bn-item" id="bn-analytics" onclick="navigate('analytics')">
-        <div class="bn-icon">📊</div><div class="bn-label">Analytics</div>
+      <div class="bn-item" id="bn-incubation" onclick="navigate('incubation')">
+        <div class="bn-icon">📂</div><div class="bn-label">Incubation</div>
+        <span class="bn-badge" id="bn-inc-count" style="display:none;">0</span>
       </div>
       <div class="bn-item" id="bn-profile" onclick="navigate('profile')">
-        <div class="bn-icon">⚙️</div><div class="bn-label">Profile</div>
+        <div class="bn-icon">⚙️</div><div class="bn-label">Settings</div>
       </div>
     </div>
   </nav>
 
 </div><!-- /app-shell -->
+
+<!-- SURVEY SUB-MENU (mobile bottom sheet) -->
+<div id="survey-submenu-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:400;" onclick="closeSurveySubMenu()"></div>
+<div id="survey-submenu" style="display:none;position:fixed;bottom:calc(var(--nav-h) + var(--safe-bottom));left:0;right:0;background:var(--charcoal);border-top:1px solid rgba(255,255,255,.12);border-radius:14px 14px 0 0;z-index:401;padding:20px 16px 16px;">
+  <div style="font-family:var(--fh);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.3);margin-bottom:14px;">Survey Options</div>
+  <div style="display:flex;gap:10px;">
+    <div onclick="openSurveyForm();closeSurveySubMenu();" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(139,178,90,.15)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">
+      <div style="font-size:26px;margin-bottom:8px;">📝</div>
+      <div style="font-family:var(--fh);font-size:12px;font-weight:800;color:#fff;">Survey Form</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:4px;">Fill new survey</div>
+    </div>
+    <div onclick="navigate('survey');closeSurveySubMenu();" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(139,178,90,.15)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">
+      <div style="font-size:26px;margin-bottom:8px;">📋</div>
+      <div style="font-family:var(--fh);font-size:12px;font-weight:800;color:#fff;">Survey Pipeline</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:4px;">Review & select</div>
+    </div>
+  </div>
+</div>
 
 <!-- MOBILE DRAWER -->
 <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
@@ -743,11 +798,11 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
   </div>
   <div class="sb-nav">
     <div class="sb-item" onclick="navigate('dashboard');closeDrawer()"><span class="sb-icon">🏠</span><span class="sb-label">Dashboard</span></div>
-    <div class="sb-item" onclick="navigate('survey');closeDrawer()"><span class="sb-icon">🌱</span><span class="sb-label">Survey Pipeline</span></div>
-    <div class="sb-item" onclick="navigate('entrepreneurs');closeDrawer()"><span class="sb-icon">👥</span><span class="sb-label">Entrepreneurs</span></div>
-    <div class="sb-item" onclick="navigate('forms');closeDrawer()"><span class="sb-icon">📋</span><span class="sb-label">Field Forms</span></div>
-    <div class="sb-item" onclick="navigate('analytics');closeDrawer()"><span class="sb-icon">📊</span><span class="sb-label">Analytics</span></div>
-    <div class="sb-item" onclick="navigate('profile');closeDrawer()"><span class="sb-icon">⚙️</span><span class="sb-label">Profile</span></div>
+    <div style="font-family:var(--fh);font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.25);padding:10px 12px 4px;">Survey</div>
+    <div class="sb-sub-item" onclick="openSurveyForm();closeDrawer()"><span class="sb-icon" style="font-size:13px;">📝</span><span class="sb-label">Survey Form</span></div>
+    <div class="sb-sub-item" onclick="navigate('survey');closeDrawer()"><span class="sb-icon" style="font-size:13px;">📋</span><span class="sb-label">Survey Pipeline</span></div>
+    <div class="sb-item" onclick="navigate('incubation');closeDrawer()"><span class="sb-icon">📂</span><span class="sb-label">Incubation Diary</span></div>
+    <div class="sb-item" onclick="navigate('profile');closeDrawer()"><span class="sb-icon">⚙️</span><span class="sb-label">Settings</span></div>
   </div>
 </nav>
 
@@ -762,6 +817,24 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
     </div>
   </div>
   <div class="dp-body" id="dp-body"></div>
+</div>
+
+<!-- INCUBATION DETAIL PANEL -->
+<div class="detail-overlay" id="inc-detail-overlay" onclick="closeIncubationDetail()"></div>
+<div class="detail-panel" id="inc-detail-panel" style="display:flex;flex-direction:column;">
+  <div class="dp-header" style="flex-shrink:0;">
+    <button class="dp-close" onclick="closeIncubationDetail()">‹</button>
+    <div style="flex:1;">
+      <div class="dp-name" id="inc-dp-name">—</div>
+      <div class="dp-sub" id="inc-dp-sub">—</div>
+    </div>
+  </div>
+  <div class="inc-tab-bar" style="flex-shrink:0;">
+    <div class="inc-tab active" id="inc-tab-baseline" onclick="switchIncubationTab('baseline')">Field Study / Baseline</div>
+    <div class="inc-tab" id="inc-tab-visit" onclick="switchIncubationTab('visit')">Visit Forms</div>
+    <div class="inc-tab" id="inc-tab-assessment" onclick="switchIncubationTab('assessment')">Assessments</div>
+  </div>
+  <div class="dp-body" id="inc-dp-body" style="flex:1;overflow-y:auto;"></div>
 </div>
 
 <!-- INSTALL PROMPT -->
@@ -1083,8 +1156,8 @@ function doLogout() {
 ═══════════════════════════════════════════════════ */
 const screenTitles = {
   dashboard: 'Dashboard', survey: 'Survey Pipeline',
-  entrepreneurs: 'Entrepreneurs', forms: 'Field Forms',
-  analytics: 'Analytics', profile: 'Profile'
+  incubation: 'Incubation Diary', profile: 'Settings',
+  entrepreneurs: 'Entrepreneurs', forms: 'Field Forms', analytics: 'Analytics'
 };
 let activeScreen = 'dashboard';
 let analyticsInited = false;
@@ -1096,14 +1169,23 @@ function navigate(screen) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + screen)?.classList.add('active');
 
-  // sidebar — match by onclick attribute
-  document.querySelectorAll('.sb-item').forEach(el => {
-    const fn = el.getAttribute('onclick') || '';
-    el.classList.toggle('active', fn.includes("navigate('" + screen + "')"));
+  // Sidebar active states
+  ['dashboard','survey','incubation','profile'].forEach(s => {
+    const el = document.getElementById('sb-' + s);
+    if (el) el.classList.toggle('active', s === screen);
   });
+  // Survey sub-items active state
+  document.getElementById('sb-survey-pipeline')?.classList.toggle('active', screen === 'survey');
+
+  // Bottom nav
   document.querySelectorAll('.bn-item').forEach(el => el.classList.remove('active'));
   const bn = document.getElementById('bn-' + screen);
   if (bn) bn.classList.add('active');
+  // Survey/pipeline both highlight bn-survey
+  if (screen === 'survey') {
+    const bnSurvey = document.getElementById('bn-survey');
+    if (bnSurvey) bnSurvey.classList.add('active');
+  }
 
   document.getElementById('at-title').textContent = screenTitles[screen] || screen;
 
@@ -1113,6 +1195,35 @@ function navigate(screen) {
   if (screen === 'entrepreneurs') renderEntCards(udyamis);
   if (screen === 'survey') renderSurveyPipeline();
   if (screen === 'forms') renderRecentImports();
+  if (screen === 'incubation') renderIncubationDiary();
+}
+
+/* ═══════════════════════════════════════════════════
+   SURVEY SUB-MENU (sidebar toggle + mobile sheet)
+═══════════════════════════════════════════════════ */
+let _surveyMenuOpen = false;
+
+function toggleSurveyMenu() {
+  _surveyMenuOpen = !_surveyMenuOpen;
+  const sub   = document.getElementById('survey-sub-items');
+  const arrow = document.getElementById('survey-arrow');
+  if (sub)   sub.style.display = _surveyMenuOpen ? 'block' : 'none';
+  if (arrow) arrow.classList.toggle('open', _surveyMenuOpen);
+}
+
+function openSurveyForm() {
+  window.open('io_form_v12.html', '_blank');
+  showToast('Survey Form opened in new tab');
+}
+
+function openSurveySubMenu() {
+  document.getElementById('survey-submenu-overlay').style.display = 'block';
+  document.getElementById('survey-submenu').style.display = 'block';
+}
+
+function closeSurveySubMenu() {
+  document.getElementById('survey-submenu-overlay').style.display = 'none';
+  document.getElementById('survey-submenu').style.display = 'none';
 }
 
 /* ═══════════════════════════════════════════════════
@@ -1121,10 +1232,12 @@ function navigate(screen) {
 function showApp() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app-shell').classList.add('show');
+  seedDemoData();
   mergeLocalData();
   populateBatchFilter();
   renderUser();
   renderDashboard();
+  _updateIncubationBadge();
 }
 
 function renderUser() {
@@ -1310,7 +1423,7 @@ let _surveyTab = 'all';
 
 function setSurveyTab(tab) {
   _surveyTab = tab;
-  ['all','pending','shortlisted','rejected'].forEach(t => {
+  ['all','pending','shortlisted','selected','rejected'].forEach(t => {
     document.getElementById('sp-tab-' + t)?.classList.toggle('active', t === tab);
   });
   filterSurvey();
@@ -1324,6 +1437,8 @@ function renderSurveyPipeline() {
   const rejectedSet    = _getRejectedSet();
 
   const surveyRecs = lsRecords.filter(r => r.formType === 'survey' || r._formType === 'survey');
+
+  const selectedSet = _getSelectedSet();
 
   const pipeline = surveyRecs.map(r => ({
     id:             r.udyamiId,
@@ -1344,6 +1459,8 @@ function renderSurveyPipeline() {
     profitBL:       r.profitBL || 0,
     shortlisted:    shortlistedSet.has(r.udyamiId),
     rejected:       rejectedSet.has(r.udyamiId),
+    selected:       selectedSet.has(r.udyamiId),
+    incId:          selectedSet.has(r.udyamiId) ? ('INC' + r.udyamiId) : null,
     source:         'ls'
   }));
 
@@ -1351,7 +1468,8 @@ function renderSurveyPipeline() {
   const total       = pipeline.length;
   const shortlisted = pipeline.filter(p => p.shortlisted).length;
   const rejected    = pipeline.filter(p => p.rejected).length;
-  const pending     = pipeline.filter(p => !p.shortlisted && !p.rejected).length;
+  const selected    = pipeline.filter(p => p.selected).length;
+  const pending     = pipeline.filter(p => !p.shortlisted && !p.rejected && !p.selected).length;
 
   const spStrip = document.getElementById('sp-stat-strip');
   if (spStrip) {
@@ -1359,13 +1477,17 @@ function renderSurveyPipeline() {
       <div class="stat-card sb"><div class="sc-icon" style="background:var(--blue-light);">📋</div><div class="sc-val">${total}</div><div class="sc-lbl">Total Surveyed</div></div>
       <div class="stat-card sg"><div class="sc-icon" style="background:var(--green-light);">✅</div><div class="sc-val">${shortlisted}</div><div class="sc-lbl">Shortlisted</div></div>
       <div class="stat-card so"><div class="sc-icon" style="background:var(--orange-light);">⏳</div><div class="sc-val">${pending}</div><div class="sc-lbl">Pending Review</div></div>
+      <div class="stat-card sg" style="border-top:3px solid var(--green-dark);"><div class="sc-icon" style="background:var(--green-light);">📂</div><div class="sc-val" style="color:var(--green-dark);">${selected}</div><div class="sc-lbl">Selected</div></div>
       <div class="stat-card sr"><div class="sc-icon" style="background:var(--red-light);">✗</div><div class="sc-val">${rejected}</div><div class="sc-lbl">Rejected</div></div>
     `;
   }
 
-  // Update count badge
+  // Update pending badge on Survey nav
   const badge = document.getElementById('sb-survey-count');
   if (badge) { badge.textContent = pending; badge.style.display = pending > 0 ? 'block' : 'none'; }
+  const bnBadge = document.getElementById('bn-survey-count');
+  if (bnBadge) { bnBadge.textContent = pending; bnBadge.style.display = pending > 0 ? 'block' : 'none'; }
+  _updateIncubationBadge();
 
   // Populate district filter
   const districts = [...new Set(pipeline.map(p => p.district).filter(d => d && d !== '—'))].sort();
@@ -1403,8 +1525,9 @@ function filterSurvey() {
     if (dist && p.district !== dist) return false;
     if (yr && !(p.surveyDate || '').startsWith(yr)) return false;
     if (bt && p.batchId !== bt) return false;
-    if (_surveyTab === 'pending'     && (p.shortlisted || p.rejected)) return false;
+    if (_surveyTab === 'pending'     && (p.shortlisted || p.rejected || p.selected)) return false;
     if (_surveyTab === 'shortlisted' && !p.shortlisted) return false;
+    if (_surveyTab === 'selected'    && !p.selected)    return false;
     if (_surveyTab === 'rejected'    && !p.rejected)    return false;
     return true;
   });
@@ -1446,6 +1569,51 @@ function rejectEntrepreneur(udyamiId) {
   renderSurveyPipeline();
 }
 
+function _getSelectedSet() {
+  try { return new Set(JSON.parse(localStorage.getItem('gr_selected') || '[]')); } catch(e) { return new Set(); }
+}
+
+function selectEntrepreneur(udyamiId) {
+  const sel = _getSelectedSet();
+  const wasSelected = sel.has(udyamiId);
+
+  if (wasSelected) {
+    sel.delete(udyamiId);
+    // Remove selected flag from record
+    try {
+      const recs = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]');
+      const idx = recs.findIndex(r => r.udyamiId === udyamiId);
+      if (idx >= 0) { recs[idx].selected = false; delete recs[idx].incId; }
+      localStorage.setItem('gr_udyami_records', JSON.stringify(recs));
+    } catch(e) {}
+    showToast('Removed from Incubation Diary');
+  } else {
+    sel.add(udyamiId);
+    // Stamp INC prefix on record
+    try {
+      const recs = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]');
+      const idx = recs.findIndex(r => r.udyamiId === udyamiId);
+      if (idx >= 0) { recs[idx].selected = true; recs[idx].incId = 'INC' + udyamiId; }
+      localStorage.setItem('gr_udyami_records', JSON.stringify(recs));
+    } catch(e) {}
+    showToast('✅ Entrepreneur selected for Incubation!');
+  }
+
+  localStorage.setItem('gr_selected', JSON.stringify([...sel]));
+  mergeLocalData();
+  renderSurveyPipeline();
+  // Update incubation badge count
+  _updateIncubationBadge();
+}
+
+function _updateIncubationBadge() {
+  const count = _getSelectedSet().size;
+  ['sb-inc-count','bn-inc-count'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = count; el.style.display = count > 0 ? 'block' : 'none'; }
+  });
+}
+
 function _renderSurveyCards(list) {
   const el = document.getElementById('survey-card-list');
   if (!el) return;
@@ -1456,6 +1624,7 @@ function _renderSurveyCards(list) {
   el.innerHTML = list.map(p => {
     const sl = p.shortlisted;
     const rj = p.rejected;
+    const se = p.selected;
     const indColor = {
       'Trading':'var(--blue)','Manufacturing':'var(--purple)','Service':'var(--orange-dark)','Agri / Agri-Allied':'var(--green-dark)'
     }[p.ind] || 'var(--grey-dark)';
@@ -1463,14 +1632,15 @@ function _renderSurveyCards(list) {
       'Trading':'var(--blue-light)','Manufacturing':'var(--purple-light)','Service':'var(--orange-light)','Agri / Agri-Allied':'var(--green-light)'
     }[p.ind] || 'var(--grey-xlight)';
     return `
-    <div class="survey-card${sl?' shortlisted':''}${rj?' rejected':''}">
-      ${sl ? '<div class="sc-selected-badge">SELECTED</div>' : ''}
+    <div class="survey-card${sl?' shortlisted':''}${rj?' rejected':''}${se?' shortlisted':''}">
+      ${se ? '<div class="sc-selected-label">✓ IN INCUBATION</div>' : (sl ? '<div class="sc-selected-badge">SHORTLISTED</div>' : '')}
       <div class="sc-top">
         <div class="sc-av" style="background:${avatarColor(p.name)};"
              onclick="openFullDashboardById('${p.id}')">${initials(p.name)}</div>
         <div class="sc-info">
           <div class="sc-name" onclick="openFullDashboardById('${p.id}')">${p.name}</div>
           <div class="sc-loc">${p.village} · ${p.district} · ${p.block}</div>
+          ${se ? `<div style="margin-top:4px;"><span style="background:var(--green-light);border:1px solid var(--green-mid);border-radius:8px;padding:2px 8px;font-family:var(--fh);font-size:9px;font-weight:800;color:var(--green-dark);">INC${p.id}</span></div>` : ''}
         </div>
       </div>
       <div class="sc-biz">
@@ -1484,6 +1654,10 @@ function _renderSurveyCards(list) {
                 onclick="shortlistEntrepreneur('${p.id}')">
           ${sl ? '✓ Shortlisted' : '✓ Shortlist'}
         </button>
+        <button class="sc-btn sc-btn-select${se?' done':''}"
+                onclick="selectEntrepreneur('${p.id}')">
+          ${se ? '📂 Selected' : '📂 Select'}
+        </button>
         <button class="sc-btn sc-btn-reject${rj?' done':''}"
                 onclick="rejectEntrepreneur('${p.id}')">
           ${rj ? '✗ Rejected' : '✗ Reject'}
@@ -1493,6 +1667,154 @@ function _renderSurveyCards(list) {
       </div>
     </div>`;
   }).join('');
+}
+
+/* ═══════════════════════════════════════════════════
+   INCUBATION DIARY
+═══════════════════════════════════════════════════ */
+function renderIncubationDiary() {
+  const sel = _getSelectedSet();
+  let lsRecords = [];
+  try { lsRecords = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]'); } catch(e) {}
+
+  const incubated = lsRecords.filter(r =>
+    (r.formType === 'survey' || r._formType === 'survey') && sel.has(r.udyamiId)
+  );
+
+  // Stats strip
+  const strip = document.getElementById('inc-stat-strip');
+  if (strip) {
+    strip.innerHTML = `
+      <div class="stat-card sg"><div class="sc-icon" style="background:var(--green-light);">📂</div><div class="sc-val" style="color:var(--green-dark);">${incubated.length}</div><div class="sc-lbl">In Incubation</div></div>
+      <div class="stat-card sb"><div class="sc-icon" style="background:var(--blue-light);">📋</div><div class="sc-val">${incubated.filter(r=>r.bmc==='done').length}</div><div class="sc-lbl">BMC Complete</div></div>
+      <div class="stat-card so"><div class="sc-icon" style="background:var(--orange-light);">⏳</div><div class="sc-val">${incubated.filter(r=>!r.bmc||r.bmc==='pend').length}</div><div class="sc-lbl">Tools Pending</div></div>
+    `;
+  }
+
+  const listEl = document.getElementById('inc-entrepreneur-list');
+  if (!listEl) return;
+
+  if (!incubated.length) {
+    listEl.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:48px 24px;color:var(--grey-med);">
+        <div style="font-size:40px;margin-bottom:16px;">📂</div>
+        <div style="font-family:var(--fh);font-size:14px;font-weight:800;color:var(--ink);margin-bottom:8px;">No entrepreneurs in incubation yet</div>
+        <div style="font-size:12px;line-height:1.6;">Go to <strong>Survey → Survey Pipeline</strong>, shortlist entrepreneurs, then click <strong>📂 Select</strong> to move them into the Incubation Diary.</div>
+      </div>`;
+    return;
+  }
+
+  listEl.innerHTML = incubated.map(r => `
+    <div class="inc-ent-card" onclick="openIncubationDetail('${r.udyamiId}')">
+      <div style="width:42px;height:42px;border-radius:50%;background:${avatarColor(r.name)};display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:15px;font-weight:900;color:#fff;flex-shrink:0;">${initials(r.name)}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-family:var(--fh);font-size:13px;font-weight:800;color:var(--charcoal);">${r.name}</div>
+        <div class="inc-id-badge">INC${r.udyamiId}</div>
+        <div style="font-size:10px;color:var(--grey-med);margin-top:4px;">${r.village||'—'} · ${r.district||'—'} · ${r.ind||'—'}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div style="font-family:var(--fh);font-size:11px;font-weight:700;color:var(--green-dark);">${fmtInr(r.salesBL||0)}</div>
+        <div style="font-size:9px;color:var(--grey-med);">Baseline Sales</div>
+        <div style="margin-top:6px;font-family:var(--fh);font-size:9px;font-weight:700;color:var(--blue);">View →</div>
+      </div>
+    </div>`).join('');
+}
+
+let _currentIncubationRecord = null;
+let _currentIncubationTab    = 'baseline';
+
+function openIncubationDetail(udyamiId) {
+  let lsRecords = [];
+  try { lsRecords = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]'); } catch(e) {}
+  const r = lsRecords.find(rec => rec.udyamiId === udyamiId);
+  if (!r) return;
+
+  _currentIncubationRecord = r;
+  document.getElementById('inc-dp-name').textContent = r.name || '—';
+  document.getElementById('inc-dp-sub').textContent  = `INC${r.udyamiId} · ${r.village||'—'} · ${r.district||'—'}`;
+
+  switchIncubationTab('baseline');
+  document.getElementById('inc-detail-overlay').classList.add('show');
+  document.getElementById('inc-detail-panel').classList.add('open');
+}
+
+function closeIncubationDetail() {
+  document.getElementById('inc-detail-overlay').classList.remove('show');
+  document.getElementById('inc-detail-panel').classList.remove('open');
+}
+
+function switchIncubationTab(tab) {
+  _currentIncubationTab = tab;
+  ['baseline','visit','assessment'].forEach(t => {
+    document.getElementById('inc-tab-' + t)?.classList.toggle('active', t === tab);
+  });
+  renderIncubationTabContent(tab);
+}
+
+function renderIncubationTabContent(tab) {
+  const r  = _currentIncubationRecord;
+  const el = document.getElementById('inc-dp-body');
+  if (!r || !el) return;
+
+  if (tab === 'baseline') {
+    el.innerHTML = `
+      <div class="dp-section">
+        <div class="dp-section-title">Field Study / Baseline</div>
+        <div class="dp-field-grid">
+          <div class="dp-field"><div class="dp-field-lbl">Incubation ID</div><div class="dp-field-val" style="color:var(--green-dark);">INC${r.udyamiId}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Survey Date</div><div class="dp-field-val">${r.surveyDate||r.baselineDate||'—'}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Village</div><div class="dp-field-val">${r.village||'—'}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">District</div><div class="dp-field-val">${r.district||'—'}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Block</div><div class="dp-field-val">${r.block||'—'}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Enterprise</div><div class="dp-field-val">${r.enterpriseName||'—'}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Industry</div><div class="dp-field-val">${r.ind||'—'}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Category</div><div class="dp-field-val">${r.category||'—'}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Baseline Sales</div><div class="dp-field-val" style="color:var(--green-dark);">${fmtInr(r.salesBL||0)}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Baseline Profit</div><div class="dp-field-val">${fmtInr(r.profitBL||0)}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">KYC Status</div><div class="dp-field-val">${r.kyc==='done'?'✅ Complete':'⏳ Pending'}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Field Officer</div><div class="dp-field-val">${r.officer||'—'}</div></div>
+        </div>
+        <div style="margin-top:14px;">
+          <button class="dp-btn dp-btn-primary" style="width:auto;padding:10px 20px;" onclick="window.open('io_form_v12.html','_blank');showToast('Field Study form opened');">+ Fill Field Study / Baseline Form</button>
+        </div>
+      </div>`;
+  } else if (tab === 'visit') {
+    let allRecs = [];
+    try { allRecs = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]'); } catch(e) {}
+    const visits = allRecs.filter(rec => (rec.formType==='visit'||rec._formType==='visit') && rec.name===r.name);
+    el.innerHTML = `
+      <div class="dp-section">
+        <div class="dp-section-title">Visit Forms (${visits.length})</div>
+        ${visits.length === 0
+          ? '<div style="color:var(--grey-med);font-size:12px;padding:8px 0;line-height:1.6;">No visits recorded yet for this entrepreneur.</div>'
+          : visits.map(v=>`
+            <div style="background:var(--grey-xlight);border-radius:var(--rs);padding:12px;margin-bottom:8px;border-left:3px solid var(--green);">
+              <div style="font-family:var(--fh);font-size:11px;font-weight:800;color:var(--ink);">${v.submittedAt?new Date(v.submittedAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—'}</div>
+              <div style="font-size:10px;color:var(--grey-dark);margin-top:3px;">Sales: ${fmtInr(v.sales||0)} · Profit: ${fmtInr(v.profit||0)}</div>
+            </div>`).join('')}
+        <div style="margin-top:14px;">
+          <button class="dp-btn dp-btn-primary" style="width:auto;padding:10px 20px;" onclick="window.open('io_form_v12.html','_blank');showToast('Visit Form opened');">+ Log New Visit</button>
+        </div>
+      </div>`;
+  } else if (tab === 'assessment') {
+    let allRecs = [];
+    try { allRecs = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]'); } catch(e) {}
+    const assessments = allRecs.filter(rec => (rec.formType==='assessment'||rec._formType==='assessment') && rec.name===r.name);
+    el.innerHTML = `
+      <div class="dp-section">
+        <div class="dp-section-title">Assessments (${assessments.length})</div>
+        ${assessments.length === 0
+          ? '<div style="color:var(--grey-med);font-size:12px;padding:8px 0;line-height:1.6;">No assessments recorded yet. Assessments are done at 6M / 1Y / 2Y / 3Y milestones.</div>'
+          : assessments.map(a=>`
+            <div style="background:var(--grey-xlight);border-radius:var(--rs);padding:12px;margin-bottom:8px;border-left:3px solid var(--purple);">
+              <div style="font-family:var(--fh);font-size:11px;font-weight:800;color:var(--ink);">${a.submittedAt?new Date(a.submittedAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—'}</div>
+              <div style="font-size:10px;color:var(--grey-dark);margin-top:3px;">Health: ${a.health||'—'} · Level: ${a.level?'L'+a.level:'—'}</div>
+            </div>`).join('')}
+        <div style="margin-top:14px;">
+          <button class="dp-btn dp-btn-primary" style="width:auto;padding:10px 20px;" onclick="window.open('io_form_v12.html','_blank');showToast('Assessment Form opened');">+ Add Assessment</button>
+        </div>
+      </div>`;
+  }
 }
 
 function populateBatchFilter() {
