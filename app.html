@@ -412,8 +412,9 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
       <div class="sb-name">Udyami Vikas<small>Grassroutes Platform</small></div>
     </div>
     <div class="sb-nav">
-      <div class="sb-item active" id="sb-dashboard" onclick="navigate('dashboard')">
-        <span class="sb-icon">🏠</span><span class="sb-label">Dashboard</span>
+      <div class="sb-item" id="sb-dashboard" onclick="openIODashboard()">
+        <span class="sb-icon">📊</span><span class="sb-label">Dashboard</span>
+        <span style="margin-left:auto;font-size:10px;color:rgba(255,255,255,.25);">↗</span>
       </div>
       <div class="sb-item" id="sb-survey-parent" onclick="toggleSurveyMenu()">
         <span class="sb-icon">🌱</span><span class="sb-label">Survey</span>
@@ -457,9 +458,27 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
     </div>
     <div class="screens">
 
-      <!-- ══ DASHBOARD SCREEN ══ -->
-      <div id="screen-dashboard" class="screen active">
-        <div class="sl" id="dash-sl">Batch Snapshot — MP-2024-A · Month 9 of 12</div>
+      <!-- ══ DASHBOARD HUB SCREEN ══ -->
+      <div id="screen-dashboard" class="screen">
+        <div class="sl">Dashboard Access</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+          <!-- IO Dashboard v7 -->
+          <div class="panel-card" style="cursor:pointer;transition:all .2s;border:2px solid var(--border);" onclick="openIODashboard()" onmouseover="this.style.borderColor='var(--green)';this.style.boxShadow='0 8px 24px rgba(139,178,90,.15)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow=''">
+            <div style="font-size:36px;margin-bottom:14px;">📊</div>
+            <div style="font-family:var(--fh);font-size:15px;font-weight:900;color:var(--charcoal);margin-bottom:6px;">IO Batch Dashboard</div>
+            <div style="font-size:11px;color:var(--grey-med);line-height:1.6;margin-bottom:16px;">Overall officer dashboard — batch-level KPIs, entrepreneur list, visit schedules, and progress tracking.</div>
+            <div style="display:flex;align-items:center;gap:6px;font-family:var(--fh);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--green-dark);">Open IO Dashboard v7 ↗</div>
+          </div>
+          <!-- Udyami Vikas Dashboard -->
+          <div class="panel-card" style="cursor:pointer;transition:all .2s;border:2px solid var(--border);" onclick="openEntrepreneurDashboard()" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 8px 24px rgba(74,127,193,.12)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow=''">
+            <div style="font-size:36px;margin-bottom:14px;">👤</div>
+            <div style="font-family:var(--fh);font-size:15px;font-weight:900;color:var(--charcoal);margin-bottom:6px;">Udyami Vikas Dashboard</div>
+            <div style="font-size:11px;color:var(--grey-med);line-height:1.6;margin-bottom:16px;">Individual entrepreneur dashboard — financial history, Shakti & Swasthya scores, tool progress, and visit log.</div>
+            <div style="display:flex;align-items:center;gap:6px;font-family:var(--fh);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--blue);">Open Entrepreneur Dashboard ↗</div>
+          </div>
+        </div>
+        <!-- Quick batch snapshot (read-only reference) -->
+        <div class="sl">Quick Batch Snapshot</div>
         <div class="stat-strip" id="stat-strip"></div>
         <div class="sl">Transaction Indicators</div>
         <div class="ind-grid" id="ind-grid"></div>
@@ -476,31 +495,6 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
           <div class="panel-card">
             <div class="pc-title">⏰ Visit Overdue (&gt;15 days)</div>
             <div id="overdue-list"></div>
-          </div>
-        </div>
-        <div class="sl">All Entrepreneurs</div>
-        <div class="panel-card" style="padding:0;overflow:hidden;">
-          <div class="ent-wrap">
-            <table class="ent-table">
-              <thead>
-                <tr>
-                  <th style="padding-left:16px;">Name</th>
-                  <th>Village GP</th>
-                  <th>Industry</th>
-                  <th>Level</th>
-                  <th title="Daily Diary">📓</th>
-                  <th title="KYC">KYC</th>
-                  <th title="BMC">BMC</th>
-                  <th title="UE">UE</th>
-                  <th title="BP">BP</th>
-                  <th>Sales/Mo</th>
-                  <th>Profit/Mo</th>
-                  <th>Health</th>
-                  <th>Last Visit</th>
-                </tr>
-              </thead>
-              <tbody id="ent-table-body"></tbody>
-            </table>
           </div>
         </div>
       </div>
@@ -702,7 +696,24 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
           .sc-btn-reject.done{background:var(--red);color:#fff;cursor:default;}
           .sc-btn-view{background:var(--grey-xlight);color:var(--ink);border:1.5px solid var(--border);}
           .sc-btn-view:hover{border-color:var(--green);color:var(--green-dark);}
-          @media(max-width:900px){.sp-stat-strip{grid-template-columns:1fr 1fr;}.sp-filters{flex-direction:column;}}
+          /* View toggle bar */
+          .view-toggle{display:flex;gap:3px;margin-bottom:14px;background:var(--grey-xlight);border:1px solid var(--border);border-radius:var(--rs);padding:3px;width:fit-content;}
+          .vt-btn{padding:6px 14px;border-radius:5px;border:none;background:transparent;font-family:var(--fh);font-size:10px;font-weight:700;color:var(--grey-med);cursor:pointer;transition:all .15s;white-space:nowrap;}
+          .vt-btn.active{background:var(--white);color:var(--green-dark);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+          .vt-btn:hover:not(.active){color:var(--ink);}
+          /* Table view */
+          .sp-table{width:100%;border-collapse:collapse;font-size:11px;background:var(--white);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-sm);}
+          .sp-table thead tr{background:var(--charcoal);}
+          .sp-table th{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.6);padding:10px 12px;text-align:left;white-space:nowrap;}
+          .sp-table tbody tr{border-bottom:1px solid var(--grey-light);transition:background .12s;}
+          .sp-table tbody tr:hover{background:var(--green-light);}
+          .sp-table td{padding:9px 12px;vertical-align:middle;}
+          /* Compact list view */
+          .sp-compact-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow-sm);overflow:hidden;}
+          .sp-compact-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--grey-light);transition:background .12s;}
+          .sp-compact-item:last-child{border-bottom:none;}
+          .sp-compact-item:hover{background:var(--green-light);}
+          @media(max-width:900px){.sp-stat-strip{grid-template-columns:1fr 1fr;}.sp-filters{flex-direction:column;}.view-toggle{width:100%;}.vt-btn{flex:1;text-align:center;}}
         </style>
 
         <!-- Stats strip -->
@@ -734,8 +745,18 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
           <div class="sp-tab"       id="sp-tab-rejected"    onclick="setSurveyTab('rejected')">Rejected</div>
         </div>
 
-        <!-- Card grid -->
-        <div id="survey-card-list" class="ent-list"></div>
+        <!-- View toggle -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+          <div class="view-toggle">
+            <button class="vt-btn active" id="vt-card"    onclick="setSurveyView('card')">⊞ Cards</button>
+            <button class="vt-btn"        id="vt-table"   onclick="setSurveyView('table')">≡ Table</button>
+            <button class="vt-btn"        id="vt-compact" onclick="setSurveyView('compact')">▤ Compact</button>
+          </div>
+          <div id="sp-result-count" style="font-family:var(--fh);font-size:10px;font-weight:700;color:var(--grey-med);"></div>
+        </div>
+
+        <!-- Card / Table / Compact list -->
+        <div id="survey-card-list"></div>
       </div>
 
       <!-- ══ INCUBATION DIARY SCREEN ══ -->
@@ -752,8 +773,8 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
   <!-- BOTTOM NAV (mobile) -->
   <nav class="bottom-nav">
     <div class="bn-inner">
-      <div class="bn-item active" id="bn-dashboard" onclick="navigate('dashboard')">
-        <div class="bn-icon">🏠</div><div class="bn-label">Dashboard</div>
+      <div class="bn-item" id="bn-dashboard" onclick="openIODashboard()">
+        <div class="bn-icon">📊</div><div class="bn-label">Dashboard</div>
       </div>
       <div class="bn-item" id="bn-survey" onclick="openSurveySubMenu()">
         <div class="bn-icon">🌱</div><div class="bn-label">Survey</div>
@@ -797,7 +818,7 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
     <div class="sb-name">Udyami Vikas<small>Grassroutes</small></div>
   </div>
   <div class="sb-nav">
-    <div class="sb-item" onclick="navigate('dashboard');closeDrawer()"><span class="sb-icon">🏠</span><span class="sb-label">Dashboard</span></div>
+    <div class="sb-item" onclick="openIODashboard();closeDrawer()"><span class="sb-icon">📊</span><span class="sb-label">Dashboard ↗</span></div>
     <div style="font-family:var(--fh);font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.25);padding:10px 12px 4px;">Survey</div>
     <div class="sb-sub-item" onclick="openSurveyForm();closeDrawer()"><span class="sb-icon" style="font-size:13px;">📝</span><span class="sb-label">Survey Form</span></div>
     <div class="sb-sub-item" onclick="navigate('survey');closeDrawer()"><span class="sb-icon" style="font-size:13px;">📋</span><span class="sb-label">Survey Pipeline</span></div>
@@ -829,10 +850,11 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
       <div class="dp-sub" id="inc-dp-sub">—</div>
     </div>
   </div>
-  <div class="inc-tab-bar" style="flex-shrink:0;">
-    <div class="inc-tab active" id="inc-tab-baseline" onclick="switchIncubationTab('baseline')">Field Study / Baseline</div>
-    <div class="inc-tab" id="inc-tab-visit" onclick="switchIncubationTab('visit')">Visit Forms</div>
-    <div class="inc-tab" id="inc-tab-assessment" onclick="switchIncubationTab('assessment')">Assessments</div>
+  <div class="inc-tab-bar" style="flex-shrink:0;overflow-x:auto;">
+    <div class="inc-tab active" id="inc-tab-baseline"   onclick="switchIncubationTab('baseline')">Field Study / Baseline</div>
+    <div class="inc-tab"        id="inc-tab-visit"      onclick="switchIncubationTab('visit')">Visit Forms</div>
+    <div class="inc-tab"        id="inc-tab-assessment" onclick="switchIncubationTab('assessment')">Assessments</div>
+    <div class="inc-tab"        id="inc-tab-udyamidash" onclick="switchIncubationTab('udyamidash')" style="color:var(--blue);opacity:.7;">Udyami Vikas Dashboard</div>
   </div>
   <div class="dp-body" id="inc-dp-body" style="flex:1;overflow-y:auto;"></div>
 </div>
@@ -1169,8 +1191,8 @@ function navigate(screen) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + screen)?.classList.add('active');
 
-  // Sidebar active states
-  ['dashboard','survey','incubation','profile'].forEach(s => {
+  // Sidebar active states (dashboard nav is external — never highlight it)
+  ['survey','incubation','profile'].forEach(s => {
     const el = document.getElementById('sb-' + s);
     if (el) el.classList.toggle('active', s === screen);
   });
@@ -1216,6 +1238,20 @@ function openSurveyForm() {
   showToast('Survey Form opened in new tab');
 }
 
+function openIODashboard() {
+  window.open('io_dashboard_v7.html', '_blank');
+  showToast('IO Dashboard v7 opened');
+}
+
+function openEntrepreneurDashboard(u) {
+  if (u) {
+    const bridged = bridgeToEntDashboard(u);
+    localStorage.setItem('udyami_vikas_data', JSON.stringify(bridged));
+  }
+  window.open('udyami_vikas_dashboard (3).html', '_blank');
+  showToast('Udyami Vikas Dashboard opened');
+}
+
 function openSurveySubMenu() {
   document.getElementById('survey-submenu-overlay').style.display = 'block';
   document.getElementById('survey-submenu').style.display = 'block';
@@ -1236,8 +1272,11 @@ function showApp() {
   mergeLocalData();
   populateBatchFilter();
   renderUser();
-  renderDashboard();
+  renderDashboard();   // renders stat-strip / ind-grid / etc used by screen-dashboard hub
   _updateIncubationBadge();
+  // Default home: Incubation Diary
+  activeScreen = 'dashboard'; // allow navigate to switch
+  navigate('incubation');
 }
 
 function renderUser() {
@@ -1419,7 +1458,16 @@ function renderEntCards(list) {
    SURVEY PIPELINE
 ═══════════════════════════════════════════════════ */
 let _surveyPipeline = [];
-let _surveyTab = 'all';
+let _surveyTab  = 'all';
+let _surveyView = 'card'; // 'card' | 'table' | 'compact'
+
+function setSurveyView(view) {
+  _surveyView = view;
+  ['card','table','compact'].forEach(v => {
+    document.getElementById('vt-' + v)?.classList.toggle('active', v === view);
+  });
+  filterSurvey();
+}
 
 function setSurveyTab(tab) {
   _surveyTab = tab;
@@ -1614,59 +1662,119 @@ function _updateIncubationBadge() {
   });
 }
 
+function _surveyStatusBadge(p) {
+  if (p.selected)    return '<span style="background:var(--green-dark);color:#fff;font-family:var(--fh);font-size:8px;font-weight:800;padding:2px 7px;border-radius:8px;">📂 Incubation</span>';
+  if (p.shortlisted) return '<span style="background:var(--green-light);color:var(--green-dark);font-family:var(--fh);font-size:8px;font-weight:800;padding:2px 7px;border-radius:8px;border:1px solid var(--green-mid);">✓ Shortlisted</span>';
+  if (p.rejected)    return '<span style="background:var(--red-light);color:var(--red);font-family:var(--fh);font-size:8px;font-weight:800;padding:2px 7px;border-radius:8px;">✗ Rejected</span>';
+  return '<span style="background:var(--orange-light);color:var(--orange-dark);font-family:var(--fh);font-size:8px;font-weight:800;padding:2px 7px;border-radius:8px;">⏳ Pending</span>';
+}
+
+function _surveyActionBtns(p) {
+  const sl = p.shortlisted, rj = p.rejected, se = p.selected;
+  return `
+    <button class="sc-btn sc-btn-shortlist${sl?' done':''}" onclick="shortlistEntrepreneur('${p.id}')">${sl?'✓ Shortlisted':'✓ Shortlist'}</button>
+    <button class="sc-btn sc-btn-select${se?' done':''}"    onclick="selectEntrepreneur('${p.id}')">${se?'📂 Selected':'📂 Select'}</button>
+    <button class="sc-btn sc-btn-reject${rj?' done':''}"    onclick="rejectEntrepreneur('${p.id}')">${rj?'✗ Rejected':'✗ Reject'}</button>
+    <button class="sc-btn sc-btn-view"                      onclick="openFullDashboardById('${p.id}')">→ View</button>`;
+}
+
 function _renderSurveyCards(list) {
   const el = document.getElementById('survey-card-list');
   if (!el) return;
+
+  // Update result count
+  const cnt = document.getElementById('sp-result-count');
+  if (cnt) cnt.textContent = list.length + ' entrepreneur' + (list.length !== 1 ? 's' : '');
+
   if (!list.length) {
-    el.innerHTML = '<div style="color:var(--grey-med);text-align:center;padding:40px;font-size:13px;">No entrepreneurs match the current filters.</div>';
+    el.className = '';
+    el.innerHTML = '<div style="color:var(--grey-med);text-align:center;padding:40px;font-size:13px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);">No entrepreneurs match the current filters.</div>';
     return;
   }
-  el.innerHTML = list.map(p => {
-    const sl = p.shortlisted;
-    const rj = p.rejected;
-    const se = p.selected;
-    const indColor = {
-      'Trading':'var(--blue)','Manufacturing':'var(--purple)','Service':'var(--orange-dark)','Agri / Agri-Allied':'var(--green-dark)'
-    }[p.ind] || 'var(--grey-dark)';
-    const indBg = {
-      'Trading':'var(--blue-light)','Manufacturing':'var(--purple-light)','Service':'var(--orange-light)','Agri / Agri-Allied':'var(--green-light)'
-    }[p.ind] || 'var(--grey-xlight)';
-    return `
-    <div class="survey-card${sl?' shortlisted':''}${rj?' rejected':''}${se?' shortlisted':''}">
-      ${se ? '<div class="sc-selected-label">✓ IN INCUBATION</div>' : (sl ? '<div class="sc-selected-badge">SHORTLISTED</div>' : '')}
-      <div class="sc-top">
-        <div class="sc-av" style="background:${avatarColor(p.name)};"
-             onclick="openFullDashboardById('${p.id}')">${initials(p.name)}</div>
-        <div class="sc-info">
-          <div class="sc-name" onclick="openFullDashboardById('${p.id}')">${p.name}</div>
-          <div class="sc-loc">${p.village} · ${p.district} · ${p.block}</div>
-          ${se ? `<div style="margin-top:4px;"><span style="background:var(--green-light);border:1px solid var(--green-mid);border-radius:8px;padding:2px 8px;font-family:var(--fh);font-size:9px;font-weight:800;color:var(--green-dark);">INC${p.id}</span></div>` : ''}
+
+  if (_surveyView === 'card') {
+    /* ── CARD VIEW (default) ── */
+    el.className = 'ent-list';
+    el.innerHTML = list.map(p => {
+      const sl = p.shortlisted, rj = p.rejected, se = p.selected;
+      const indColor = {'Trading':'var(--blue)','Manufacturing':'var(--purple)','Service':'var(--orange-dark)','Agri / Agri-Allied':'var(--green-dark)'}[p.ind]||'var(--grey-dark)';
+      const indBg    = {'Trading':'var(--blue-light)','Manufacturing':'var(--purple-light)','Service':'var(--orange-light)','Agri / Agri-Allied':'var(--green-light)'}[p.ind]||'var(--grey-xlight)';
+      return `
+      <div class="survey-card${sl||se?' shortlisted':''}${rj?' rejected':''}">
+        ${se ? '<div class="sc-selected-label">✓ IN INCUBATION</div>' : (sl ? '<div class="sc-selected-badge">SHORTLISTED</div>' : '')}
+        <div class="sc-top">
+          <div class="sc-av" style="background:${avatarColor(p.name)};" onclick="openFullDashboardById('${p.id}')">${initials(p.name)}</div>
+          <div class="sc-info">
+            <div class="sc-name" onclick="openFullDashboardById('${p.id}')">${p.name}</div>
+            <div class="sc-loc">${p.village} · ${p.district} · ${p.block}</div>
+            ${se ? `<div style="margin-top:4px;"><span style="background:var(--green-light);border:1px solid var(--green-mid);border-radius:8px;padding:2px 8px;font-family:var(--fh);font-size:9px;font-weight:800;color:var(--green-dark);">INC${p.id}</span></div>` : ''}
+          </div>
         </div>
-      </div>
-      <div class="sc-biz">
-        <span class="sc-biz-name">${p.enterpriseName}</span>
-        <span class="sc-ind-badge" style="background:${indBg};color:${indColor};">${p.ind}</span>
-      </div>
-      <div class="sc-officer-row">Officer: <span class="sc-officer-link" onclick="openOfficerProfile('${p.officer}')">${p.officer}</span></div>
-      <div class="sc-date">Survey date: ${p.surveyDate}</div>
-      <div class="sc-actions">
-        <button class="sc-btn sc-btn-shortlist${sl?' done':''}"
-                onclick="shortlistEntrepreneur('${p.id}')">
-          ${sl ? '✓ Shortlisted' : '✓ Shortlist'}
-        </button>
-        <button class="sc-btn sc-btn-select${se?' done':''}"
-                onclick="selectEntrepreneur('${p.id}')">
-          ${se ? '📂 Selected' : '📂 Select'}
-        </button>
-        <button class="sc-btn sc-btn-reject${rj?' done':''}"
-                onclick="rejectEntrepreneur('${p.id}')">
-          ${rj ? '✗ Rejected' : '✗ Reject'}
-        </button>
-        <button class="sc-btn sc-btn-view"
-                onclick="openFullDashboardById('${p.id}')">→ View</button>
-      </div>
+        <div class="sc-biz"><span class="sc-biz-name">${p.enterpriseName}</span><span class="sc-ind-badge" style="background:${indBg};color:${indColor};">${p.ind}</span></div>
+        <div class="sc-officer-row">Officer: <span class="sc-officer-link" onclick="openOfficerProfile('${p.officer}')">${p.officer}</span></div>
+        <div class="sc-date">Survey date: ${p.surveyDate}</div>
+        <div class="sc-actions">${_surveyActionBtns(p)}</div>
+      </div>`;
+    }).join('');
+
+  } else if (_surveyView === 'table') {
+    /* ── TABLE VIEW ── */
+    el.className = '';
+    el.innerHTML = `
+    <div style="overflow-x:auto;">
+    <table class="sp-table">
+      <thead><tr>
+        <th style="padding-left:16px;">Name</th>
+        <th>Village</th>
+        <th>District</th>
+        <th>Enterprise</th>
+        <th>Industry</th>
+        <th>Officer</th>
+        <th>Survey Date</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr></thead>
+      <tbody>
+      ${list.map(p => `<tr style="${p.rejected?'opacity:.55;':''}">
+        <td style="padding-left:16px;min-width:130px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:28px;height:28px;border-radius:50%;background:${avatarColor(p.name)};display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:9px;font-weight:900;color:#fff;flex-shrink:0;">${initials(p.name)}</div>
+            <div>
+              <div style="font-family:var(--fh);font-size:11px;font-weight:800;color:var(--charcoal);">${p.name}</div>
+              ${p.selected ? `<div style="font-family:var(--fh);font-size:8px;font-weight:800;color:var(--green-dark);">INC${p.id}</div>` : `<div style="font-size:9px;color:var(--grey-med);">${p.id}</div>`}
+            </div>
+          </div>
+        </td>
+        <td style="font-size:10px;color:var(--grey-dark);">${p.village}</td>
+        <td style="font-size:10px;color:var(--grey-dark);">${p.district}</td>
+        <td style="font-size:10px;font-weight:600;color:var(--ink);">${p.enterpriseName}</td>
+        <td><span style="font-size:9px;font-family:var(--fh);font-weight:700;padding:2px 7px;border-radius:6px;background:var(--blue-light);color:var(--blue);">${p.ind}</span></td>
+        <td style="font-size:10px;color:var(--grey-dark);">${p.officer}</td>
+        <td style="font-size:10px;color:var(--grey-med);">${p.surveyDate}</td>
+        <td>${_surveyStatusBadge(p)}</td>
+        <td><div style="display:flex;gap:4px;flex-wrap:nowrap;">${_surveyActionBtns(p)}</div></td>
+      </tr>`).join('')}
+      </tbody>
+    </table>
     </div>`;
-  }).join('');
+
+  } else {
+    /* ── COMPACT LIST VIEW ── */
+    el.className = '';
+    el.innerHTML = `<div class="sp-compact-wrap">` + list.map(p => `
+      <div class="sp-compact-item" style="${p.rejected?'opacity:.55;':''}">
+        <div style="width:34px;height:34px;border-radius:50%;background:${avatarColor(p.name)};display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:12px;font-weight:900;color:#fff;flex-shrink:0;">${initials(p.name)}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-family:var(--fh);font-size:12px;font-weight:800;color:var(--charcoal);">${p.name}</span>
+            ${_surveyStatusBadge(p)}
+            ${p.selected ? `<span style="background:var(--green-light);border:1px solid var(--green-mid);border-radius:6px;padding:1px 7px;font-family:var(--fh);font-size:8px;font-weight:800;color:var(--green-dark);">INC${p.id}</span>` : ''}
+          </div>
+          <div style="font-size:10px;color:var(--grey-med);margin-top:2px;">${p.village} · ${p.district} · ${p.enterpriseName} · ${p.ind}</div>
+        </div>
+        <div style="display:flex;gap:4px;flex-shrink:0;">${_surveyActionBtns(p)}</div>
+      </div>`).join('') + `</div>`;
+  }
 }
 
 /* ═══════════════════════════════════════════════════
@@ -1743,9 +1851,28 @@ function closeIncubationDetail() {
   document.getElementById('inc-detail-panel').classList.remove('open');
 }
 
+function _openIncDash() {
+  // Bridge current incubation record → Udyami Vikas Dashboard
+  const r = _currentIncubationRecord;
+  if (!r) { openEntrepreneurDashboard(); return; }
+  const u = udyamis.find(u => u.name === r.name) || {
+    id: r.udyamiId, name: r.name,
+    gp: r.gp || ((r.village||'') + ' GP'),
+    ind: r.ind||'—', level: r.level||1,
+    diary: r.diary||'miss', kyc: r.kyc||'pend', bmc: r.bmc||'pend',
+    ue: r.ue||'pend', bp: r.bp||'pend',
+    sales: r.sales||r.salesBL||0, profit: r.profit||r.profitBL||0,
+    salesBL: r.salesBL||0, health: r.health||0,
+    lastVisit: r.surveyDate||'—', flag: false, dropout: false,
+    officer: r.officer||'—', batchId: r.batchId||'—',
+    surveyDate: r.surveyDate||'—',
+  };
+  openEntrepreneurDashboard(u);
+}
+
 function switchIncubationTab(tab) {
   _currentIncubationTab = tab;
-  ['baseline','visit','assessment'].forEach(t => {
+  ['baseline','visit','assessment','udyamidash'].forEach(t => {
     document.getElementById('inc-tab-' + t)?.classList.toggle('active', t === tab);
   });
   renderIncubationTabContent(tab);
@@ -1812,6 +1939,36 @@ function renderIncubationTabContent(tab) {
             </div>`).join('')}
         <div style="margin-top:14px;">
           <button class="dp-btn dp-btn-primary" style="width:auto;padding:10px 20px;" onclick="window.open('io_form_v12.html','_blank');showToast('Assessment Form opened');">+ Add Assessment</button>
+        </div>
+      </div>`;
+
+  } else if (tab === 'udyamidash') {
+    /* ── Udyami Vikas Dashboard tab ── */
+    // Build bridged data for this entrepreneur and open in new tab
+    const u = udyamis.find(u => u.name === r.name) || {
+      id: r.udyamiId, name: r.name, gp: r.gp || (r.village+' GP'),
+      ind: r.ind, level: r.level||1, diary: r.diary||'miss',
+      kyc: r.kyc||'pend', bmc: r.bmc||'pend', ue: r.ue||'pend', bp: r.bp||'pend',
+      sales: r.sales||r.salesBL||0, profit: r.profit||r.profitBL||0,
+      salesBL: r.salesBL||0, health: r.health||0, lastVisit: r.surveyDate||'—',
+      flag: false, dropout: false, officer: r.officer||'—',
+      batchId: r.batchId||'—', surveyDate: r.surveyDate||'—',
+    };
+
+    el.innerHTML = `
+      <div class="dp-section">
+        <div class="dp-section-title">Udyami Vikas Dashboard</div>
+        <div style="background:var(--blue-light);border:1.5px solid #c0d8f8;border-radius:var(--r);padding:20px;text-align:center;margin-bottom:20px;">
+          <div style="font-size:40px;margin-bottom:12px;">👤</div>
+          <div style="font-family:var(--fh);font-size:15px;font-weight:900;color:var(--charcoal);margin-bottom:6px;">${r.name}</div>
+          <div style="font-size:11px;color:var(--grey-med);margin-bottom:16px;">INC${r.udyamiId} · ${r.village||'—'} · ${r.enterpriseName||'—'}</div>
+          <button class="dp-btn dp-btn-primary" onclick="closeIncubationDetail();_openIncDash()">Open Udyami Vikas Dashboard ↗</button>
+        </div>
+        <div class="dp-field-grid">
+          <div class="dp-field"><div class="dp-field-lbl">Baseline Sales</div><div class="dp-field-val" style="color:var(--green-dark);">${fmtInr(r.salesBL||0)}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Baseline Profit</div><div class="dp-field-val">${fmtInr(r.profitBL||0)}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">KYC</div><div class="dp-field-val">${r.kyc==='done'?'✅ Complete':'⏳ Pending'}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Field Officer</div><div class="dp-field-val">${r.officer||'—'}</div></div>
         </div>
       </div>`;
   }
