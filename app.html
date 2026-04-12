@@ -296,6 +296,50 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
 .logout-btn{width:100%;background:var(--red-light);border:1.5px solid #f5c0c0;border-radius:var(--rs);padding:13px;font-family:var(--fh);font-size:12px;font-weight:800;color:var(--red);cursor:pointer;transition:all .15s;}
 .logout-btn:hover{background:#f9d0d0;}
 
+/* ═══════════════════════ APPROVAL SYSTEM ═══════════ */
+.apv-badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--fh);font-size:8px;font-weight:800;padding:3px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.4px;}
+.apv-pending{background:#fff8e1;color:#b38600;border:1px solid #ffe082;}
+.apv-approved{background:var(--green-light);color:var(--green-dark);border:1px solid var(--green-mid);}
+.apv-rejected{background:var(--red-light);color:var(--red);border:1px solid #f5c0c0;}
+.apv-sentback{background:var(--blue-light);color:var(--blue);border:1px solid #c0d8f8;}
+.prog-status-pill{display:inline-flex;align-items:center;gap:5px;font-family:var(--fh);font-size:9px;font-weight:800;padding:3px 10px;border-radius:10px;cursor:pointer;transition:all .15s;}
+.ps-active{background:var(--green-light);color:var(--green-dark);border:1.5px solid var(--green-mid);}
+.ps-inactive{background:var(--orange-light);color:var(--orange-dark);border:1.5px solid var(--orange-mid);}
+.ps-exited{background:var(--red-light);color:var(--red);border:1.5px solid #f5c0c0;}
+/* Approvals screen */
+.apv-section-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:18px;}
+.apv-sec-tab{padding:10px 20px;font-family:var(--fh);font-size:11px;font-weight:700;cursor:pointer;color:var(--grey-med);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;}
+.apv-sec-tab.active{color:var(--green-dark);border-bottom-color:var(--green-dark);}
+.apv-queue-item{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px;box-shadow:var(--shadow-sm);}
+.apv-queue-item:hover{border-color:var(--green-mid);}
+.apv-item-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;}
+.apv-item-name{font-family:var(--fh);font-size:13px;font-weight:800;color:var(--charcoal);}
+.apv-item-meta{font-size:10px;color:var(--grey-med);margin-top:3px;line-height:1.5;}
+.apv-item-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;}
+.apv-btn-approve{background:var(--green-dark);color:#fff;border:none;border-radius:var(--rs);padding:8px 14px;font-family:var(--fh);font-size:10px;font-weight:800;cursor:pointer;transition:all .15s;}
+.apv-btn-approve:hover{background:var(--green-deep);}
+.apv-btn-reject{background:var(--red-light);color:var(--red);border:1.5px solid #f5c0c0;border-radius:var(--rs);padding:8px 14px;font-family:var(--fh);font-size:10px;font-weight:800;cursor:pointer;}
+.apv-btn-reject:hover{background:var(--red);color:#fff;}
+.apv-btn-back{background:var(--blue-light);color:var(--blue);border:1.5px solid #c0d8f8;border-radius:var(--rs);padding:8px 14px;font-family:var(--fh);font-size:10px;font-weight:800;cursor:pointer;}
+.apv-btn-back:hover{background:var(--blue);color:#fff;}
+.apv-field-diff{background:var(--grey-xlight);border-radius:var(--rs);padding:10px 12px;margin-top:8px;font-size:11px;}
+.apv-old{color:var(--red);text-decoration:line-through;margin-right:8px;}
+.apv-new{color:var(--green-dark);font-weight:700;}
+/* Approval queue item internals */
+.apv-qi-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px;}
+.apv-qi-name{font-family:var(--fh);font-size:13px;font-weight:800;color:var(--charcoal);}
+.apv-qi-meta{font-size:10px;color:var(--grey-med);margin-top:2px;}
+.apv-qi-action{font-size:11px;color:var(--ink);margin-bottom:4px;}
+.apv-qi-notes{font-size:10px;color:var(--grey-dark);background:var(--grey-xlight);border-radius:4px;padding:6px 8px;margin:4px 0;}
+.apv-qi-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+/* Supervisor-only nav item */
+.sb-item.sv-only{border-left:3px solid var(--blue);}
+/* Audit trail */
+.audit-row{background:var(--white);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;margin-bottom:8px;font-size:10px;color:var(--grey-dark);}
+.audit-who{font-family:var(--fh);font-weight:700;color:var(--ink);margin-bottom:3px;}
+.audit-what{margin-bottom:3px;}
+.audit-when{color:var(--grey-med);}
+
 /* ═══════════════════════ SURVEY SUB-MENU ════════════ */
 .sb-sub-item{display:flex;align-items:center;gap:11px;padding:9px 12px 9px 36px;border-radius:var(--rs);cursor:pointer;transition:all .15s;border:1px solid transparent;}
 .sb-sub-item:hover{background:rgba(255,255,255,.06);}
@@ -411,31 +455,8 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
       </div>
       <div class="sb-name">Udyami Vikas<small>Grassroutes Platform</small></div>
     </div>
-    <div class="sb-nav">
-      <div class="sb-item" id="sb-dashboard" onclick="openIODashboard()">
-        <span class="sb-icon">📊</span><span class="sb-label">Dashboard</span>
-        <span style="margin-left:auto;font-size:10px;color:rgba(255,255,255,.25);">↗</span>
-      </div>
-      <div class="sb-item" id="sb-survey-parent" onclick="toggleSurveyMenu()">
-        <span class="sb-icon">🌱</span><span class="sb-label">Survey</span>
-        <span class="sb-badge" id="sb-survey-count" style="display:none">0</span>
-        <span class="survey-arrow" id="survey-arrow">›</span>
-      </div>
-      <div id="survey-sub-items" style="display:none;">
-        <div class="sb-sub-item" id="sb-survey-form" onclick="openSurveyForm()">
-          <span class="sb-icon" style="font-size:13px;">📝</span><span class="sb-label">Survey Form</span>
-        </div>
-        <div class="sb-sub-item" id="sb-survey-pipeline" onclick="navigate('survey')">
-          <span class="sb-icon" style="font-size:13px;">📋</span><span class="sb-label">Survey Pipeline</span>
-        </div>
-      </div>
-      <div class="sb-item" id="sb-incubation" onclick="navigate('incubation')">
-        <span class="sb-icon">📂</span><span class="sb-label">Incubation Diary</span>
-        <span class="sb-badge" id="sb-inc-count" style="display:none">0</span>
-      </div>
-      <div class="sb-item" id="sb-profile" onclick="navigate('profile')">
-        <span class="sb-icon">⚙️</span><span class="sb-label">Settings</span>
-      </div>
+    <div class="sb-nav" id="sb-nav-items">
+      <!-- Rendered dynamically by buildNav() based on role -->
     </div>
     <div class="sb-footer">
       <div class="sb-user" onclick="navigate('profile')">
@@ -551,9 +572,9 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
           </div>
           <div class="form-card">
             <div class="fc-icon">📍</div>
-            <div class="fc-title">Visit Form</div>
+            <div class="fc-title">Interaction Form</div>
             <span class="fc-freq" style="background:var(--orange-light);color:var(--orange-dark);">Every 10–15 Days · ~30 min</span>
-            <div class="fc-desc">Regular visit record. Captures financial updates, BMC/UE/BP progress, flag status, and observations.</div>
+            <div class="fc-desc">Regular interaction record. Captures financial updates, BMC/UE/BP progress, flag status, and observations.</div>
             <div class="fc-fields">📌 Financials · Diary · BMC/UE/BP · Flag · Dropout</div>
             <div class="fc-actions">
               <button class="fc-btn fc-btn-fill" onclick="openForm('visit')">Fill Form</button>
@@ -767,27 +788,25 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
         <div id="inc-entrepreneur-list" class="ent-list"></div>
       </div>
 
+      <!-- ══ APPROVALS SCREEN (Supervisor only) ══ -->
+      <div id="screen-approvals" class="screen">
+        <!-- Approval section tabs -->
+        <div class="apv-section-tabs">
+          <div class="apv-sec-tab active" id="apv-tab-survey"    onclick="setApvTab('survey')">Survey Approvals <span id="apv-badge-survey" class="sb-badge" style="background:var(--orange-dark);display:none;margin-left:6px;">0</span></div>
+          <div class="apv-sec-tab"        id="apv-tab-status"    onclick="setApvTab('status')">Incubation Approvals <span id="apv-badge-status" class="sb-badge" style="background:var(--orange-dark);display:none;margin-left:6px;">0</span></div>
+          <div class="apv-sec-tab"        id="apv-tab-edit"      onclick="setApvTab('edit')">Data Edit Approvals <span id="apv-badge-edit" class="sb-badge" style="background:var(--orange-dark);display:none;margin-left:6px;">0</span></div>
+          <div class="apv-sec-tab"        id="apv-tab-history"   onclick="setApvTab('history')">Audit Trail</div>
+        </div>
+        <!-- Queue container -->
+        <div id="apv-queue-list"></div>
+      </div>
+
     </div><!-- /screens -->
   </main>
 
-  <!-- BOTTOM NAV (mobile) -->
+  <!-- BOTTOM NAV (mobile) — rendered dynamically by buildNav() -->
   <nav class="bottom-nav">
-    <div class="bn-inner">
-      <div class="bn-item" id="bn-dashboard" onclick="openIODashboard()">
-        <div class="bn-icon">📊</div><div class="bn-label">Dashboard</div>
-      </div>
-      <div class="bn-item" id="bn-survey" onclick="openSurveySubMenu()">
-        <div class="bn-icon">🌱</div><div class="bn-label">Survey</div>
-        <span class="bn-badge" id="bn-survey-count" style="display:none;">0</span>
-      </div>
-      <div class="bn-item" id="bn-incubation" onclick="navigate('incubation')">
-        <div class="bn-icon">📂</div><div class="bn-label">Incubation</div>
-        <span class="bn-badge" id="bn-inc-count" style="display:none;">0</span>
-      </div>
-      <div class="bn-item" id="bn-profile" onclick="navigate('profile')">
-        <div class="bn-icon">⚙️</div><div class="bn-label">Settings</div>
-      </div>
-    </div>
+    <div class="bn-inner" id="bn-inner-items"></div>
   </nav>
 
 </div><!-- /app-shell -->
@@ -817,13 +836,8 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
     <div class="sb-logo"><svg viewBox="0 0 40 40" fill="none" width="18" height="18"><circle cx="20" cy="14" r="7" fill="white" opacity=".9"/><path d="M8 32 Q20 18 32 32" stroke="white" stroke-width="2.5" fill="none" opacity=".8"/></svg></div>
     <div class="sb-name">Udyami Vikas<small>Grassroutes</small></div>
   </div>
-  <div class="sb-nav">
-    <div class="sb-item" onclick="openIODashboard();closeDrawer()"><span class="sb-icon">📊</span><span class="sb-label">Dashboard ↗</span></div>
-    <div style="font-family:var(--fh);font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.25);padding:10px 12px 4px;">Survey</div>
-    <div class="sb-sub-item" onclick="openSurveyForm();closeDrawer()"><span class="sb-icon" style="font-size:13px;">📝</span><span class="sb-label">Survey Form</span></div>
-    <div class="sb-sub-item" onclick="navigate('survey');closeDrawer()"><span class="sb-icon" style="font-size:13px;">📋</span><span class="sb-label">Survey Pipeline</span></div>
-    <div class="sb-item" onclick="navigate('incubation');closeDrawer()"><span class="sb-icon">📂</span><span class="sb-label">Incubation Diary</span></div>
-    <div class="sb-item" onclick="navigate('profile');closeDrawer()"><span class="sb-icon">⚙️</span><span class="sb-label">Settings</span></div>
+  <div class="sb-nav" id="drawer-nav-items">
+    <!-- Rendered dynamically by buildNav() -->
   </div>
 </nav>
 
@@ -852,7 +866,7 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
   </div>
   <div class="inc-tab-bar" style="flex-shrink:0;overflow-x:auto;">
     <div class="inc-tab active" id="inc-tab-baseline"   onclick="switchIncubationTab('baseline')">Field Study / Baseline</div>
-    <div class="inc-tab"        id="inc-tab-visit"      onclick="switchIncubationTab('visit')">Visit Forms</div>
+    <div class="inc-tab"        id="inc-tab-visit"      onclick="switchIncubationTab('visit')">Interaction Forms</div>
     <div class="inc-tab"        id="inc-tab-assessment" onclick="switchIncubationTab('assessment')">Assessments</div>
     <div class="inc-tab"        id="inc-tab-udyamidash" onclick="switchIncubationTab('udyamidash')" style="color:var(--blue);opacity:.7;">Udyami Vikas Dashboard</div>
   </div>
@@ -1179,7 +1193,8 @@ function doLogout() {
 const screenTitles = {
   dashboard: 'Dashboard', survey: 'Survey Pipeline',
   incubation: 'Incubation Diary', profile: 'Settings',
-  entrepreneurs: 'Entrepreneurs', forms: 'Field Forms', analytics: 'Analytics'
+  entrepreneurs: 'Entrepreneurs', forms: 'Field Forms', analytics: 'Analytics',
+  approvals: 'Approvals'
 };
 let activeScreen = 'dashboard';
 let analyticsInited = false;
@@ -1218,6 +1233,7 @@ function navigate(screen) {
   if (screen === 'survey') renderSurveyPipeline();
   if (screen === 'forms') renderRecentImports();
   if (screen === 'incubation') renderIncubationDiary();
+  if (screen === 'approvals') renderSupervisorApprovals();
 }
 
 /* ═══════════════════════════════════════════════════
@@ -1274,9 +1290,15 @@ function showApp() {
   renderUser();
   renderDashboard();   // renders stat-strip / ind-grid / etc used by screen-dashboard hub
   _updateIncubationBadge();
-  // Default home: Incubation Diary
+  buildNav();
+  // Default home: role-dependent
   activeScreen = 'dashboard'; // allow navigate to switch
-  navigate('incubation');
+  const role = (currentUser && currentUser.role) ? currentUser.role.toLowerCase() : '';
+  if (role.includes('supervisor') || role.includes('sp')) {
+    navigate('approvals');
+  } else {
+    navigate('incubation');
+  }
 }
 
 function renderUser() {
@@ -1590,30 +1612,37 @@ function _getRejectedSet() {
 }
 
 function shortlistEntrepreneur(udyamiId) {
+  // Check if there is already a pending approval for this entrepreneur
+  const pending = getApprovals().find(a => a.udyamiId === udyamiId && a.type === 'survey' && a.status === 'pending');
+  if (pending) { showToast('⏳ Action already pending supervisor approval'); return; }
+
   const sl = _getShortlistedSet();
   const wasShortlisted = sl.has(udyamiId);
-  if (wasShortlisted) { sl.delete(udyamiId); } else { sl.add(udyamiId); }
-  localStorage.setItem('gr_shortlisted', JSON.stringify([...sl]));
+  const action = wasShortlisted ? 'unshortlist' : 'shortlist';
 
-  // Update flag in gr_udyami_records
-  try {
-    const recs = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]');
-    const idx = recs.findIndex(r => r.udyamiId === udyamiId);
-    if (idx >= 0) { recs[idx].shortlisted = !wasShortlisted; }
-    localStorage.setItem('gr_udyami_records', JSON.stringify(recs));
-  } catch(e) {}
-
-  // Rebuild main udyamis array and re-render dashboard
-  mergeLocalData();
+  createApproval('survey', {
+    udyamiId,
+    action,
+    officerName: (currentUser && currentUser.name) ? currentUser.name : (currentUser ? currentUser.id : 'Unknown'),
+    notes: action === 'shortlist' ? 'Officer shortlisted entrepreneur' : 'Officer removed from shortlist'
+  });
+  showToast('⏳ Sent for supervisor approval');
   renderSurveyPipeline();
-  showToast(wasShortlisted ? 'Removed from shortlist' : '✅ Entrepreneur shortlisted!');
 }
 
 function rejectEntrepreneur(udyamiId) {
+  const pending = getApprovals().find(a => a.udyamiId === udyamiId && a.type === 'survey' && a.status === 'pending');
+  if (pending) { showToast('⏳ Action already pending supervisor approval'); return; }
+
   const rj = _getRejectedSet();
-  if (rj.has(udyamiId)) { rj.delete(udyamiId); showToast('Rejection removed'); }
-  else { rj.add(udyamiId); showToast('Entrepreneur marked as rejected'); }
-  localStorage.setItem('gr_rejected', JSON.stringify([...rj]));
+  const wasRejected = rj.has(udyamiId);
+  createApproval('survey', {
+    udyamiId,
+    action: wasRejected ? 'unreject' : 'reject',
+    officerName: (currentUser && currentUser.name) ? currentUser.name : (currentUser ? currentUser.id : 'Unknown'),
+    notes: wasRejected ? 'Officer removed rejection' : 'Officer marked as rejected'
+  });
+  showToast('⏳ Sent for supervisor approval');
   renderSurveyPipeline();
 }
 
@@ -1622,35 +1651,69 @@ function _getSelectedSet() {
 }
 
 function selectEntrepreneur(udyamiId) {
+  const pending = getApprovals().find(a => a.udyamiId === udyamiId && a.type === 'survey' && a.status === 'pending');
+  if (pending) { showToast('⏳ Action already pending supervisor approval'); return; }
+
   const sel = _getSelectedSet();
   const wasSelected = sel.has(udyamiId);
+  createApproval('survey', {
+    udyamiId,
+    action: wasSelected ? 'deselect' : 'select',
+    officerName: (currentUser && currentUser.name) ? currentUser.name : (currentUser ? currentUser.id : 'Unknown'),
+    notes: wasSelected ? 'Officer removed from Incubation Diary' : 'Officer selected for Incubation Diary'
+  });
+  showToast('⏳ Sent for supervisor approval');
+  renderSurveyPipeline();
+  _updateIncubationBadge();
+}
 
-  if (wasSelected) {
-    sel.delete(udyamiId);
-    // Remove selected flag from record
+// Apply a survey approval action to the actual data
+function _applyApprovedSurveyAction(apv) {
+  const { udyamiId, action } = apv;
+  if (action === 'shortlist') {
+    const sl = _getShortlistedSet(); sl.add(udyamiId);
+    localStorage.setItem('gr_shortlisted', JSON.stringify([...sl]));
     try {
       const recs = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]');
       const idx = recs.findIndex(r => r.udyamiId === udyamiId);
-      if (idx >= 0) { recs[idx].selected = false; delete recs[idx].incId; }
+      if (idx >= 0) recs[idx].shortlisted = true;
       localStorage.setItem('gr_udyami_records', JSON.stringify(recs));
     } catch(e) {}
-    showToast('Removed from Incubation Diary');
-  } else {
-    sel.add(udyamiId);
-    // Stamp INC prefix on record
+  } else if (action === 'unshortlist') {
+    const sl = _getShortlistedSet(); sl.delete(udyamiId);
+    localStorage.setItem('gr_shortlisted', JSON.stringify([...sl]));
+    try {
+      const recs = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]');
+      const idx = recs.findIndex(r => r.udyamiId === udyamiId);
+      if (idx >= 0) recs[idx].shortlisted = false;
+      localStorage.setItem('gr_udyami_records', JSON.stringify(recs));
+    } catch(e) {}
+  } else if (action === 'select') {
+    const sel = _getSelectedSet(); sel.add(udyamiId);
     try {
       const recs = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]');
       const idx = recs.findIndex(r => r.udyamiId === udyamiId);
       if (idx >= 0) { recs[idx].selected = true; recs[idx].incId = 'INC' + udyamiId; }
       localStorage.setItem('gr_udyami_records', JSON.stringify(recs));
     } catch(e) {}
-    showToast('✅ Entrepreneur selected for Incubation!');
+    localStorage.setItem('gr_selected', JSON.stringify([...sel]));
+  } else if (action === 'deselect') {
+    const sel = _getSelectedSet(); sel.delete(udyamiId);
+    try {
+      const recs = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]');
+      const idx = recs.findIndex(r => r.udyamiId === udyamiId);
+      if (idx >= 0) { recs[idx].selected = false; delete recs[idx].incId; }
+      localStorage.setItem('gr_udyami_records', JSON.stringify(recs));
+    } catch(e) {}
+    localStorage.setItem('gr_selected', JSON.stringify([...sel]));
+  } else if (action === 'reject') {
+    const rj = _getRejectedSet(); rj.add(udyamiId);
+    localStorage.setItem('gr_rejected', JSON.stringify([...rj]));
+  } else if (action === 'unreject') {
+    const rj = _getRejectedSet(); rj.delete(udyamiId);
+    localStorage.setItem('gr_rejected', JSON.stringify([...rj]));
   }
-
-  localStorage.setItem('gr_selected', JSON.stringify([...sel]));
   mergeLocalData();
-  renderSurveyPipeline();
-  // Update incubation badge count
   _updateIncubationBadge();
 }
 
@@ -1663,6 +1726,14 @@ function _updateIncubationBadge() {
 }
 
 function _surveyStatusBadge(p) {
+  // Check pending/resolved approvals first
+  const apvs = getApprovals().filter(a => a.udyamiId === p.id && a.type === 'survey');
+  const latest = apvs.sort((a,b) => b.createdAt - a.createdAt)[0];
+  if (latest) {
+    if (latest.status === 'pending')  return '<span class="apv-badge apv-pending">⏳ Pending Approval</span>';
+    if (latest.status === 'rejected') return '<span class="apv-badge apv-rejected">✗ Rejected by Supervisor</span>';
+    if (latest.status === 'sentback') return '<span class="apv-badge apv-sentback">↩ Sent Back for Review</span>';
+  }
   if (p.selected)    return '<span style="background:var(--green-dark);color:#fff;font-family:var(--fh);font-size:8px;font-weight:800;padding:2px 7px;border-radius:8px;">📂 Incubation</span>';
   if (p.shortlisted) return '<span style="background:var(--green-light);color:var(--green-dark);font-family:var(--fh);font-size:8px;font-weight:800;padding:2px 7px;border-radius:8px;border:1px solid var(--green-mid);">✓ Shortlisted</span>';
   if (p.rejected)    return '<span style="background:var(--red-light);color:var(--red);font-family:var(--fh);font-size:8px;font-weight:800;padding:2px 7px;border-radius:8px;">✗ Rejected</span>';
@@ -1671,6 +1742,12 @@ function _surveyStatusBadge(p) {
 
 function _surveyActionBtns(p) {
   const sl = p.shortlisted, rj = p.rejected, se = p.selected;
+  const hasPending = getApprovals().some(a => a.udyamiId === p.id && a.type === 'survey' && a.status === 'pending');
+  if (hasPending) {
+    return `
+    <div style="font-size:11px;color:var(--orange-dark);padding:4px 0;font-weight:600;">⏳ Awaiting supervisor approval</div>
+    <button class="sc-btn sc-btn-view" onclick="openFullDashboardById('${p.id}')">→ View</button>`;
+  }
   return `
     <button class="sc-btn sc-btn-shortlist${sl?' done':''}" onclick="shortlistEntrepreneur('${p.id}')">${sl?'✓ Shortlisted':'✓ Shortlist'}</button>
     <button class="sc-btn sc-btn-select${se?' done':''}"    onclick="selectEntrepreneur('${p.id}')">${se?'📂 Selected':'📂 Select'}</button>
@@ -1819,6 +1896,10 @@ function renderIncubationDiary() {
         <div style="font-family:var(--fh);font-size:13px;font-weight:800;color:var(--charcoal);">${r.name}</div>
         <div class="inc-id-badge">INC${r.udyamiId}</div>
         <div style="font-size:10px;color:var(--grey-med);margin-top:4px;">${r.village||'—'} · ${r.district||'—'} · ${r.ind||'—'}</div>
+        <div style="margin-top:4px;display:flex;align-items:center;gap:6px;" onclick="event.stopPropagation()">
+          ${_getProgramStatusPill(r.udyamiId)}
+          ${_programStatusControls(r.udyamiId)}
+        </div>
       </div>
       <div style="text-align:right;flex-shrink:0;">
         <div style="font-family:var(--fh);font-size:11px;font-weight:700;color:var(--green-dark);">${fmtInr(r.salesBL||0)}</div>
@@ -1911,7 +1992,7 @@ function renderIncubationTabContent(tab) {
     const visits = allRecs.filter(rec => (rec.formType==='visit'||rec._formType==='visit') && rec.name===r.name);
     el.innerHTML = `
       <div class="dp-section">
-        <div class="dp-section-title">Visit Forms (${visits.length})</div>
+        <div class="dp-section-title">Interaction Forms (${visits.length})</div>
         ${visits.length === 0
           ? '<div style="color:var(--grey-med);font-size:12px;padding:8px 0;line-height:1.6;">No visits recorded yet for this entrepreneur.</div>'
           : visits.map(v=>`
@@ -1920,7 +2001,7 @@ function renderIncubationTabContent(tab) {
               <div style="font-size:10px;color:var(--grey-dark);margin-top:3px;">Sales: ${fmtInr(v.sales||0)} · Profit: ${fmtInr(v.profit||0)}</div>
             </div>`).join('')}
         <div style="margin-top:14px;">
-          <button class="dp-btn dp-btn-primary" style="width:auto;padding:10px 20px;" onclick="window.open('io_form_v12.html','_blank');showToast('Visit Form opened');">+ Log New Visit</button>
+          <button class="dp-btn dp-btn-primary" style="width:auto;padding:10px 20px;" onclick="window.open('io_form_v12.html','_blank');showToast('Interaction Form opened');">+ Log New Interaction</button>
         </div>
       </div>`;
   } else if (tab === 'assessment') {
@@ -2039,7 +2120,7 @@ function openDetail(id) {
     ${u.dropout?'<div style="background:var(--grey-xlight);border:1.5px solid var(--grey-light);border-radius:var(--rs);padding:12px;margin-bottom:16px;font-size:12px;color:var(--grey-dark);font-family:var(--fh);font-weight:700;">✗ Marked as programme dropout</div>':''}
     <div class="dp-open-full">
       <button class="dp-btn dp-btn-primary" onclick="openFullDashboard('${u.name}')">Open Full Dashboard →</button>
-      <button class="dp-btn dp-btn-secondary" onclick="openVisitForm('${u.id}')">+ Log Visit</button>
+      <button class="dp-btn dp-btn-secondary" onclick="openVisitForm('${u.id}')">+ Log Interaction</button>
     </div>
   `;
 
@@ -2107,7 +2188,7 @@ function openOfficerProfile(officerName) {
 function openVisitForm(id) {
   closeDetail();
   window.open('io_form_v12.html', '_blank');
-  showToast('Visit Form opened. Use Udyami ID GR-MP-24A-' + id);
+  showToast('Interaction Form opened. Use Udyami ID GR-MP-24A-' + id);
 }
 
 /* ═══════════════════════════════════════════════════
@@ -2396,6 +2477,380 @@ window.addEventListener('load', () => {
   document.getElementById('l-pw').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
   document.getElementById('l-uid').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('l-pw').focus(); });
 });
+
+/* ═══════════════════════════════════════════════════
+   APPROVAL DATA LAYER
+═══════════════════════════════════════════════════ */
+function getApprovals() {
+  try { return JSON.parse(localStorage.getItem('gr_approvals') || '[]'); } catch(e) { return []; }
+}
+function saveApprovals(arr) {
+  localStorage.setItem('gr_approvals', JSON.stringify(arr));
+}
+
+function createApproval(type, data) {
+  const apvs = getApprovals();
+  const id = 'APV-' + Date.now() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
+  const record = {
+    id,
+    type,           // 'survey' | 'status_change' | 'data_edit'
+    status: 'pending',
+    createdAt: Date.now(),
+    officerName: data.officerName || 'Unknown',
+    udyamiId: data.udyamiId || null,
+    action: data.action || null,         // for survey: shortlist/select/reject/etc
+    oldValue: data.oldValue || null,     // for status_change/data_edit
+    newValue: data.newValue || null,
+    fieldName: data.fieldName || null,   // for data_edit
+    notes: data.notes || '',
+    supervisorNotes: '',
+    resolvedAt: null,
+    resolvedBy: null
+  };
+  apvs.push(record);
+  saveApprovals(apvs);
+  _updateApprovalBadges();
+  return record;
+}
+
+function approveItem(apvId, supervisorNotes) {
+  const apvs = getApprovals();
+  const idx = apvs.findIndex(a => a.id === apvId);
+  if (idx < 0) return;
+  const apv = apvs[idx];
+  apv.status = 'approved';
+  apv.resolvedAt = Date.now();
+  apv.resolvedBy = (currentUser && currentUser.name) ? currentUser.name : (currentUser ? currentUser.id : 'Supervisor');
+  apv.supervisorNotes = supervisorNotes || '';
+  saveApprovals(apvs);
+
+  // Apply the action
+  if (apv.type === 'survey') _applyApprovedSurveyAction(apv);
+  if (apv.type === 'status_change') _applyApprovedStatusChange(apv);
+  if (apv.type === 'data_edit') _applyApprovedDataEdit(apv);
+
+  mergeLocalData();
+  _updateApprovalBadges();
+  renderSupervisorApprovals();
+  showToast('✅ Approved and applied');
+}
+
+function rejectItem(apvId, supervisorNotes) {
+  const apvs = getApprovals();
+  const idx = apvs.findIndex(a => a.id === apvId);
+  if (idx < 0) return;
+  apvs[idx].status = 'rejected';
+  apvs[idx].resolvedAt = Date.now();
+  apvs[idx].resolvedBy = (currentUser && currentUser.name) ? currentUser.name : (currentUser ? currentUser.id : 'Supervisor');
+  apvs[idx].supervisorNotes = supervisorNotes || '';
+  saveApprovals(apvs);
+  _updateApprovalBadges();
+  renderSurveyPipeline();
+  renderSupervisorApprovals();
+  showToast('✗ Approval rejected');
+}
+
+function sendBackItem(apvId, supervisorNotes) {
+  const apvs = getApprovals();
+  const idx = apvs.findIndex(a => a.id === apvId);
+  if (idx < 0) return;
+  apvs[idx].status = 'sentback';
+  apvs[idx].resolvedAt = Date.now();
+  apvs[idx].resolvedBy = (currentUser && currentUser.name) ? currentUser.name : (currentUser ? currentUser.id : 'Supervisor');
+  apvs[idx].supervisorNotes = supervisorNotes || '';
+  saveApprovals(apvs);
+  _updateApprovalBadges();
+  renderSurveyPipeline();
+  renderSupervisorApprovals();
+  showToast('↩ Sent back for review');
+}
+
+function _updateApprovalBadges() {
+  const pending = getApprovals().filter(a => a.status === 'pending');
+  const surveyCnt  = pending.filter(a => a.type === 'survey').length;
+  const statusCnt  = pending.filter(a => a.type === 'status_change').length;
+  const editCnt    = pending.filter(a => a.type === 'data_edit').length;
+  const totalPending = pending.length;
+
+  [['apv-badge-survey', surveyCnt], ['apv-badge-status', statusCnt], ['apv-badge-edit', editCnt]].forEach(([id, cnt]) => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = cnt; el.style.display = cnt > 0 ? 'inline-block' : 'none'; }
+  });
+  // Sidebar/nav approvals badge
+  const sbBadge = document.getElementById('sb-apv-count');
+  if (sbBadge) { sbBadge.textContent = totalPending; sbBadge.style.display = totalPending > 0 ? 'block' : 'none'; }
+}
+
+function _applyApprovedStatusChange(apv) {
+  try {
+    const recs = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]');
+    const idx = recs.findIndex(r => r.udyamiId === apv.udyamiId || r.incId === apv.udyamiId);
+    if (idx >= 0) recs[idx].programStatus = apv.newValue;
+    localStorage.setItem('gr_udyami_records', JSON.stringify(recs));
+  } catch(e) {}
+}
+
+function _applyApprovedDataEdit(apv) {
+  try {
+    const recs = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]');
+    const idx = recs.findIndex(r => r.udyamiId === apv.udyamiId || r.incId === apv.udyamiId);
+    if (idx >= 0 && apv.fieldName) recs[idx][apv.fieldName] = apv.newValue;
+    localStorage.setItem('gr_udyami_records', JSON.stringify(recs));
+  } catch(e) {}
+}
+
+/* ═══════════════════════════════════════════════════
+   PROGRAM STATUS (Incubation Diary)
+═══════════════════════════════════════════════════ */
+function requestStatusChange(udyamiId, newStatus) {
+  const pending = getApprovals().find(a => a.udyamiId === udyamiId && a.type === 'status_change' && a.status === 'pending');
+  if (pending) { showToast('⏳ Status change already pending approval'); return; }
+
+  try {
+    const recs = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]');
+    const rec = recs.find(r => r.udyamiId === udyamiId || r.incId === udyamiId);
+    const oldStatus = (rec && rec.programStatus) ? rec.programStatus : 'Active';
+    createApproval('status_change', {
+      udyamiId,
+      action: 'status_change',
+      oldValue: oldStatus,
+      newValue: newStatus,
+      officerName: (currentUser && currentUser.name) ? currentUser.name : (currentUser ? currentUser.id : 'Unknown'),
+      notes: `Status change request: ${oldStatus} → ${newStatus}`
+    });
+    showToast('⏳ Status change sent for supervisor approval');
+    renderIncubationDiary();
+  } catch(e) { showToast('Error creating status change request'); }
+}
+
+function _getProgramStatusPill(udyamiId) {
+  // Check pending
+  const pending = getApprovals().find(a => a.udyamiId === udyamiId && a.type === 'status_change' && a.status === 'pending');
+  if (pending) {
+    return `<span class="prog-status-pill ps-active" style="opacity:.6;">⏳ ${pending.newValue} (pending)</span>`;
+  }
+  try {
+    const recs = JSON.parse(localStorage.getItem('gr_udyami_records') || '[]');
+    const rec = recs.find(r => r.udyamiId === udyamiId || r.incId === udyamiId);
+    const st = (rec && rec.programStatus) ? rec.programStatus : 'Active';
+    const cls = st === 'Active' ? 'ps-active' : st === 'Inactive' ? 'ps-inactive' : 'ps-exited';
+    return `<span class="prog-status-pill ${cls}">${st === 'Active' ? '🟢' : st === 'Inactive' ? '🟡' : '🔴'} ${st}</span>`;
+  } catch(e) { return '<span class="prog-status-pill ps-active">🟢 Active</span>'; }
+}
+
+function _programStatusControls(udyamiId) {
+  const hasPending = getApprovals().some(a => a.udyamiId === udyamiId && a.type === 'status_change' && a.status === 'pending');
+  if (hasPending) return '<span style="font-size:11px;color:var(--orange-dark);">⏳ Pending supervisor approval</span>';
+  return `
+    <select class="prog-status-select" onchange="requestStatusChange('${udyamiId}', this.value)" onclick="event.stopPropagation()" style="font-size:11px;border:1px solid var(--border);border-radius:6px;padding:3px 6px;background:var(--white);">
+      <option value="">Change Status…</option>
+      <option value="Active">🟢 Active</option>
+      <option value="Inactive">🟡 Inactive</option>
+      <option value="Exited / Drop Off">🔴 Exited / Drop Off</option>
+    </select>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   BUILD NAV (role-aware)
+═══════════════════════════════════════════════════ */
+function buildNav() {
+  const role = (currentUser && currentUser.role) ? currentUser.role.toLowerCase() : '';
+  const isSupervisor = role.includes('supervisor') || role.includes('sp');
+  const totalPending = getApprovals().filter(a => a.status === 'pending').length;
+  const incCount = _getSelectedSet().size;
+  const badgeApv = totalPending > 0 ? `<span class="sb-badge" id="sb-apv-count" style="background:var(--orange-dark);">${totalPending}</span>` : `<span class="sb-badge" id="sb-apv-count" style="background:var(--orange-dark);display:none;">0</span>`;
+  const badgeInc = incCount > 0 ? `<span class="sb-badge" id="sb-inc-count" style="background:var(--green-dark);">${incCount}</span>` : `<span class="sb-badge" id="sb-inc-count" style="background:var(--green-dark);display:none;">0</span>`;
+
+  let sbHTML = '', bnHTML = '', drawerHTML = '';
+
+  if (isSupervisor) {
+    sbHTML = `
+      <div class="sb-item" id="sb-survey" onclick="navigate('survey')">
+        <span class="sb-icon">📋</span><span class="sb-label">Survey Pipeline</span>
+      </div>
+      <div class="sb-item" id="sb-incubation" onclick="navigate('incubation')">
+        <span class="sb-icon">🌱</span><span class="sb-label">Incubation Diary</span>${badgeInc}
+      </div>
+      <div class="sb-item" id="sb-approvals" onclick="navigate('approvals')">
+        <span class="sb-icon">✅</span><span class="sb-label">Approvals</span>${badgeApv}
+      </div>
+      <div class="sb-item" onclick="openIODashboard()">
+        <span class="sb-icon">📊</span><span class="sb-label">IO Dashboard ↗</span>
+      </div>
+      <div class="sb-item" id="sb-profile" onclick="navigate('profile')">
+        <span class="sb-icon">⚙️</span><span class="sb-label">Settings</span>
+      </div>`;
+
+    bnHTML = `
+      <div class="bn-item" id="bn-survey" onclick="navigate('survey')">
+        <div class="bn-ic">📋</div><div class="bn-lbl">Survey</div>
+      </div>
+      <div class="bn-item" id="bn-incubation" onclick="navigate('incubation')">
+        <div class="bn-ic">🌱</div><div class="bn-lbl">Incubation</div>
+        <span class="bn-badge" id="bn-inc-count" style="display:none;background:var(--green-dark);">0</span>
+      </div>
+      <div class="bn-item active" id="bn-approvals" onclick="navigate('approvals')">
+        <div class="bn-ic">✅</div><div class="bn-lbl">Approvals</div>
+        <span class="bn-badge" id="bn-apv-count" style="${totalPending>0?'':'display:none;'}background:var(--orange-dark);">${totalPending}</span>
+      </div>
+      <div class="bn-item" id="bn-profile" onclick="navigate('profile')">
+        <div class="bn-ic">⚙️</div><div class="bn-lbl">Settings</div>
+      </div>`;
+  } else {
+    // IO Officer
+    sbHTML = `
+      <div class="sb-item" id="sb-survey" onclick="toggleSurveyMenu()">
+        <span class="sb-icon">📋</span><span class="sb-label">Survey</span>
+        <span id="survey-arrow" class="sb-arrow">›</span>
+      </div>
+      <div id="survey-sub-items" style="display:none;padding-left:16px;">
+        <div class="sb-item sb-sub" onclick="openSurveyForm()">📝 Survey Form ↗</div>
+        <div class="sb-item sb-sub" id="sb-survey-pipeline" onclick="navigate('survey')">📋 Survey Pipeline</div>
+      </div>
+      <div class="sb-item" id="sb-incubation" onclick="navigate('incubation')">
+        <span class="sb-icon">🌱</span><span class="sb-label">Incubation Diary</span>${badgeInc}
+      </div>
+      <div class="sb-item" onclick="openIODashboard()">
+        <span class="sb-icon">📊</span><span class="sb-label">Dashboard ↗</span>
+      </div>
+      <div class="sb-item" id="sb-profile" onclick="navigate('profile')">
+        <span class="sb-icon">⚙️</span><span class="sb-label">Settings</span>
+      </div>`;
+
+    bnHTML = `
+      <div class="bn-item" id="bn-survey" onclick="openSurveySubMenu()">
+        <div class="bn-ic">📋</div><div class="bn-lbl">Survey</div>
+      </div>
+      <div class="bn-item active" id="bn-incubation" onclick="navigate('incubation')">
+        <div class="bn-ic">🌱</div><div class="bn-lbl">Incubation</div>
+        <span class="bn-badge" id="bn-inc-count" style="${incCount>0?'':'display:none;'}background:var(--green-dark);">${incCount}</span>
+      </div>
+      <div class="bn-item" onclick="openIODashboard()">
+        <div class="bn-ic">📊</div><div class="bn-lbl">Dashboard</div>
+      </div>
+      <div class="bn-item" id="bn-profile" onclick="navigate('profile')">
+        <div class="bn-ic">⚙️</div><div class="bn-lbl">Settings</div>
+      </div>`;
+  }
+
+  drawerHTML = sbHTML; // Drawer mirrors sidebar
+
+  const sbEl     = document.getElementById('sb-nav-items');
+  const bnEl     = document.getElementById('bn-inner-items');
+  const drawerEl = document.getElementById('drawer-nav-items');
+  if (sbEl)     sbEl.innerHTML     = sbHTML;
+  if (bnEl)     bnEl.innerHTML     = bnHTML;
+  if (drawerEl) drawerEl.innerHTML = drawerHTML;
+}
+
+/* ═══════════════════════════════════════════════════
+   SUPERVISOR APPROVALS SCREEN
+═══════════════════════════════════════════════════ */
+let _activeApvTab = 'survey';
+
+function setApvTab(tab) {
+  _activeApvTab = tab;
+  ['survey','status','edit','history'].forEach(t => {
+    const el = document.getElementById('apv-tab-' + t);
+    if (el) el.classList.toggle('active', t === tab);
+  });
+  renderSupervisorApprovals();
+}
+
+function renderSupervisorApprovals() {
+  _updateApprovalBadges();
+  const el = document.getElementById('apv-queue-list');
+  if (!el) return;
+
+  const all = getApprovals();
+  const tab = _activeApvTab;
+
+  if (tab === 'history') {
+    _renderAuditTrail(el, all);
+    return;
+  }
+
+  const typeMap = { survey: 'survey', status: 'status_change', edit: 'data_edit' };
+  const typeFilter = typeMap[tab];
+  const pending = all.filter(a => a.type === typeFilter && a.status === 'pending');
+
+  if (!pending.length) {
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--grey-med);font-size:13px;">No pending approvals in this category.</div>';
+    return;
+  }
+
+  el.innerHTML = pending.map(apv => {
+    const recs = (() => { try { return JSON.parse(localStorage.getItem('gr_udyami_records') || '[]'); } catch(e) { return []; } })();
+    const rec = recs.find(r => r.udyamiId === apv.udyamiId || r.incId === apv.udyamiId);
+    const name = rec ? (rec.name || apv.udyamiId) : apv.udyamiId;
+    const village = rec ? (rec.village || '') : '';
+    const when = apv.createdAt ? new Date(apv.createdAt).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : '—';
+    const actionLabel = _apvActionLabel(apv);
+
+    return `
+    <div class="apv-queue-item" id="apvitem-${apv.id}">
+      <div class="apv-qi-header">
+        <div>
+          <div class="apv-qi-name">${name}</div>
+          <div class="apv-qi-meta">${village ? village + ' · ' : ''}${apv.udyamiId}</div>
+        </div>
+        <span class="apv-badge apv-pending">⏳ Pending</span>
+      </div>
+      <div class="apv-qi-action">${actionLabel}</div>
+      ${apv.notes ? `<div class="apv-qi-notes"><strong>Officer notes:</strong> ${apv.notes}</div>` : ''}
+      <div class="apv-qi-meta" style="margin-top:4px;">By: ${apv.officerName} · ${when}</div>
+      <div class="apv-qi-btns">
+        <button class="apv-btn-approve" onclick="approveItem('${apv.id}','')">✅ Approve</button>
+        <button class="apv-btn-reject"  onclick="_promptApvAction('reject','${apv.id}')">✗ Reject</button>
+        <button class="apv-btn-back"    onclick="_promptApvAction('sendback','${apv.id}')">↩ Send Back</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function _apvActionLabel(apv) {
+  if (apv.type === 'survey') {
+    const labels = {shortlist:'Shortlist', unshortlist:'Remove from shortlist', select:'Select for Incubation', deselect:'Remove from Incubation', reject:'Mark as Rejected', unreject:'Remove rejection'};
+    return `<strong>Action:</strong> ${labels[apv.action] || apv.action}`;
+  }
+  if (apv.type === 'status_change') {
+    return `<strong>Status change:</strong> <span class="apv-old">${apv.oldValue}</span> → <span class="apv-new">${apv.newValue}</span>`;
+  }
+  if (apv.type === 'data_edit') {
+    return `<strong>Edit field:</strong> ${apv.fieldName} — <span class="apv-old">${apv.oldValue}</span> → <span class="apv-new">${apv.newValue}</span>`;
+  }
+  return apv.action || '—';
+}
+
+function _promptApvAction(action, apvId) {
+  const notes = prompt(action === 'reject' ? 'Reason for rejection (optional):' : 'Feedback for officer (optional):') || '';
+  if (action === 'reject') rejectItem(apvId, notes);
+  else sendBackItem(apvId, notes);
+}
+
+function _renderAuditTrail(el, all) {
+  const resolved = all.filter(a => a.status !== 'pending').sort((a,b) => (b.resolvedAt||0) - (a.resolvedAt||0));
+  if (!resolved.length) {
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--grey-med);font-size:13px;">No resolved approvals yet.</div>';
+    return;
+  }
+  el.innerHTML = resolved.map(apv => {
+    const recs = (() => { try { return JSON.parse(localStorage.getItem('gr_udyami_records') || '[]'); } catch(e) { return []; } })();
+    const rec = recs.find(r => r.udyamiId === apv.udyamiId || r.incId === apv.udyamiId);
+    const name = rec ? (rec.name || apv.udyamiId) : apv.udyamiId;
+    const when = apv.resolvedAt ? new Date(apv.resolvedAt).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : '—';
+    const statusBadge = apv.status === 'approved' ? '<span class="apv-badge apv-approved">✅ Approved</span>'
+      : apv.status === 'rejected' ? '<span class="apv-badge apv-rejected">✗ Rejected</span>'
+      : '<span class="apv-badge apv-sentback">↩ Sent Back</span>';
+    return `
+    <div class="audit-row">
+      <div class="audit-who">${name} · <span style="color:var(--grey-med);">${apv.udyamiId}</span></div>
+      <div class="audit-what">${_apvActionLabel(apv)} ${statusBadge}</div>
+      <div class="audit-when">Officer: ${apv.officerName} · Supervisor: ${apv.resolvedBy || '—'} · ${when}</div>
+      ${apv.supervisorNotes ? `<div class="audit-when" style="color:var(--orange-dark);">Supervisor notes: ${apv.supervisorNotes}</div>` : ''}
+    </div>`;
+  }).join('');
+}
 </script>
 </body>
 </html>

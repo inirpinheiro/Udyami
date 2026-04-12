@@ -386,7 +386,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
   <div class="fstab" onclick="switchForm('visit',this)">
     <div class="fstab-inner">
       <span class="fstab-icon">📍</span>
-      <div class="fstab-title">Visit Form</div>
+      <div class="fstab-title">Interaction Form</div>
       <div class="fstab-sub">Every 10–15 Days · Training · Peer · Exposure · Journal</div>
       <span class="freq-badge fb-reg">Regular · ~30 min</span>
     </div>
@@ -1208,7 +1208,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 <div id="panel-visit" class="panel">
 <div class="import-bar">
   <div class="import-bar-left">
-    <div class="import-bar-title">📥 Bulk Import — Visit Form</div>
+    <div class="import-bar-title">📥 Bulk Import — Interaction Form</div>
     <div class="import-bar-note">Download the template, fill in data, then upload. Files not matching the template structure will be rejected.</div>
   </div>
   <div class="import-bar-actions">
@@ -1217,7 +1217,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <input type="file" id="import-input-visit" accept=".csv,.xlsx" style="display:none" onchange="processImport('visit',this)"/>
   </div>
 </div>
-<div class="info-pill">📍 Visit Form — Fill on <strong>every field visit</strong>, approximately every 10–15 days. Captures financial updates, observations, and action tracking.</div>
+<div class="info-pill">📍 Interaction Form — Fill on <strong>every field visit</strong>, approximately every 10–15 days. Captures financial updates, observations, and action tracking.</div>
 
 <!-- Visit Meta -->
 <div class="visit-meta">
@@ -1878,7 +1878,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 </div>
 
 <div class="form-footer">
-  <button class="submit-btn" onclick="submitForm('visit')">✅ Submit Visit</button>
+  <button class="submit-btn" onclick="submitForm('visit')">✅ Submit Interaction</button>
   <button class="print-btn" onclick="window.print()">🖨 Print Form</button>
   <div class="footer-note">Regular visit forms update <strong>financial metrics, tool progress, and interaction history</strong> on the dashboard. Target frequency: every 10–15 days.</div>
 </div>
@@ -3250,7 +3250,7 @@ const IMPORT_TEMPLATES = {
     sample: ['GR-MP-2024-A-001','2024-02-01','Priya Rawat','17','done','3','3','2','2','3','3','3','3','4','3','3','4','4','4','3','4','4','3','3','3','enrolled','Credit;Training','Good progress. Needs help with BMC.'],
   },
   visit: {
-    label: 'Visit Form',
+    label: 'Interaction Form',
     filename: 'GR_Visit_Template.csv',
     headers: [
       'udyami_id','visit_date','officer_name','visit_type',
