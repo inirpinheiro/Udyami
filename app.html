@@ -461,13 +461,20 @@ table.ent-table{width:100%;border-collapse:collapse;font-size:11px;}
       <!-- ══ DASHBOARD HUB SCREEN ══ -->
       <div id="screen-dashboard" class="screen">
         <div class="sl">Dashboard Access</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px;">
           <!-- IO Dashboard v7 -->
           <div class="panel-card" style="cursor:pointer;transition:all .2s;border:2px solid var(--border);" onclick="openIODashboard()" onmouseover="this.style.borderColor='var(--green)';this.style.boxShadow='0 8px 24px rgba(139,178,90,.15)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow=''">
             <div style="font-size:36px;margin-bottom:14px;">📊</div>
             <div style="font-family:var(--fh);font-size:15px;font-weight:900;color:var(--charcoal);margin-bottom:6px;">IO Batch Dashboard</div>
-            <div style="font-size:11px;color:var(--grey-med);line-height:1.6;margin-bottom:16px;">Overall officer dashboard — batch-level KPIs, entrepreneur list, visit schedules, and progress tracking.</div>
+            <div style="font-size:11px;color:var(--grey-med);line-height:1.6;margin-bottom:16px;">Officer dashboard — batch-level KPIs, entrepreneur list, visit schedules, and progress tracking.</div>
             <div style="display:flex;align-items:center;gap:6px;font-family:var(--fh);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--green-dark);">Open IO Dashboard v7 ↗</div>
+          </div>
+          <!-- Supervisor Portfolio Dashboard -->
+          <div class="panel-card" style="cursor:pointer;transition:all .2s;border:2px solid var(--border);" onclick="openSupervisorDashboard()" onmouseover="this.style.borderColor='var(--purple)';this.style.boxShadow='0 8px 24px rgba(124,92,191,.12)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow=''">
+            <div style="font-size:36px;margin-bottom:14px;">🏛</div>
+            <div style="font-family:var(--fh);font-size:15px;font-weight:900;color:var(--charcoal);margin-bottom:6px;">Supervisor Portfolio Dashboard</div>
+            <div style="font-size:11px;color:var(--grey-med);line-height:1.6;margin-bottom:16px;">NGO supervisor view — portfolio GMV, officer performance heatmap, escalations, and funder report.</div>
+            <div style="display:flex;align-items:center;gap:6px;font-family:var(--fh);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--purple);">Open Supervisor Dashboard v2 ↗</div>
           </div>
           <!-- Udyami Vikas Dashboard -->
           <div class="panel-card" style="cursor:pointer;transition:all .2s;border:2px solid var(--border);" onclick="openEntrepreneurDashboard()" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 8px 24px rgba(74,127,193,.12)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow=''">
@@ -1241,6 +1248,11 @@ function openSurveyForm() {
 function openIODashboard() {
   window.open('io_dashboard_v7.html', '_blank');
   showToast('IO Dashboard v7 opened');
+}
+
+function openSupervisorDashboard() {
+  window.open('supervisor_dashboard_v2.html', '_blank');
+  showToast('Supervisor Portfolio Dashboard opened');
 }
 
 function openEntrepreneurDashboard(u) {

@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Udyami Vikas — Supervisor Dashboard v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --green:#8bb25a;--green-dark:#5e8332;--green-deep:#3d5c1f;--green-light:#eef4e5;--green-mid:#c8e0a0;
+  --orange:#f9a556;--orange-dark:#d9760f;--orange-light:#fff5ea;--orange-mid:#fdd9ad;
+  --charcoal:#1e2a16;--ink:#2e3d20;--grey-dark:#555f4a;--grey-med:#7a8a6a;--grey-light:#e2e9d8;--grey-xlight:#f4f7ef;
+  --white:#fff;--red:#c94444;--red-light:#fdf0f0;--blue:#4a7fc1;--blue-light:#eef4fc;--purple:#7c5cbf;--purple-light:#f0ecf9;
+  --teal:#2a9d8f;--teal-light:#e0f5f3;
+  --border:#d6e2c4;--border-strong:#b8d08a;
+  --fh:'Montserrat',sans-serif;--fb:'Open Sans',sans-serif;--r:10px;--rs:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--grey-xlight);color:var(--ink);font-family:var(--fb);font-size:13px;min-height:100vh;}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:60px;background:var(--green-deep);position:sticky;top:0;z-index:200;box-shadow:0 2px 14px rgba(0,0,0,.3);gap:8px;}
+.tl{display:flex;align-items:center;gap:12px;}
+.logo-mark{width:38px;height:38px;background:var(--green);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.brand-name{font-family:var(--fh);font-size:15px;font-weight:800;color:#fff;letter-spacing:.5px;line-height:1.1;}
+.brand-name span{color:var(--green-mid);}
+.brand-sub{font-size:9px;color:rgba(255,255,255,.45);letter-spacing:1.5px;text-transform:uppercase;font-family:var(--fh);font-weight:500;}
+.sv-chip{background:rgba(200,224,160,.18);border:1px solid rgba(200,224,160,.35);border-radius:20px;padding:5px 14px;display:flex;align-items:center;gap:9px;}
+.sv-avatar{width:28px;height:28px;border-radius:50%;background:var(--green-mid);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:10px;font-weight:900;color:var(--green-deep);}
+.sv-name{font-family:var(--fh);font-size:11px;font-weight:700;color:rgba(255,255,255,.9);}
+.sv-role{font-size:9px;color:rgba(255,255,255,.45);font-family:var(--fh);}
+.view-toggle{display:flex;background:rgba(0,0,0,.2);border-radius:var(--rs);padding:3px;gap:2px;}
+.vt-btn{padding:5px 14px;border-radius:5px;font-family:var(--fh);font-size:10px;font-weight:700;cursor:pointer;border:none;transition:all .15s;letter-spacing:.3px;}
+.vt-btn.active{background:var(--green);color:white;}
+.vt-btn:not(.active){background:transparent;color:rgba(255,255,255,.5);}
+.io-dash-btn{background:rgba(200,224,160,.18);border:1px solid rgba(200,224,160,.35);border-radius:var(--rs);padding:6px 14px;font-family:var(--fh);font-size:10px;font-weight:700;color:rgba(255,255,255,.8);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;text-decoration:none;}
+.io-dash-btn:hover{background:rgba(200,224,160,.3);}
+
+/* BATCH COHORT TABS */
+.batch-cohort-bar{background:var(--charcoal);border-bottom:2px solid rgba(139,178,90,.25);padding:0 28px;display:flex;align-items:center;gap:0;overflow-x:auto;}
+.bct{padding:11px 22px;cursor:pointer;font-family:var(--fh);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.38);border-bottom:3px solid transparent;transition:all .18s;white-space:nowrap;display:flex;align-items:center;gap:7px;}
+.bct.active{color:var(--green);border-bottom-color:var(--green);}
+.bct:hover:not(.active){color:rgba(255,255,255,.7);}
+.bct-pip{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.bct-meta{margin-left:auto;display:flex;gap:20px;padding:8px 0;flex-shrink:0;}
+.bct-m{text-align:right;}
+.bct-mv{font-family:var(--fh);font-size:12px;font-weight:800;color:var(--green);}
+.bct-ml{font-size:9px;color:rgba(255,255,255,.3);font-family:var(--fh);text-transform:uppercase;letter-spacing:.8px;}
+
+/* CONTENT */
+.content{padding:20px 28px 56px;}
+.sl{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--grey-med);margin-bottom:12px;margin-top:4px;display:flex;align-items:center;gap:8px;}
+.sl::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--green);flex-shrink:0;}
+.sl::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* QUICK STATS */
+.qstat-row{display:grid;grid-template-columns:repeat(9,1fr);gap:9px;margin-bottom:20px;}
+.qs{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:11px 12px;box-shadow:0 1px 3px rgba(30,42,22,.07);}
+.qs-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px;}
+.qs-icon{font-size:14px;}
+.qs-delta{font-family:var(--fh);font-size:9px;font-weight:700;padding:1px 5px;border-radius:7px;}
+.d-up{background:#e8f5e0;color:var(--green-dark);}
+.d-warn{background:var(--orange-light);color:var(--orange-dark);}
+.d-red{background:var(--red-light);color:var(--red);}
+.qs-num{font-family:var(--fh);font-size:18px;font-weight:900;color:var(--ink);line-height:1;margin-bottom:1px;}
+.qs-lbl{font-family:var(--fh);font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--grey-med);}
+.qs-sub{font-size:9px;color:var(--grey-dark);margin-top:3px;}
+.qs-bl{display:flex;align-items:center;gap:4px;margin-top:4px;padding-top:4px;border-top:1px solid var(--grey-light);}
+.qs-bll{font-size:8px;color:var(--grey-med);font-family:var(--fh);}
+.qs-blv{font-size:8px;font-family:var(--fh);font-weight:700;color:var(--grey-dark);}
+.qs-blc{font-size:8px;font-family:var(--fh);font-weight:800;}
+
+/* PROGRAMME HIGHLIGHTS */
+.prog-highlight{background:var(--charcoal);border-radius:var(--r);padding:18px 22px;margin-bottom:20px;display:flex;gap:0;overflow:hidden;}
+.ph-item{flex:1;padding:0 20px;position:relative;}
+.ph-item:not(:last-child)::after{content:'';position:absolute;right:0;top:10%;height:80%;width:1px;background:rgba(255,255,255,.1);}
+.ph-item:first-child{padding-left:4px;}
+.ph-label{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);margin-bottom:5px;}
+.ph-value{font-family:var(--fh);font-size:26px;font-weight:900;color:var(--green);line-height:1;margin-bottom:3px;}
+.ph-baseline{font-size:10px;color:rgba(255,255,255,.35);margin-bottom:3px;}
+.ph-change{display:inline-block;font-family:var(--fh);font-size:11px;font-weight:800;padding:3px 10px;border-radius:8px;margin-bottom:6px;}
+.ph-bar-bg{height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;}
+.ph-bar-fill{height:100%;border-radius:3px;}
+.ph-bar-lbl{display:flex;justify-content:space-between;font-size:8px;color:rgba(255,255,255,.3);font-family:var(--fh);font-weight:600;margin-top:3px;}
+
+/* INLINE TOGGLE TABS */
+.itab-bar{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap;align-items:center;}
+.itab-label{font-family:var(--fh);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--grey-med);margin-right:4px;}
+.itab{padding:5px 13px;border-radius:20px;cursor:pointer;font-family:var(--fh);font-size:10px;font-weight:700;border:1.5px solid var(--border);background:var(--white);color:var(--grey-dark);transition:all .15s;white-space:nowrap;}
+.itab.active{background:var(--green-dark);color:#fff;border-color:var(--green-dark);}
+.itab:hover:not(.active){border-color:var(--green);color:var(--green-dark);}
+
+/* OFFICER PERFORMANCE TABLE */
+.op-table{width:100%;border-collapse:collapse;font-size:11px;}
+.op-table thead tr{background:var(--charcoal);}
+.op-table th{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.58);padding:9px 10px;text-align:left;white-space:nowrap;}
+.op-table th:not(:first-child){text-align:center;}
+.op-table tbody tr{border-bottom:1px solid var(--grey-light);transition:background .12s;cursor:pointer;}
+.op-table tbody tr:hover{background:var(--green-light);}
+.op-table tbody tr.flagged-row{background:#fff8f8;}
+.op-table td{padding:9px 10px;vertical-align:middle;}
+.op-table td:not(:first-child){text-align:center;}
+.io-name-cell{font-family:var(--fh);font-size:11px;font-weight:800;color:var(--ink);}
+.io-sub-cell{font-size:9px;color:var(--grey-med);margin-top:1px;}
+.io-status-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;}
+.cell-chip{display:inline-block;font-family:var(--fh);font-size:10px;font-weight:800;padding:3px 9px;border-radius:8px;min-width:38px;text-align:center;}
+.cc-green{background:var(--green-light);color:var(--green-dark);}
+.cc-amber{background:var(--orange-light);color:var(--orange-dark);}
+.cc-red{background:var(--red-light);color:var(--red);}
+.cc-blue{background:var(--blue-light);color:var(--blue);}
+.mini-prog{width:64px;height:5px;background:var(--grey-light);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:4px;}
+.mini-fill{height:100%;border-radius:3px;}
+.pct-text{font-family:var(--fh);font-size:10px;font-weight:800;vertical-align:middle;}
+.flag-badge{display:inline-block;background:var(--red);color:#fff;font-family:var(--fh);font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;}
+.tfoot-row td{background:var(--grey-xlight);border-top:2px solid var(--border);font-family:var(--fh);font-size:10px;font-weight:800;color:var(--ink);padding:9px 10px;}
+.tfoot-row td:not(:first-child){text-align:center;}
+
+/* IO DRILL-DOWN PANEL */
+.io-detail-panel{display:none;background:var(--white);border:2px solid var(--green-mid);border-radius:var(--r);padding:20px;margin-bottom:20px;box-shadow:0 4px 20px rgba(139,178,90,.15);}
+.io-detail-panel.open{display:block;}
+.io-dp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+.io-dp-name{font-family:var(--fh);font-size:18px;font-weight:900;}
+.io-dp-meta{font-size:11px;color:var(--grey-med);margin-top:2px;}
+.io-dp-close{background:var(--grey-xlight);border:1px solid var(--border);border-radius:var(--rs);padding:6px 14px;font-family:var(--fh);font-size:10px;font-weight:700;cursor:pointer;color:var(--grey-dark);}
+.io-dp-close:hover{background:var(--border);}
+.io-dp-stats{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px;}
+.io-dp-stat{text-align:center;background:var(--grey-xlight);border-radius:var(--rs);padding:10px 8px;}
+.io-dp-sv{font-family:var(--fh);font-size:16px;font-weight:900;color:var(--ink);}
+.io-dp-sl{font-size:9px;font-family:var(--fh);font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--grey-med);margin-top:2px;}
+.io-btn-bar{display:flex;gap:8px;flex-wrap:wrap;}
+.io-dp-btn{padding:8px 18px;border-radius:var(--rs);font-family:var(--fh);font-size:10px;font-weight:800;cursor:pointer;border:1.5px solid;transition:all .15s;letter-spacing:.3px;}
+.io-dp-btn-green{background:var(--green-dark);color:#fff;border-color:var(--green-dark);}
+.io-dp-btn-green:hover{background:var(--green-deep);}
+.io-dp-btn-blue{background:var(--blue-light);color:var(--blue);border-color:#b8d0ee;}
+.io-dp-btn-blue:hover{background:var(--blue);color:#fff;}
+.io-dp-btn-outline{background:var(--white);color:var(--grey-dark);border-color:var(--border);}
+.io-dp-btn-outline:hover{border-color:var(--green);color:var(--green-dark);}
+
+/* GMV MATRIX */
+.gmv-matrix{width:100%;border-collapse:collapse;font-size:11px;}
+.gmv-matrix th{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.58);padding:9px 12px;text-align:left;background:var(--charcoal);white-space:nowrap;}
+.gmv-matrix th:not(:first-child){text-align:center;}
+.gmv-matrix tbody tr{border-bottom:1px solid var(--grey-light);}
+.gmv-matrix tbody tr:hover{background:var(--green-light);}
+.gmv-matrix td{padding:9px 12px;vertical-align:middle;}
+.gmv-matrix td:not(:first-child){text-align:center;}
+.gmv-val{font-family:var(--fh);font-size:11px;font-weight:800;color:var(--green-dark);}
+.gmv-bl{font-size:9px;color:var(--grey-med);display:block;margin-top:1px;}
+.gmv-delta{font-family:var(--fh);font-size:9px;font-weight:800;}
+.gmv-empty{color:var(--grey-med);font-style:italic;font-size:10px;}
+.gmv-total-cell{font-family:var(--fh);font-size:12px;font-weight:900;color:var(--green-dark);}
+.gmv-total-row td{background:var(--grey-xlight);border-top:2px solid var(--border);font-family:var(--fh);font-size:10px;font-weight:800;color:var(--ink);padding:9px 12px;}
+.gmv-total-row td:not(:first-child){text-align:center;}
+
+/* HEATMAP */
+.hm-table{width:100%;border-collapse:collapse;font-size:11px;}
+.hm-table thead tr{background:var(--charcoal);}
+.hm-table th{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.6);padding:9px 10px;text-align:center;white-space:nowrap;}
+.hm-table th:first-child{text-align:left;}
+.hm-table tbody tr{border-bottom:1px solid var(--grey-light);}
+.hm-table tbody tr.flagged-row{background:#fff8f8;}
+.hm-table td{padding:8px 10px;text-align:center;vertical-align:middle;}
+.hm-table td:first-child{text-align:left;}
+.hm-cell{display:inline-block;width:54px;height:28px;border-radius:6px;font-family:var(--fh);font-size:11px;font-weight:800;line-height:28px;text-align:center;}
+.hm-green{background:var(--green-light);color:var(--green-dark);}
+.hm-amber{background:var(--orange-light);color:var(--orange-dark);}
+.hm-red{background:var(--red-light);color:var(--red);}
+.hm-na{background:var(--grey-xlight);color:var(--grey-med);font-style:italic;font-size:9px;}
+.hm-officer{font-family:var(--fh);font-size:11px;font-weight:800;color:var(--ink);}
+.hm-sub{font-size:9px;color:var(--grey-med);}
+
+/* ESCALATIONS */
+.esc-list{display:flex;flex-direction:column;gap:7px;}
+.esc-item{display:flex;align-items:flex-start;gap:11px;padding:10px 13px;border-radius:var(--rs);border:1px solid;}
+.esc-critical{background:#fff4f4;border-color:#f5c0c0;}
+.esc-warn{background:var(--orange-light);border-color:var(--orange-mid);}
+.esc-info{background:var(--blue-light);border-color:#b8d0ee;}
+.esc-icon{font-size:15px;flex-shrink:0;margin-top:1px;}
+.esc-title{font-family:var(--fh);font-size:11px;font-weight:800;color:var(--ink);margin-bottom:2px;}
+.esc-detail{font-size:10px;color:var(--grey-dark);line-height:1.5;}
+.esc-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
+.esc-tag{font-size:9px;font-family:var(--fh);font-weight:700;padding:2px 7px;border-radius:6px;}
+.esc-io{font-size:9px;color:var(--grey-med);font-family:var(--fh);font-weight:600;margin-top:3px;}
+
+/* LAYOUTS */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.panel-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:0 1px 3px rgba(30,42,22,.07);}
+.pc-title{font-family:var(--fh);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--ink);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.pc-tag{font-size:9px;padding:2px 8px;border-radius:8px;text-transform:none;letter-spacing:0;font-weight:700;flex-shrink:0;}
+
+/* FUNDER REPORT */
+.fr-filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;align-items:center;padding:12px 16px;background:var(--grey-xlight);border:1px solid var(--border);border-radius:var(--rs);}
+.fr-group{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.fr-group-label{font-family:var(--fh);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--grey-med);margin-right:2px;}
+.fr-divider{width:1px;height:22px;background:var(--border);margin:0 6px;}
+.fr-tab{padding:5px 12px;border-radius:16px;cursor:pointer;font-family:var(--fh);font-size:10px;font-weight:700;border:1.5px solid var(--border);background:var(--white);color:var(--grey-dark);transition:all .15s;white-space:nowrap;}
+.fr-tab.active{background:var(--charcoal);color:#fff;border-color:var(--charcoal);}
+.fr-tab:hover:not(.active){border-color:var(--green);color:var(--green-dark);}
+.target-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--grey-light);}
+.target-row:last-child{border-bottom:none;}
+.tr-label{font-size:11px;color:var(--ink);flex:1;}
+.tr-target{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--grey-dark);min-width:50px;text-align:right;}
+.tr-actual{font-family:var(--fh);font-size:11px;font-weight:800;min-width:50px;text-align:right;}
+.tr-bar-wrap{width:80px;height:7px;background:var(--grey-light);border-radius:4px;overflow:hidden;}
+.tr-bar-fill{height:100%;border-radius:4px;}
+.tr-status{font-size:9px;font-family:var(--fh);font-weight:700;padding:2px 7px;border-radius:6px;min-width:48px;text-align:center;flex-shrink:0;}
+.funder-3col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;}
+.funder-metric{border-radius:var(--rs);padding:12px;border:1px solid;}
+.fm-target{background:var(--grey-xlight);border-color:var(--border);}
+.fm-actual{background:var(--green-light);border-color:var(--border-strong);}
+.fm-gap{background:var(--orange-light);border-color:var(--orange-mid);}
+.fm-label{font-family:var(--fh);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;}
+.fm-num{font-family:var(--fh);font-size:20px;font-weight:900;line-height:1;margin-bottom:2px;}
+.fm-sub{font-size:9px;margin-top:2px;}
+
+/* PIPELINE */
+.pipeline-table{width:100%;border-collapse:collapse;font-size:11px;}
+.pipeline-table thead tr{background:var(--charcoal);}
+.pipeline-table th{font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.55);padding:9px 10px;text-align:center;white-space:nowrap;}
+.pipeline-table th:first-child{text-align:left;padding-left:14px;}
+.pipeline-table tbody tr{border-bottom:1px solid var(--grey-light);}
+.pipeline-table tbody tr:hover{background:var(--green-light);}
+.pipeline-table td{padding:9px 10px;text-align:center;vertical-align:middle;}
+.pipeline-table td:first-child{text-align:left;padding-left:14px;}
+.stk-cat{font-family:var(--fh);font-size:11px;font-weight:800;color:var(--ink);}
+.stage-chip{display:inline-block;font-family:var(--fh);font-size:11px;font-weight:800;padding:3px 10px;border-radius:10px;min-width:30px;text-align:center;}
+.sc-target{background:var(--grey-xlight);color:var(--ink);border:1px solid var(--border);}
+.sc-contact{background:var(--blue-light);color:var(--blue);border:1px solid #b8d0ee;}
+.sc-process{background:var(--orange-light);color:var(--orange-dark);border:1px solid var(--orange-mid);}
+.sc-done{background:var(--green-light);color:var(--green-dark);border:1px solid var(--border-strong);}
+.conv-bar{height:4px;background:var(--grey-light);border-radius:2px;overflow:hidden;margin-top:4px;}
+.conv-fill{height:100%;border-radius:2px;background:var(--green);}
+
+@media(max-width:1200px){.qstat-row{grid-template-columns:repeat(5,1fr);}.io-dp-stats{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:900px){.qstat-row{grid-template-columns:repeat(3,1fr);}.two-col{grid-template-columns:1fr;}.funder-3col{grid-template-columns:1fr;}}
+@media(max-width:600px){.content{padding:14px 14px 48px;}.batch-cohort-bar{padding:0 14px;}.prog-highlight{flex-direction:column;}.ph-item{padding:12px 0;}.ph-item:not(:last-child)::after{display:none;}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tl">
+    <div class="logo-mark">
+      <svg viewBox="0 0 40 40" fill="none" width="22" height="22">
+        <circle cx="20" cy="12" r="6" fill="white" opacity=".9"/>
+        <circle cx="9" cy="28" r="4.5" fill="white" opacity=".6"/>
+        <circle cx="31" cy="28" r="4.5" fill="white" opacity=".6"/>
+        <path d="M9 24 L20 18 L31 24" stroke="white" stroke-width="1.5" fill="none" opacity=".7"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">Udyami <span>Vikas</span></div>
+      <div class="brand-sub">Supervisor Portfolio Dashboard v2 · Grassroutes MP Region</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <button class="io-dash-btn" onclick="openIODashboard()">📊 IO Batch Dashboard ↗</button>
+    <div class="view-toggle">
+      <button class="vt-btn active" onclick="setView(this,'portfolio')">Portfolio View</button>
+      <button class="vt-btn" onclick="setView(this,'funder')">Funder Report</button>
+    </div>
+    <div class="sv-chip">
+      <div class="sv-avatar" id="sv-avatar-initials">SP</div>
+      <div>
+        <div class="sv-name" id="sv-display-name">Supervisor</div>
+        <div class="sv-role">NGO Supervisor · MP Region</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BATCH COHORT TABS -->
+<div class="batch-cohort-bar">
+  <div class="bct active" onclick="selectCohort(this,'all')">
+    <div class="bct-pip" style="background:var(--green);"></div>All Batches (<span id="bct-total-batches">9</span>)
+  </div>
+  <div class="bct" onclick="selectCohort(this,'c1')">
+    <div class="bct-pip" style="background:var(--blue);"></div>Cohort 1 — 2023
+  </div>
+  <div class="bct" onclick="selectCohort(this,'c2')">
+    <div class="bct-pip" style="background:var(--orange);"></div>Cohort 2 — 2024 A
+  </div>
+  <div class="bct" onclick="selectCohort(this,'c3')">
+    <div class="bct-pip" style="background:var(--purple);"></div>Cohort 3 — 2024 B
+  </div>
+  <div class="bct" onclick="selectCohort(this,'c4')">
+    <div class="bct-pip" style="background:var(--teal);"></div>Cohort 4 — 2025
+  </div>
+  <div class="bct-meta">
+    <div class="bct-m"><div class="bct-mv" id="bct-officer-count">5</div><div class="bct-ml">Officers</div></div>
+    <div class="bct-m"><div class="bct-mv" id="bct-batch-count">9</div><div class="bct-ml">Batches</div></div>
+    <div class="bct-m"><div class="bct-mv" id="bct-active-count">267</div><div class="bct-ml">Active</div></div>
+    <div class="bct-m"><div class="bct-mv" style="color:var(--orange);" id="bct-next-review">Apr 2025</div><div class="bct-ml">Next Review</div></div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────── -->
+<!--  PORTFOLIO VIEW                                     -->
+<!-- ─────────────────────────────────────────────────── -->
+<div id="portfolio-view">
+<div class="content">
+
+<!-- PROGRAMME HIGHLIGHTS -->
+<div class="prog-highlight">
+  <div class="ph-item">
+    <div class="ph-label">Portfolio GMV / Month</div>
+    <div class="ph-value">₹19.4L</div>
+    <div class="ph-baseline">Baseline: ₹14.1L</div>
+    <div class="ph-change" style="background:rgba(139,178,90,.2);color:var(--green);">▲ +₹5.3L &nbsp;(+38%)</div>
+    <div class="ph-bar-bg"><div class="ph-bar-fill" style="width:88%;background:var(--green);"></div></div>
+    <div class="ph-bar-lbl"><span>₹0</span><span>Target ₹22L</span></div>
+  </div>
+  <div class="ph-item">
+    <div class="ph-label">Employment Generated</div>
+    <div class="ph-value">412</div>
+    <div class="ph-baseline">Baseline: 322 jobs</div>
+    <div class="ph-change" style="background:rgba(139,178,90,.2);color:var(--green);">▲ +90 new jobs &nbsp;(+28%)</div>
+    <div class="ph-bar-bg"><div class="ph-bar-fill" style="width:100%;background:var(--green);"></div></div>
+    <div class="ph-bar-lbl"><span>0</span><span>Target 400</span></div>
+  </div>
+  <div class="ph-item">
+    <div class="ph-label">Avg Portfolio Health Score</div>
+    <div class="ph-value">54 <span style="font-size:14px;color:rgba(255,255,255,.3);font-weight:600;">/80</span></div>
+    <div class="ph-baseline">Baseline avg: 47/80</div>
+    <div class="ph-change" style="background:rgba(249,165,86,.18);color:var(--orange);">▲ +7 pts &nbsp;(+14.9%) · 6 pts to target</div>
+    <div class="ph-bar-bg"><div class="ph-bar-fill" style="width:67%;background:var(--orange);"></div></div>
+    <div class="ph-bar-lbl"><span>0</span><span>Target 60/80</span></div>
+  </div>
+  <div class="ph-item">
+    <div class="ph-label">Net Profit / Month</div>
+    <div class="ph-value">₹6.8L</div>
+    <div class="ph-baseline">Baseline: ₹4.5L</div>
+    <div class="ph-change" style="background:rgba(139,178,90,.2);color:var(--green);">▲ +₹2.3L &nbsp;(+52%)</div>
+    <div class="ph-bar-bg"><div class="ph-bar-fill" style="width:76%;background:var(--green);"></div></div>
+    <div class="ph-bar-lbl"><span>₹0</span><span>Target ₹9L</span></div>
+  </div>
+  <div class="ph-item">
+    <div class="ph-label">Loans Sanctioned</div>
+    <div class="ph-value">₹22.4L</div>
+    <div class="ph-baseline">Target: ₹30L</div>
+    <div class="ph-change" style="background:rgba(249,165,86,.18);color:var(--orange);">75% of annual credit target</div>
+    <div class="ph-bar-bg"><div class="ph-bar-fill" style="width:75%;background:var(--orange);"></div></div>
+    <div class="ph-bar-lbl"><span>₹0</span><span>₹30L target</span></div>
+  </div>
+</div>
+
+<!-- QUICK STATS -->
+<div class="sl">Quick Stats — All Officers · All Batches</div>
+<div class="qstat-row">
+  <div class="qs"><div class="qs-top"><span class="qs-icon">🏢</span><span class="qs-delta d-up">All</span></div><div class="qs-num">9</div><div class="qs-lbl">Active Batches</div><div class="qs-sub">Across 5 officers</div><div class="qs-bl"><span class="qs-bll">Cohorts:</span><span class="qs-blv">1+2+3+4</span></div></div>
+  <div class="qs"><div class="qs-top"><span class="qs-icon">🌱</span><span class="qs-delta d-warn">12 out</span></div><div class="qs-num">267</div><div class="qs-lbl">Active Udyamis</div><div class="qs-sub">of 279 enrolled</div><div class="qs-bl"><span class="qs-bll">Dropout:</span><span class="qs-blv">4.3%</span><span class="qs-blc" style="color:var(--red);">↑ watch</span></div></div>
+  <div class="qs"><div class="qs-top"><span class="qs-icon">📈</span><span class="qs-delta d-warn">+7 pts</span></div><div class="qs-num">54<span style="font-size:11px;color:var(--grey-med);font-weight:600;">/80</span></div><div class="qs-lbl">Avg Health Score</div><div class="qs-sub">Portfolio average</div><div class="qs-bl"><span class="qs-bll">Baseline:</span><span class="qs-blv">47/80</span><span class="qs-blc" style="color:var(--green-dark);">↑</span></div></div>
+  <div class="qs"><div class="qs-top"><span class="qs-icon">📔</span><span class="qs-delta d-warn">Below target</span></div><div class="qs-num">52<span style="font-size:11px;color:var(--grey-med);">%</span></div><div class="qs-lbl">Avg Diary Rate</div><div class="qs-sub">Portfolio daily filling</div><div class="qs-bl"><span class="qs-bll">Target:</span><span class="qs-blv">≥70%</span><span class="qs-blc" style="color:var(--red);">−18pp</span></div></div>
+  <div class="qs"><div class="qs-top"><span class="qs-icon">🪪</span><span class="qs-delta d-warn">Gap</span></div><div class="qs-num">71<span style="font-size:11px;color:var(--grey-med);">%</span></div><div class="qs-lbl">KYC Completion</div><div class="qs-sub">Portfolio average</div><div class="qs-bl"><span class="qs-bll">Target:</span><span class="qs-blv">≥85%</span><span class="qs-blc" style="color:var(--red);">−14pp</span></div></div>
+  <div class="qs"><div class="qs-top"><span class="qs-icon">🚗</span><span class="qs-delta d-warn">Below min</span></div><div class="qs-num">3.3</div><div class="qs-lbl">Visits / Week</div><div class="qs-sub">Portfolio avg cadence</div><div class="qs-bl"><span class="qs-bll">Minimum:</span><span class="qs-blv">2.5/wk</span><span class="qs-blc" style="color:var(--green-dark);">✓</span></div></div>
+  <div class="qs"><div class="qs-top"><span class="qs-icon">⚠</span><span class="qs-delta d-red">Urgent</span></div><div class="qs-num" style="color:var(--red);">19</div><div class="qs-lbl">Flagged Udyamis</div><div class="qs-sub">Across all batches</div><div class="qs-bl"><span class="qs-bll">Dropout risk:</span><span class="qs-blv" style="color:var(--red);">8</span></div></div>
+  <div class="qs"><div class="qs-top"><span class="qs-icon">💰</span><span class="qs-delta d-up">75%</span></div><div class="qs-num">₹22.4L</div><div class="qs-lbl">Loans Sanctioned</div><div class="qs-sub">of ₹30L target</div><div class="qs-bl"><span class="qs-bll">Pipeline:</span><span class="qs-blv">₹4.2L</span></div></div>
+  <div class="qs"><div class="qs-top"><span class="qs-icon">🤝</span><span class="qs-delta d-up">108 done</span></div><div class="qs-num">570</div><div class="qs-lbl">Stakeholder Connections</div><div class="qs-sub">Targeted across portfolio</div><div class="qs-bl"><span class="qs-bll">Conv rate:</span><span class="qs-blv">19%</span></div></div>
+</div>
+
+<!-- IO DRILL-DOWN PANEL (appears when row is clicked) -->
+<div class="io-detail-panel" id="io-detail-panel">
+  <div class="io-dp-header">
+    <div>
+      <div class="io-dp-name" id="io-dp-name">—</div>
+      <div class="io-dp-meta" id="io-dp-meta">—</div>
+    </div>
+    <button class="io-dp-close" onclick="closeIODetail()">✕ Close</button>
+  </div>
+  <div class="io-dp-stats" id="io-dp-stats"></div>
+  <div class="io-btn-bar">
+    <button class="io-dp-btn io-dp-btn-green" onclick="openIODashboard()">📊 Open IO Dashboard ↗</button>
+    <button class="io-dp-btn io-dp-btn-blue" id="io-dp-btn-schedule" onclick="">📅 Schedule Review</button>
+    <button class="io-dp-btn io-dp-btn-outline" id="io-dp-btn-flag" onclick="">⚑ Flag for Attention</button>
+  </div>
+</div>
+
+<!-- OFFICER PERFORMANCE TABLE -->
+<div class="sl">Officer Performance — Batch-Level View</div>
+<div class="panel-card" style="padding:16px;">
+  <div class="pc-title" style="margin-bottom:10px;">
+    Officer Status &amp; Batch Health
+    <span class="pc-tag" style="background:var(--green-light);color:var(--green-dark);">Click any officer row to drill down</span>
+  </div>
+  <div class="itab-bar">
+    <span class="itab-label">Batch filter:</span>
+    <div class="itab active" onclick="switchOpTab(this,'all')">All Batches</div>
+    <div class="itab" onclick="switchOpTab(this,'c1')">Cohort 1 — 2023</div>
+    <div class="itab" onclick="switchOpTab(this,'c2')">Cohort 2 — 2024 A</div>
+    <div class="itab" onclick="switchOpTab(this,'c3')">Cohort 3 — 2024 B</div>
+    <div class="itab" onclick="switchOpTab(this,'c4')">Cohort 4 — 2025</div>
+  </div>
+  <div style="overflow-x:auto;">
+    <table class="op-table" id="opTable">
+      <thead>
+        <tr>
+          <th style="padding-left:14px;min-width:160px;">Officer / Block</th>
+          <th>Status</th>
+          <th>Batches</th>
+          <th>Udyamis</th>
+          <th>Avg Health</th>
+          <th>GMV / mo</th>
+          <th>Diary %</th>
+          <th>KYC %</th>
+          <th>BMC %</th>
+          <th>Visit /wk</th>
+          <th>Flags</th>
+          <th>Dropout</th>
+        </tr>
+      </thead>
+      <tbody id="opTableBody"></tbody>
+      <tfoot>
+        <tr class="tfoot-row">
+          <td style="padding-left:14px;">PORTFOLIO TOTAL</td>
+          <td>—</td><td>9</td><td>267</td>
+          <td><span class="cell-chip cc-amber">54/80</span></td>
+          <td class="gmv-total-cell">₹19.4L</td>
+          <td>52%</td><td>71%</td><td>45%</td><td>3.3</td>
+          <td><span class="flag-badge">19</span></td>
+          <td style="color:var(--red);font-weight:800;">12</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+
+<!-- GMV BY OFFICER × BATCH MATRIX -->
+<div class="sl" style="margin-top:20px;">GMV by Officer × Batch — Monthly Revenue Matrix</div>
+<div class="panel-card" style="padding:0;overflow:hidden;margin-bottom:20px;">
+  <div style="overflow-x:auto;">
+    <table class="gmv-matrix">
+      <thead>
+        <tr>
+          <th style="padding-left:14px;min-width:160px;">Officer</th>
+          <th>SHP-2023-A<br><span style="font-weight:500;letter-spacing:0;text-transform:none;font-size:8px;">Sunita · Cohort 1</span></th>
+          <th>MP-2024-A<br><span style="font-weight:500;letter-spacing:0;text-transform:none;font-size:8px;">Priya · Cohort 2</span></th>
+          <th>JBP-2024-A<br><span style="font-weight:500;letter-spacing:0;text-transform:none;font-size:8px;">Rahul · Cohort 2</span></th>
+          <th>NGP-2024-A<br><span style="font-weight:500;letter-spacing:0;text-transform:none;font-size:8px;">Ajay · Cohort 2</span></th>
+          <th>SHP-2024-A<br><span style="font-weight:500;letter-spacing:0;text-transform:none;font-size:8px;">Sunita · Cohort 3</span></th>
+          <th>MP-2024-B<br><span style="font-weight:500;letter-spacing:0;text-transform:none;font-size:8px;">Priya · Cohort 3</span></th>
+          <th>JBP-2024-B<br><span style="font-weight:500;letter-spacing:0;text-transform:none;font-size:8px;">Rahul · Cohort 3</span></th>
+          <th>NGP-2024-B<br><span style="font-weight:500;letter-spacing:0;text-transform:none;font-size:8px;">Ajay · Cohort 4</span></th>
+          <th>SIH-2025-A<br><span style="font-weight:500;letter-spacing:0;text-transform:none;font-size:8px;">Kavita · Cohort 4</span></th>
+          <th style="background:rgba(255,255,255,.05);">Officer Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding-left:14px;"><div class="hm-officer" style="color:var(--green-dark);">Priya Rawat</div><div class="hm-sub">Baghli Block</div></td>
+          <td><span class="gmv-empty">—</span></td>
+          <td><div class="gmv-val">₹2.84L</div><span class="gmv-bl">BL ₹1.96L</span><span class="gmv-delta" style="color:var(--green-dark);">+45%</span></td>
+          <td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td>
+          <td><div class="gmv-val">₹1.96L</div><span class="gmv-bl">BL ₹1.72L</span><span class="gmv-delta" style="color:var(--green-dark);">+14%</span></td>
+          <td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td>
+          <td><div class="gmv-val" style="font-size:13px;">₹4.80L</div></td>
+        </tr>
+        <tr>
+          <td style="padding-left:14px;"><div class="hm-officer" style="color:var(--orange-dark);">Rahul Kumar</div><div class="hm-sub">Kundam Block</div></td>
+          <td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td>
+          <td><div class="gmv-val">₹2.12L</div><span class="gmv-bl">BL ₹1.68L</span><span class="gmv-delta" style="color:var(--green-dark);">+26%</span></td>
+          <td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td>
+          <td><div class="gmv-val">₹1.44L</div><span class="gmv-bl">BL ₹1.44L</span><span class="gmv-delta" style="color:var(--grey-med);">0%</span></td>
+          <td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td>
+          <td><div class="gmv-val" style="font-size:13px;">₹3.56L</div></td>
+        </tr>
+        <tr class="flagged-row">
+          <td style="padding-left:14px;"><div class="hm-officer" style="color:var(--red);">Sunita Devi ⚑</div><div class="hm-sub">Shahpura Block</div></td>
+          <td><div class="gmv-val" style="color:var(--red);">₹1.18L</div><span class="gmv-bl">BL ₹1.64L</span><span class="gmv-delta" style="color:var(--red);">−28%</span></td>
+          <td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td>
+          <td><div class="gmv-val" style="color:var(--orange-dark);">₹1.02L</div><span class="gmv-bl">BL ₹0.98L</span><span class="gmv-delta" style="color:var(--green-dark);">+4%</span></td>
+          <td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td>
+          <td><div class="gmv-val" style="font-size:13px;color:var(--red);">₹2.20L</div></td>
+        </tr>
+        <tr>
+          <td style="padding-left:14px;"><div class="hm-officer" style="color:var(--teal);">Ajay Verma</div><div class="hm-sub">Tendukheda Block</div></td>
+          <td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td>
+          <td><div class="gmv-val">₹2.34L</div><span class="gmv-bl">BL ₹1.62L</span><span class="gmv-delta" style="color:var(--green-dark);">+44%</span></td>
+          <td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td>
+          <td><div class="gmv-val">₹1.08L</div><span class="gmv-bl">BL ₹1.08L</span><span class="gmv-delta" style="color:var(--grey-med);">Baseline</span></td>
+          <td><span class="gmv-empty">—</span></td>
+          <td><div class="gmv-val" style="font-size:13px;">₹3.42L</div></td>
+        </tr>
+        <tr>
+          <td style="padding-left:14px;"><div class="hm-officer" style="color:var(--purple);">Kavita Mehta</div><div class="hm-sub">Sihora Block</div></td>
+          <td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td><td><span class="gmv-empty">—</span></td>
+          <td><div class="gmv-val">₹1.46L</div><span class="gmv-bl">BL ₹1.46L</span><span class="gmv-delta" style="color:var(--grey-med);">Baseline</span></td>
+          <td><div class="gmv-val" style="font-size:13px;">₹1.46L</div></td>
+        </tr>
+        <tr class="gmv-total-row">
+          <td style="padding-left:14px;font-weight:800;">Batch Total</td>
+          <td><div class="gmv-total-cell" style="color:var(--red);">₹1.18L</div></td>
+          <td><div class="gmv-total-cell">₹2.84L</div></td>
+          <td><div class="gmv-total-cell">₹2.12L</div></td>
+          <td><div class="gmv-total-cell">₹2.34L</div></td>
+          <td><div class="gmv-total-cell">₹1.02L</div></td>
+          <td><div class="gmv-total-cell">₹1.96L</div></td>
+          <td><div class="gmv-total-cell">₹1.44L</div></td>
+          <td><div class="gmv-total-cell">₹1.08L</div></td>
+          <td><div class="gmv-total-cell">₹1.46L</div></td>
+          <td><div class="gmv-total-cell" style="font-size:14px;">₹15.44L</div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- INDICATOR HEATMAP -->
+<div class="sl">Transaction Indicator Heatmap</div>
+<div class="panel-card" style="padding:16px;margin-bottom:20px;">
+  <div class="pc-title" style="margin-bottom:10px;">Indicator Completion — by Officer × Batch</div>
+  <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:8px;">
+    <div>
+      <div class="itab-bar" style="margin-bottom:6px;">
+        <span class="itab-label">Officer:</span>
+        <div class="itab active" onclick="switchHmOfficer(this,'all')">All</div>
+        <div class="itab" onclick="switchHmOfficer(this,'pr')">Priya R.</div>
+        <div class="itab" onclick="switchHmOfficer(this,'rk')">Rahul K.</div>
+        <div class="itab" onclick="switchHmOfficer(this,'sd')">Sunita D.</div>
+        <div class="itab" onclick="switchHmOfficer(this,'av')">Ajay V.</div>
+        <div class="itab" onclick="switchHmOfficer(this,'km')">Kavita M.</div>
+      </div>
+      <div class="itab-bar">
+        <span class="itab-label">Batch:</span>
+        <div class="itab active" onclick="switchHmBatch(this,'all')">All Batches</div>
+        <div class="itab" onclick="switchHmBatch(this,'c1')">Cohort 1</div>
+        <div class="itab" onclick="switchHmBatch(this,'c2')">Cohort 2 A</div>
+        <div class="itab" onclick="switchHmBatch(this,'c3')">Cohort 3 B</div>
+        <div class="itab" onclick="switchHmBatch(this,'c4')">Cohort 4</div>
+      </div>
+    </div>
+  </div>
+  <div style="overflow-x:auto;">
+    <table class="hm-table" id="hmTable">
+      <thead>
+        <tr>
+          <th style="text-align:left;">Officer</th>
+          <th>Financial Diary</th>
+          <th>KYC</th>
+          <th>Biz Mgmt Canvas</th>
+          <th>Unit Economics</th>
+          <th>Business Plan</th>
+          <th>Visit Freq/wk</th>
+        </tr>
+      </thead>
+      <tbody id="hmTableBody"></tbody>
+      <tfoot>
+        <tr style="background:var(--grey-xlight);border-top:2px solid var(--border);">
+          <td style="padding:8px 10px;font-family:var(--fh);font-size:10px;font-weight:800;color:var(--ink);">PORTFOLIO AVG</td>
+          <td><div class="hm-cell hm-amber">52%</div></td>
+          <td><div class="hm-cell hm-amber">71%</div></td>
+          <td><div class="hm-cell hm-red">45%</div></td>
+          <td><div class="hm-cell hm-red">39%</div></td>
+          <td><div class="hm-cell hm-red">28%</div></td>
+          <td><div class="hm-cell hm-amber">3.3</div></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div style="display:flex;gap:12px;padding-top:10px;border-top:1px solid var(--border);margin-top:10px;">
+    <span style="font-size:9px;font-family:var(--fh);font-weight:700;color:var(--grey-med);">KEY:</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:9px;font-family:var(--fh);font-weight:700;color:var(--green-dark);"><div style="width:12px;height:12px;border-radius:3px;background:var(--green-light);"></div>≥65% · ≥4/wk — Good</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:9px;font-family:var(--fh);font-weight:700;color:var(--orange-dark);"><div style="width:12px;height:12px;border-radius:3px;background:var(--orange-light);"></div>40–65% — Monitor</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:9px;font-family:var(--fh);font-weight:700;color:var(--red);"><div style="width:12px;height:12px;border-radius:3px;background:var(--red-light);"></div>&lt;40% — Intervene</span>
+  </div>
+</div>
+
+<!-- ESCALATIONS + STAKEHOLDER PIPELINE -->
+<div class="two-col">
+  <div class="panel-card">
+    <div class="pc-title">Supervisor Escalations
+      <span class="pc-tag" style="background:var(--red-light);color:var(--red);">4 Critical · 2 Monitor</span>
+    </div>
+    <div class="esc-list">
+      <div class="esc-item esc-critical">
+        <div class="esc-icon">🚨</div>
+        <div style="flex:1;">
+          <div class="esc-title">SHP-2023-A graduating in Month 11 — health score 34/80</div>
+          <div class="esc-detail">9 udyamis flagged, diary 28%, GMV down 28% vs baseline. Needs supervisor-led remediation this week before graduation.</div>
+          <div class="esc-tags"><span class="esc-tag" style="background:var(--red-light);color:var(--red);">Critical — Closing Batch</span></div>
+          <div class="esc-io">IO: Sunita Devi · Due immediately</div>
+        </div>
+      </div>
+      <div class="esc-item esc-critical">
+        <div class="esc-icon">📉</div>
+        <div style="flex:1;">
+          <div class="esc-title">Sunita Devi — visit cadence 1.6/wk for 6 consecutive weeks</div>
+          <div class="esc-detail">Both Shahpura batches affected. Coaching session + workplan review required.</div>
+          <div class="esc-tags"><span class="esc-tag" style="background:var(--red-light);color:var(--red);">IO Performance</span><span class="esc-tag" style="background:var(--purple-light);color:var(--purple);">Coaching</span></div>
+          <div class="esc-io">IO: Sunita Devi · Schedule this week</div>
+        </div>
+      </div>
+      <div class="esc-item esc-critical">
+        <div class="esc-icon">⚠️</div>
+        <div style="flex:1;">
+          <div class="esc-title">Rahul Kumar — diary 44%, BMC 38% stagnant 3 months</div>
+          <div class="esc-detail">No indicator movement despite review calls. Peer mentoring from Ajay Verma recommended.</div>
+          <div class="esc-tags"><span class="esc-tag" style="background:var(--orange-light);color:var(--orange-dark);">Stagnant</span><span class="esc-tag" style="background:var(--blue-light);color:var(--blue);">Peer Mentoring</span></div>
+          <div class="esc-io">IO: Rahul Kumar · Kundam</div>
+        </div>
+      </div>
+      <div class="esc-item esc-critical">
+        <div class="esc-icon">📵</div>
+        <div style="flex:1;">
+          <div class="esc-title">8 udyamis at dropout risk — 3 uncontacted 6+ weeks</div>
+          <div class="esc-detail">Sunita Devi (5), Rahul Kumar (3). Supervisor to assign direct outreach calls.</div>
+          <div class="esc-tags"><span class="esc-tag" style="background:var(--red-light);color:var(--red);">Dropout Risk</span></div>
+          <div class="esc-io">IOs: Devi (5) · Kumar (3)</div>
+        </div>
+      </div>
+      <div class="esc-item esc-warn">
+        <div class="esc-icon">🏦</div>
+        <div style="flex:1;">
+          <div class="esc-title">NABARD credit camp — 5 Apr · 18 udyamis eligible</div>
+          <div class="esc-detail">Coordinate Rawat (8), Kumar (6), Verma (4) to prepare documentation.</div>
+          <div class="esc-tags"><span class="esc-tag" style="background:var(--green-light);color:var(--green-dark);">Opportunity</span></div>
+          <div class="esc-io">Due: 4 Apr</div>
+        </div>
+      </div>
+      <div class="esc-item esc-info">
+        <div class="esc-icon">📚</div>
+        <div style="flex:1;">
+          <div class="esc-title">RSETI batch — 20 Apr · 30 seats · Priority Shahpura</div>
+          <div class="esc-detail">Recommend prioritising SHP batches to boost indicators before year-end.</div>
+          <div class="esc-tags"><span class="esc-tag" style="background:var(--blue-light);color:var(--blue);">Training Opportunity</span></div>
+          <div class="esc-io">IO: Sunita Devi · Priority</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-card" style="padding:14px;">
+    <div class="pc-title" style="margin-bottom:10px;">Portfolio Stakeholder Pipeline
+      <span class="pc-tag" style="background:var(--blue-light);color:var(--blue);">All 5 Officers</span>
+    </div>
+    <table class="pipeline-table">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Targeted</th>
+          <th>Contact</th>
+          <th>In Process</th>
+          <th>Done ✓</th>
+          <th>Conv%</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><div class="stk-cat">🏦 Bank / FI</div></td><td><span class="stage-chip sc-target">94</span></td><td><span class="stage-chip sc-contact">42</span></td><td><span class="stage-chip sc-process">28</span></td><td><span class="stage-chip sc-done">14</span></td><td><div style="font-family:var(--fh);font-size:10px;font-weight:800;color:var(--green-dark);">15%</div><div class="conv-bar"><div class="conv-fill" style="width:15%;"></div></div></td></tr>
+        <tr><td><div class="stk-cat">🏛 Govt / Scheme</div></td><td><span class="stage-chip sc-target">68</span></td><td><span class="stage-chip sc-contact">38</span></td><td><span class="stage-chip sc-process">24</span></td><td><span class="stage-chip sc-done">18</span></td><td><div style="font-family:var(--fh);font-size:10px;font-weight:800;color:var(--green-dark);">26%</div><div class="conv-bar"><div class="conv-fill" style="width:26%;"></div></div></td></tr>
+        <tr><td><div class="stk-cat">🏪 Supplier / Agency</div></td><td><span class="stage-chip sc-target">82</span></td><td><span class="stage-chip sc-contact">56</span></td><td><span class="stage-chip sc-process">34</span></td><td><span class="stage-chip sc-done">22</span></td><td><div style="font-family:var(--fh);font-size:10px;font-weight:800;color:var(--green-dark);">27%</div><div class="conv-bar"><div class="conv-fill" style="width:27%;"></div></div></td></tr>
+        <tr><td><div class="stk-cat">🤝 Peer / SHG / REN</div></td><td><span class="stage-chip sc-target">158</span></td><td><span class="stage-chip sc-contact">134</span></td><td><span class="stage-chip sc-process">112</span></td><td><span class="stage-chip sc-done" style="background:#e8f0fa;color:#2e5f9a;border-color:#b8d0ee;">Ongoing</span></td><td><div style="font-family:var(--fh);font-size:10px;font-weight:800;color:var(--blue);">85%</div><div class="conv-bar"><div class="conv-fill" style="width:85%;background:var(--blue);"></div></div></td></tr>
+        <tr><td><div class="stk-cat">📚 Training Body</div></td><td><span class="stage-chip sc-target">114</span></td><td><span class="stage-chip sc-contact">88</span></td><td><span class="stage-chip sc-process">62</span></td><td><span class="stage-chip sc-done">44</span></td><td><div style="font-family:var(--fh);font-size:10px;font-weight:800;color:var(--green-dark);">39%</div><div class="conv-bar"><div class="conv-fill" style="width:39%;"></div></div></td></tr>
+        <tr><td><div class="stk-cat">🛒 Market / Buyer</div></td><td><span class="stage-chip sc-target">54</span></td><td><span class="stage-chip sc-contact">32</span></td><td><span class="stage-chip sc-process">18</span></td><td><span class="stage-chip sc-done">10</span></td><td><div style="font-family:var(--fh);font-size:10px;font-weight:800;color:var(--green-dark);">19%</div><div class="conv-bar"><div class="conv-fill" style="width:19%;"></div></div></td></tr>
+      </tbody>
+      <tfoot>
+        <tr style="background:var(--grey-xlight);border-top:2px solid var(--border);">
+          <td style="padding-left:14px;font-family:var(--fh);font-size:10px;font-weight:800;">TOTAL</td>
+          <td style="text-align:center;font-family:var(--fh);font-size:12px;font-weight:900;">570</td>
+          <td style="text-align:center;font-family:var(--fh);font-size:12px;font-weight:900;color:var(--blue);">390</td>
+          <td style="text-align:center;font-family:var(--fh);font-size:12px;font-weight:900;color:var(--orange-dark);">278</td>
+          <td style="text-align:center;font-family:var(--fh);font-size:12px;font-weight:900;color:var(--green-dark);">108</td>
+          <td style="text-align:center;font-family:var(--fh);font-size:10px;font-weight:800;color:var(--grey-dark);">19%</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+
+</div><!-- /content -->
+</div><!-- /portfolio-view -->
+
+<!-- ─────────────────────────────────────────────────── -->
+<!--  FUNDER REPORT VIEW                                -->
+<!-- ─────────────────────────────────────────────────── -->
+<div id="funder-view" style="display:none;">
+<div class="content">
+
+<div class="sl">Programme Outcomes — ED / Funder Report · MP Region · FY 2024–25</div>
+
+<!-- FILTER BAR -->
+<div class="fr-filter-bar">
+  <div class="fr-group">
+    <span class="fr-group-label">Officer:</span>
+    <div class="fr-tab active" onclick="frFilter(this,'officer','all')">All Officers</div>
+    <div class="fr-tab" onclick="frFilter(this,'officer','pr')">Priya Rawat</div>
+    <div class="fr-tab" onclick="frFilter(this,'officer','rk')">Rahul Kumar</div>
+    <div class="fr-tab" onclick="frFilter(this,'officer','sd')">Sunita Devi</div>
+    <div class="fr-tab" onclick="frFilter(this,'officer','av')">Ajay Verma</div>
+    <div class="fr-tab" onclick="frFilter(this,'officer','km')">Kavita Mehta</div>
+  </div>
+  <div class="fr-divider"></div>
+  <div class="fr-group">
+    <span class="fr-group-label">Block:</span>
+    <div class="fr-tab active" onclick="frFilter(this,'block','all')">All Blocks</div>
+    <div class="fr-tab" onclick="frFilter(this,'block','baghli')">Baghli</div>
+    <div class="fr-tab" onclick="frFilter(this,'block','kundam')">Kundam</div>
+    <div class="fr-tab" onclick="frFilter(this,'block','shahpura')">Shahpura</div>
+    <div class="fr-tab" onclick="frFilter(this,'block','tendukheda')">Tendukheda</div>
+    <div class="fr-tab" onclick="frFilter(this,'block','sihora')">Sihora</div>
+  </div>
+  <div class="fr-divider"></div>
+  <div class="fr-group">
+    <span class="fr-group-label">Batch:</span>
+    <div class="fr-tab active" onclick="frFilter(this,'batch','all')">All Batches</div>
+    <div class="fr-tab" onclick="frFilter(this,'batch','c1')">Cohort 1 — 2023</div>
+    <div class="fr-tab" onclick="frFilter(this,'batch','c2')">Cohort 2 — 2024A</div>
+    <div class="fr-tab" onclick="frFilter(this,'batch','c3')">Cohort 3 — 2024B</div>
+    <div class="fr-tab" onclick="frFilter(this,'batch','c4')">Cohort 4 — 2025</div>
+  </div>
+  <div style="margin-left:auto;">
+    <button onclick="window.print()" style="background:var(--green-dark);color:#fff;border:none;border-radius:var(--rs);padding:8px 18px;font-family:var(--fh);font-size:10px;font-weight:700;cursor:pointer;letter-spacing:.3px;">🖨 Print PDF</button>
+  </div>
+</div>
+
+<div style="background:var(--charcoal);border-radius:var(--r);padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+  <div><div style="font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);margin-bottom:3px;">Report Period</div><div style="font-family:var(--fh);font-size:13px;font-weight:800;color:#fff;">April 2024 — March 2025</div></div>
+  <div style="width:1px;height:30px;background:rgba(255,255,255,.1);flex-shrink:0;"></div>
+  <div><div style="font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);margin-bottom:3px;">Geography</div><div style="font-family:var(--fh);font-size:13px;font-weight:800;color:#fff;">Madhya Pradesh · 5 Blocks</div></div>
+  <div style="width:1px;height:30px;background:rgba(255,255,255,.1);flex-shrink:0;"></div>
+  <div><div style="font-family:var(--fh);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);margin-bottom:3px;">Programme Phase</div><div style="font-family:var(--fh);font-size:13px;font-weight:800;color:var(--green);">Year 2 of 3</div></div>
+</div>
+
+<div class="funder-3col">
+  <div class="panel-card">
+    <div class="pc-title">Reach &amp; Enrolment</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:12px;">
+      <div class="funder-metric fm-target"><div class="fm-label" style="color:var(--grey-med);">Target</div><div class="fm-num" style="color:var(--grey-dark);">300</div><div class="fm-sub" style="color:var(--grey-med);">Planned</div></div>
+      <div class="funder-metric fm-actual"><div class="fm-label" style="color:var(--green-dark);">Enrolled</div><div class="fm-num" style="color:var(--green-dark);">279</div><div class="fm-sub" style="color:var(--green-dark);">93%</div></div>
+      <div class="funder-metric fm-gap"><div class="fm-label" style="color:var(--orange-dark);">Active</div><div class="fm-num" style="color:var(--orange-dark);">267</div><div class="fm-sub" style="color:var(--orange-dark);">4.3% drop</div></div>
+    </div>
+    <div class="target-row"><div class="tr-label">Women-led enterprises</div><div class="tr-target">≥95%</div><div class="tr-actual" style="color:var(--green-dark);">98%</div><div class="tr-bar-wrap"><div class="tr-bar-fill" style="width:98%;background:var(--green);"></div></div><span class="tr-status" style="background:var(--green-light);color:var(--green-dark);">✓ Met</span></div>
+    <div class="target-row"><div class="tr-label">SC/ST/OBC beneficiaries</div><div class="tr-target">≥70%</div><div class="tr-actual" style="color:var(--green-dark);">74%</div><div class="tr-bar-wrap"><div class="tr-bar-fill" style="width:74%;background:var(--green);"></div></div><span class="tr-status" style="background:var(--green-light);color:var(--green-dark);">✓ Met</span></div>
+    <div class="target-row"><div class="tr-label">REN network enrolment</div><div class="tr-target">≥80%</div><div class="tr-actual" style="color:var(--orange-dark);">61%</div><div class="tr-bar-wrap"><div class="tr-bar-fill" style="width:61%;background:var(--orange);"></div></div><span class="tr-status" style="background:var(--orange-light);color:var(--orange-dark);">⚠ Gap</span></div>
+  </div>
+  <div class="panel-card">
+    <div class="pc-title">Economic Outcomes</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:12px;">
+      <div class="funder-metric fm-target"><div class="fm-label" style="color:var(--grey-med);">GMV Target</div><div class="fm-num" style="color:var(--grey-dark);">₹22L</div><div class="fm-sub" style="color:var(--grey-med);">/month</div></div>
+      <div class="funder-metric fm-actual"><div class="fm-label" style="color:var(--green-dark);">Actual GMV</div><div class="fm-num" style="color:var(--green-dark);">₹19.4L</div><div class="fm-sub" style="color:var(--green-dark);">88%</div></div>
+      <div class="funder-metric fm-gap"><div class="fm-label" style="color:var(--orange-dark);">Gap</div><div class="fm-num" style="color:var(--orange-dark);">₹2.6L</div><div class="fm-sub" style="color:var(--orange-dark);">to close</div></div>
+    </div>
+    <div class="target-row"><div class="tr-label">Avg revenue growth vs baseline</div><div class="tr-target">≥30%</div><div class="tr-actual" style="color:var(--green-dark);">38%</div><div class="tr-bar-wrap"><div class="tr-bar-fill" style="width:85%;background:var(--green);"></div></div><span class="tr-status" style="background:var(--green-light);color:var(--green-dark);">✓ Met</span></div>
+    <div class="target-row"><div class="tr-label">Loans sanctioned</div><div class="tr-target">₹30L</div><div class="tr-actual" style="color:var(--orange-dark);">₹22.4L</div><div class="tr-bar-wrap"><div class="tr-bar-fill" style="width:75%;background:var(--orange);"></div></div><span class="tr-status" style="background:var(--orange-light);color:var(--orange-dark);">⚠ 75%</span></div>
+    <div class="target-row"><div class="tr-label">Employment generated</div><div class="tr-target">80 jobs</div><div class="tr-actual" style="color:var(--green-dark);">90</div><div class="tr-bar-wrap"><div class="tr-bar-fill" style="width:100%;background:var(--green);"></div></div><span class="tr-status" style="background:var(--green-light);color:var(--green-dark);">✓ Met</span></div>
+  </div>
+  <div class="panel-card">
+    <div class="pc-title">Capability &amp; Process</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:12px;">
+      <div class="funder-metric fm-target"><div class="fm-label" style="color:var(--grey-med);">Health Target</div><div class="fm-num" style="color:var(--grey-dark);">60/80</div><div class="fm-sub" style="color:var(--grey-med);">Avg score</div></div>
+      <div class="funder-metric fm-actual"><div class="fm-label" style="color:var(--green-dark);">Actual</div><div class="fm-num" style="color:var(--green-dark);">54/80</div><div class="fm-sub" style="color:var(--green-dark);">+7 from BL</div></div>
+      <div class="funder-metric fm-gap"><div class="fm-label" style="color:var(--orange-dark);">Gap</div><div class="fm-num" style="color:var(--orange-dark);">6 pts</div><div class="fm-sub" style="color:var(--orange-dark);">to target</div></div>
+    </div>
+    <div class="target-row"><div class="tr-label">Diary compliance (daily)</div><div class="tr-target">≥70%</div><div class="tr-actual" style="color:var(--red);">52%</div><div class="tr-bar-wrap"><div class="tr-bar-fill" style="width:52%;background:var(--orange);"></div></div><span class="tr-status" style="background:var(--red-light);color:var(--red);">✗ Below</span></div>
+    <div class="target-row"><div class="tr-label">KYC completion</div><div class="tr-target">≥85%</div><div class="tr-actual" style="color:var(--orange-dark);">71%</div><div class="tr-bar-wrap"><div class="tr-bar-fill" style="width:71%;background:var(--orange);"></div></div><span class="tr-status" style="background:var(--orange-light);color:var(--orange-dark);">⚠ Gap</span></div>
+    <div class="target-row"><div class="tr-label">Udyamis at L2 or above</div><div class="tr-target">≥50%</div><div class="tr-actual" style="color:var(--orange-dark);">46%</div><div class="tr-bar-wrap"><div class="tr-bar-fill" style="width:46%;background:var(--orange);"></div></div><span class="tr-status" style="background:var(--orange-light);color:var(--orange-dark);">⚠ Close</span></div>
+  </div>
+</div>
+
+<div class="two-col">
+  <div class="panel-card">
+    <div class="pc-title">Programme Strengths</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:4px;"></div><div style="font-size:12px;color:var(--ink);line-height:1.6;">GMV grew 38% against baseline — Ajay Verma's Tendukheda batch leads at 74% diary compliance and highest health scores.</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:4px;"></div><div style="font-size:12px;color:var(--ink);line-height:1.6;">Employment target exceeded — 90 new jobs vs target of 80, driven by agri-allied and manufacturing in Baghli and Tendukheda.</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:4px;"></div><div style="font-size:12px;color:var(--ink);line-height:1.6;">108 successful stakeholder outcomes from 570 connections — government scheme conversion at 26% performing best.</div></div>
+    </div>
+  </div>
+  <div class="panel-card">
+    <div class="pc-title">Areas Requiring Attention</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:4px;"></div><div style="font-size:12px;color:var(--ink);line-height:1.6;">Shahpura (Sunita Devi): SHP-2023-A graduates Month 11 with 34/80 health. Supervisor direct intervention required this week.</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:8px;height:8px;border-radius:50%;background:var(--orange-dark);flex-shrink:0;margin-top:4px;"></div><div style="font-size:12px;color:var(--ink);line-height:1.6;">Diary compliance 52% against 70% target portfolio-wide. Programme-level diary revival campaign recommended.</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;"><div style="width:8px;height:8px;border-radius:50%;background:var(--orange-dark);flex-shrink:0;margin-top:4px;"></div><div style="font-size:12px;color:var(--ink);line-height:1.6;">Credit gap at ₹7.6L vs target. NABARD camp 5 Apr is key accelerator — 18 udyamis eligible, documentation must be prepared by 4 Apr.</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content funder -->
+</div><!-- /funder-view -->
+
+<script>
+/* ── INIT: read supervisor identity from app session ── */
+(function(){
+  try {
+    const sess = JSON.parse(localStorage.getItem('gr_session') || '{}');
+    if (sess.name) {
+      const initials = sess.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+      document.getElementById('sv-avatar-initials').textContent = initials;
+      document.getElementById('sv-display-name').textContent = sess.name;
+    }
+  } catch(e) {}
+})();
+
+/* ── LINK BACK: open IO Dashboard in new tab ── */
+function openIODashboard() {
+  window.open('io_dashboard_v7.html', '_blank');
+}
+
+/* ── OFFICER DATA ── */
+const officers = [
+  {id:'pr', name:'Priya Rawat',    block:'Baghli Block',    cohorts:['c2','c3'], batches:2, udyamis:68, health:61, gmv:'₹4.80L', diary:63, kyc:80, bmc:57, visits:4.2, flags:6,  dropout:2, status:'on-track', color:'#5e8332'},
+  {id:'rk', name:'Rahul Kumar',    block:'Kundam Block',    cohorts:['c2','c3'], batches:2, udyamis:62, health:49, gmv:'₹3.56L', diary:44, kyc:67, bmc:38, visits:2.8, flags:8,  dropout:3, status:'moderate', color:'#d9760f'},
+  {id:'sd', name:'Sunita Devi ⚑', block:'Shahpura Block',  cohorts:['c1','c3'], batches:2, udyamis:58, health:38, gmv:'₹2.20L', diary:28, kyc:49, bmc:22, visits:1.6, flags:11, dropout:5, status:'critical', color:'#c94444'},
+  {id:'av', name:'Ajay Verma',     block:'Tendukheda Block',cohorts:['c2','c4'], batches:2, udyamis:52, health:66, gmv:'₹3.42L', diary:74, kyc:88, bmc:62, visits:4.6, flags:3,  dropout:1, status:'on-track', color:'#2a9d8f'},
+  {id:'km', name:'Kavita Mehta',   block:'Sihora Block',   cohorts:['c4'],      batches:1, udyamis:37, health:51, gmv:'₹1.46L', diary:54, kyc:72, bmc:44, visits:3.2, flags:5,  dropout:1, status:'moderate',color:'#7c5cbf'},
+];
+
+function healthClass(h){return h>=60?'cc-green':h>=40?'cc-amber':'cc-red';}
+function pctClass(p){return p>=65?'hm-green':p>=40?'hm-amber':'hm-red';}
+function pctFill(p){return p>=65?'#5e8332':p>=40?'#d9760f':'#c94444';}
+function statusDot(s){const c={'on-track':'#8bb25a',moderate:'#f9a556',critical:'#c94444'};return `<span class="io-status-dot" style="background:${c[s]||'#aaa'};"></span>`;}
+
+function renderOpTable(cohort='all'){
+  const filtered = cohort==='all' ? officers : officers.filter(o=>o.cohorts.includes(cohort));
+  document.getElementById('opTableBody').innerHTML = filtered.map(o=>{
+    const rowCls = o.status==='critical' ? 'flagged-row' : '';
+    return `<tr class="${rowCls}" onclick="openIODetail('${o.id}')">
+      <td style="padding-left:14px;"><div class="io-name-cell" style="color:${o.color};">${o.name}</div><div class="io-sub-cell">${o.block}</div></td>
+      <td>${statusDot(o.status)}<span style="font-family:var(--fh);font-size:10px;font-weight:700;color:${o.color};">${o.status==='on-track'?'On Track':o.status==='moderate'?'Moderate':'Needs Attention'}</span></td>
+      <td style="font-family:var(--fh);font-weight:800;">${o.batches}</td>
+      <td style="font-family:var(--fh);font-weight:800;">${o.udyamis}</td>
+      <td><span class="cell-chip ${healthClass(o.health)}">${o.health}/80</span></td>
+      <td style="font-family:var(--fh);font-size:11px;font-weight:800;color:var(--green-dark);">${o.gmv}</td>
+      <td><div class="mini-prog"><div class="mini-fill" style="width:${o.diary}%;background:${pctFill(o.diary)};"></div></div><span class="pct-text">${o.diary}%</span></td>
+      <td><div class="mini-prog"><div class="mini-fill" style="width:${o.kyc}%;background:${pctFill(o.kyc)};"></div></div><span class="pct-text">${o.kyc}%</span></td>
+      <td><div class="mini-prog"><div class="mini-fill" style="width:${o.bmc}%;background:${pctFill(o.bmc)};"></div></div><span class="pct-text">${o.bmc}%</span></td>
+      <td style="font-family:var(--fh);font-weight:800;">${o.visits}</td>
+      <td>${o.flags>0?`<span class="flag-badge">${o.flags}</span>`:'—'}</td>
+      <td style="font-family:var(--fh);font-weight:800;color:${o.dropout>2?'var(--red)':'var(--ink)'};">${o.dropout}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderHmTable(officerF='all', batchF='all'){
+  const filtered = officers.filter(o=>{
+    if(officerF!=='all' && o.id!==officerF) return false;
+    if(batchF!=='all' && !o.cohorts.includes(batchF)) return false;
+    return true;
+  });
+  document.getElementById('hmTableBody').innerHTML = filtered.map(o=>`
+    <tr class="${o.status==='critical'?'flagged-row':''}">
+      <td><div class="hm-officer" style="color:${o.color};">${o.name}</div><div class="hm-sub">${o.block} · ${o.batches} batch${o.batches>1?'es':''} · ${o.udyamis} udyamis</div></td>
+      <td><div class="hm-cell ${pctClass(o.diary)}">${o.diary}%</div></td>
+      <td><div class="hm-cell ${pctClass(o.kyc)}">${o.kyc}%</div></td>
+      <td><div class="hm-cell ${pctClass(o.bmc)}">${o.bmc}%</div></td>
+      <td><div class="hm-cell ${pctClass(Math.max(o.bmc-10,18))}">${Math.max(o.bmc-10,18)}%</div></td>
+      <td><div class="hm-cell ${o.diary>55?'hm-amber':'hm-red'}">${Math.round(o.diary*0.6)}%</div></td>
+      <td><div class="hm-cell ${o.visits>=4?'hm-green':o.visits>=2.5?'hm-amber':'hm-red'}">${o.visits}</div></td>
+    </tr>`).join('');
+}
+
+/* ── IO DRILL-DOWN PANEL ── */
+let _activeOfficer = null;
+function openIODetail(id) {
+  const o = officers.find(x=>x.id===id);
+  if (!o) return;
+  _activeOfficer = o;
+  const panel = document.getElementById('io-detail-panel');
+  document.getElementById('io-dp-name').innerHTML = `<span style="color:${o.color};">${o.name}</span>`;
+  document.getElementById('io-dp-meta').textContent = `${o.block} · ${o.batches} batch${o.batches>1?'es':''} · ${o.udyamis} Udyamis · ${o.cohorts.map(c=>({c1:'Cohort 1',c2:'Cohort 2',c3:'Cohort 3',c4:'Cohort 4'})[c]).join(', ')}`;
+  document.getElementById('io-dp-stats').innerHTML = [
+    {l:'Health Score', v:`${o.health}/80`, cls: o.health>=60?'var(--green-dark)':o.health>=40?'var(--orange-dark)':'var(--red)'},
+    {l:'GMV / Month',  v: o.gmv,           cls:'var(--green-dark)'},
+    {l:'Diary Rate',   v:`${o.diary}%`,    cls: o.diary>=65?'var(--green-dark)':o.diary>=40?'var(--orange-dark)':'var(--red)'},
+    {l:'KYC %',        v:`${o.kyc}%`,      cls: o.kyc>=85?'var(--green-dark)':o.kyc>=60?'var(--orange-dark)':'var(--red)'},
+    {l:'Flagged',      v: o.flags,          cls: o.flags>5?'var(--red)':'var(--grey-dark)'},
+    {l:'Dropout',      v: o.dropout,        cls: o.dropout>2?'var(--red)':'var(--grey-dark)'},
+  ].map(s=>`<div class="io-dp-stat"><div class="io-dp-sv" style="color:${s.cls};">${s.v}</div><div class="io-dp-sl">${s.l}</div></div>`).join('');
+  panel.classList.add('open');
+  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+function closeIODetail() {
+  document.getElementById('io-detail-panel').classList.remove('open');
+  _activeOfficer = null;
+}
+
+/* ── INIT ── */
+renderOpTable();
+renderHmTable();
+
+/* ── COHORT TABS ── */
+function selectCohort(el, key){
+  document.querySelectorAll('.bct').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderOpTable(key);
+  renderHmTable('all', key);
+}
+
+/* ── OP TABLE TABS ── */
+function switchOpTab(el, key){
+  el.closest('.itab-bar').querySelectorAll('.itab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderOpTable(key);
+}
+
+/* ── HEATMAP TABS ── */
+let _hmOfficer='all', _hmBatch='all';
+function switchHmOfficer(el, key){
+  el.closest('.itab-bar').querySelectorAll('.itab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  _hmOfficer=key; renderHmTable(_hmOfficer, _hmBatch);
+}
+function switchHmBatch(el, key){
+  el.closest('.itab-bar').querySelectorAll('.itab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  _hmBatch=key; renderHmTable(_hmOfficer, _hmBatch);
+}
+
+/* ── VIEW TOGGLE ── */
+function setView(btn, view){
+  document.querySelectorAll('.vt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('portfolio-view').style.display = view==='portfolio'?'block':'none';
+  document.getElementById('funder-view').style.display    = view==='funder'?'block':'none';
+}
+
+/* ── FUNDER FILTERS ── */
+function frFilter(el, type, val){
+  el.closest('.fr-group').querySelectorAll('.fr-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
